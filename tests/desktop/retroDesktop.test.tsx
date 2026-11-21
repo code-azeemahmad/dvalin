@@ -13,6 +13,7 @@ import { MessagesApp } from '@/components/applications/MessagesApp';
 import { FileExplorerApp } from '@/components/applications/FileExplorerApp';
 import { ControlPanelApp } from '@/components/applications/ControlPanelApp';
 import { TerminalApp } from '@/components/applications/TerminalApp';
+import { BrowserApp } from '@/components/applications/BrowserApp';
 import { createRoot } from 'react-dom/client';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -351,6 +352,43 @@ describe('Retro Desktop Redesign Components', () => {
     // Run cd .. from ~ (goes to /home)
     runCmd('cd ..');
     expect(container.textContent).toContain('tc@box:/home$');
+
+    act(() => {
+      root.unmount();
+    });
+  });
+
+  it('renders BrowserApp and navigates to live website inside iframe', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <BrowserApp />
+        </WindowProvider>
+      );
+    });
+
+    // Check home portal elements
+    expect(container.textContent).toContain('WebOS Navigator');
+    expect(container.textContent).toContain('FrogFind Search');
+    expect(container.textContent).toContain('Wikipedia');
+
+    // Click Wikipedia bookmark
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const wikiBtn = buttons.find((b) => b.textContent?.includes('Wikipedia'));
+    expect(wikiBtn).toBeDefined();
+
+    act(() => {
+      wikiBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // An iframe should now be mounted inside the browser with Wikipedia src!
+    const iframe = container.querySelector('iframe');
+    expect(iframe).not.toBeNull();
+    expect(iframe?.getAttribute('src')).toContain('wikipedia.org');
+    expect(iframe?.getAttribute('sandbox')).toContain('allow-scripts');
 
     act(() => {
       root.unmount();

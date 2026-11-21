@@ -1,73 +1,92 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, RotateCw, Home, Globe, ExternalLink, ShieldCheck } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  RotateCw,
+  Home,
+  Globe,
+  ExternalLink,
+  ShieldCheck,
+  Search,
+  BookOpen,
+  Newspaper,
+  Terminal,
+  CloudSun,
+} from 'lucide-react';
 
-interface Bookmark {
-  title: string;
+interface QuickTile {
+  name: string;
   url: string;
-  content: string;
+  icon: string;
+  desc: string;
 }
 
-const BOOKMARKS: Record<string, Bookmark> = {
-  'retrium://welcome': {
-    title: 'Welcome to Retrium OS',
-    url: 'retrium://welcome',
-    content: `
-# Welcome to Retrium OS Web Portal
-
-Retrium OS provides an authentic x86 PC emulation layer in the browser powered by v86 and Tiny Core Linux 17.1.
-
-### Features:
-- **Zero Simulation:** Commands are executed inside a genuine Linux kernel (6.18) with BusyBox userland.
-- **WASM Acceleration:** Emulation runs at near-native x86 bytecode interpretation in WebAssembly.
-- **Hardware Profile:** 128MB RAM, SeaBIOS, VGA BIOS with 1024x768 framebuffer.
-- **Desktop Shell:** Clean retro aesthetic inspired by classic operating systems.
-
-Use the bottom dock or desktop icons to open apps!
-`,
+const QUICK_TILES: QuickTile[] = [
+  {
+    name: 'FrogFind Search',
+    url: 'https://frogfind.com/',
+    icon: '🔍',
+    desc: 'Live web search engine designed for retro and embedded browsers',
   },
-  'retrium://tinycore': {
-    title: 'Tiny Core Linux 17.1 Reference',
-    url: 'retrium://tinycore',
-    content: `
-# Tiny Core Linux 17.1 (i686)
-
-Tiny Core Linux is a minimalist Linux operating system focusing on providing a base system using Linux kernel, Busybox, and FLTK GUI.
-
-### Essential Commands:
-- \`uname -a\` : Kernel and CPU architecture details
-- \`version\` : Tiny Core Linux release version
-- \`df -h\` : Mounted filesystem statistics
-- \`free -m\` : System RAM and buffer metrics
-- \`tce-status\` : Active extension package list
-- \`ps aux\` : Process table
-`,
+  {
+    name: 'Wikipedia',
+    url: 'https://en.m.wikipedia.org/',
+    icon: '📖',
+    desc: 'The free encyclopedia with millions of articles',
   },
-  'retrium://experiments': {
-    title: 'OS Laboratory & Kernel Notes',
-    url: 'retrium://experiments',
-    content: `
-# Operating Systems Laboratory
-
-Understanding Linux guest internals:
-1. **/proc filesystem**: A virtual pseudo-filesystem created on-the-fly by the Linux kernel to expose process and runtime statistics.
-2. **/sys (sysfs)**: Unified kernel device tree.
-3. **Interrupts & Timers**: Managed through the emulated 8259 PIC and 8254 PIT.
-4. **Memory Management**: Paging and translation lookaside buffer (TLB) emulated in WebAssembly.
-`,
+  {
+    name: 'Hacker News',
+    url: 'https://news.ycombinator.com/',
+    icon: '📰',
+    desc: 'Tech, programming, and computer science discussions',
   },
-};
+  {
+    name: 'Tiny Core Linux',
+    url: 'http://tinycorelinux.net/',
+    icon: '🐧',
+    desc: 'Official home of the lightweight x86 guest operating system',
+  },
+  {
+    name: 'Live Weather',
+    url: 'https://wttr.in/',
+    icon: '🌦️',
+    desc: 'Real-time terminal-style worldwide weather forecast',
+  },
+  {
+    name: 'Wiby Classic Web',
+    url: 'https://wiby.org/',
+    icon: '🌐',
+    desc: 'Search engine for the classic, lightweight, indie web',
+  },
+];
 
 export const BrowserApp: React.FC = () => {
   const [currentUrl, setCurrentUrl] = useState<string>('retrium://welcome');
   const [inputUrl, setInputUrl] = useState<string>('retrium://welcome');
   const [history, setHistory] = useState<string[]>(['retrium://welcome']);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
+  const [reloadKey, setReloadKey] = useState<number>(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const formatUrl = (raw: string): string => {
+    const trimmed = raw.trim();
+    if (!trimmed) return 'retrium://welcome';
+    if (trimmed.startsWith('retrium://') || trimmed.startsWith('about:')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    // Check if it looks like a domain name (e.g. wikipedia.org, github.com, news.ycombinator.com)
+    if (trimmed.includes('.') && !trimmed.includes(' ')) {
+      return `https://${trimmed}`;
+    }
+    // Otherwise treat as search query on FrogFind
+    return `https://frogfind.com/?q=${encodeURIComponent(trimmed)}`;
+  };
 
   const navigateTo = (url: string) => {
-    let target = url.trim();
-    if (!target.startsWith('http://') && !target.startsWith('https://') && !target.startsWith('retrium://')) {
-      target = `https://duckduckgo.com/?q=${encodeURIComponent(target)}`;
-    }
+    const target = formatUrl(url);
     const newHist = history.slice(0, historyIndex + 1);
     newHist.push(target);
     setHistory(newHist);
@@ -94,24 +113,28 @@ export const BrowserApp: React.FC = () => {
     }
   };
 
+  const handleReload = () => {
+    setReloadKey((prev) => prev + 1);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     navigateTo(inputUrl);
   };
 
-  const isInternal = currentUrl.startsWith('retrium://');
-  const currentBookmark = isInternal ? BOOKMARKS[currentUrl] : null;
+  const isInternal = currentUrl.startsWith('retrium://') || currentUrl === 'about:blank';
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-900 text-slate-100 font-sans select-none overflow-hidden">
-      {/* Top Address Toolbar */}
+      {/* Top Address & Controls Toolbar */}
       <div className="h-10 px-3 bg-slate-950 border-b border-slate-800 flex items-center space-x-2 shrink-0">
         <div className="flex items-center space-x-1">
           <button
             type="button"
             onClick={handleBack}
             disabled={historyIndex === 0}
-            className="p-1.5 rounded hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300 cursor-pointer"
+            title="Go Back"
+            className="p-1.5 rounded hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300 cursor-pointer transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
           </button>
@@ -119,106 +142,220 @@ export const BrowserApp: React.FC = () => {
             type="button"
             onClick={handleForward}
             disabled={historyIndex >= history.length - 1}
-            className="p-1.5 rounded hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300 cursor-pointer"
+            title="Go Forward"
+            className="p-1.5 rounded hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent text-slate-300 cursor-pointer transition-colors"
           >
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
-            onClick={() => navigateTo(currentUrl)}
-            className="p-1.5 rounded hover:bg-slate-800 text-slate-300 cursor-pointer"
+            onClick={handleReload}
+            title="Reload Page"
+            className="p-1.5 rounded hover:bg-slate-800 text-slate-300 cursor-pointer transition-colors"
           >
             <RotateCw className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
             onClick={() => navigateTo('retrium://welcome')}
-            className="p-1.5 rounded hover:bg-slate-800 text-slate-300 cursor-pointer"
+            title="Browser Home"
+            className="p-1.5 rounded hover:bg-slate-800 text-slate-300 cursor-pointer transition-colors"
           >
             <Home className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* URL Input Form */}
-        <form onSubmit={handleSubmit} className="flex-1 flex items-center px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 flex items-center px-2 py-1 bg-slate-900 border border-slate-700 focus-within:border-sky-500 rounded text-xs transition-colors"
+        >
           <Globe className="w-3.5 h-3.5 text-sky-400 mr-2 shrink-0" />
           <input
             type="text"
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="Enter web address or search term..."
             className="w-full bg-transparent outline-none text-slate-200 font-mono text-xs select-text"
           />
         </form>
 
         <div className="flex items-center space-x-1">
-          <span title="Sandbox Protected" className="p-1 text-emerald-400">
+          {!isInternal && (
+            <a
+              href={currentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open current page in new tab"
+              className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-sky-300 cursor-pointer transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+          <span title="Sandbox Shield Active" className="p-1 text-emerald-400">
             <ShieldCheck className="w-4 h-4" />
           </span>
         </div>
       </div>
 
       {/* Bookmarks Bar */}
-      <div className="h-7 px-3 bg-slate-950/70 border-b border-slate-800 flex items-center space-x-3 text-[11px] font-mono text-slate-400 shrink-0">
+      <div className="h-7 px-3 bg-slate-950/70 border-b border-slate-800 flex items-center space-x-3 text-[11px] font-mono text-slate-400 shrink-0 overflow-x-auto">
         <button
           type="button"
           onClick={() => navigateTo('retrium://welcome')}
-          className="hover:text-white cursor-pointer hover:underline"
+          className="hover:text-white cursor-pointer hover:underline shrink-0"
         >
-          Retrium Home
+          Home Portal
         </button>
         <span className="text-slate-600">·</span>
         <button
           type="button"
-          onClick={() => navigateTo('retrium://tinycore')}
-          className="hover:text-white cursor-pointer hover:underline"
+          onClick={() => navigateTo('https://frogfind.com/')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
         >
-          Tiny Core Linux
+          <Search className="w-2.5 h-2.5" />
+          <span>Web Search</span>
         </button>
         <span className="text-slate-600">·</span>
         <button
           type="button"
-          onClick={() => navigateTo('retrium://experiments')}
-          className="hover:text-white cursor-pointer hover:underline"
+          onClick={() => navigateTo('https://en.m.wikipedia.org/')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
         >
-          OS Lab
+          <BookOpen className="w-2.5 h-2.5" />
+          <span>Wikipedia</span>
+        </button>
+        <span className="text-slate-600">·</span>
+        <button
+          type="button"
+          onClick={() => navigateTo('https://news.ycombinator.com/')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
+        >
+          <Newspaper className="w-2.5 h-2.5" />
+          <span>Hacker News</span>
+        </button>
+        <span className="text-slate-600">·</span>
+        <button
+          type="button"
+          onClick={() => navigateTo('http://tinycorelinux.net/')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
+        >
+          <Terminal className="w-2.5 h-2.5" />
+          <span>Tiny Core</span>
+        </button>
+        <span className="text-slate-600">·</span>
+        <button
+          type="button"
+          onClick={() => navigateTo('https://wttr.in/')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
+        >
+          <CloudSun className="w-2.5 h-2.5" />
+          <span>Weather</span>
         </button>
       </div>
 
-      {/* Page Content Viewport */}
-      <div className="flex-1 bg-slate-950 overflow-y-auto p-6 font-sans">
-        {currentBookmark ? (
-          <div className="max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl leading-relaxed">
-            <h1 className="text-xl font-bold text-sky-400 mb-4 border-b border-slate-800 pb-2">
-              {currentBookmark.title}
-            </h1>
-            <div className="prose prose-invert text-xs space-y-3 font-mono text-slate-300 whitespace-pre-line select-text">
-              {currentBookmark.content}
+      {/* Main Viewport: Live Web Surfing iframe or Home Portal */}
+      <div className="flex-1 w-full h-full relative overflow-hidden bg-slate-950">
+        {isInternal ? (
+          <div className="w-full h-full overflow-y-auto p-6">
+            <div className="max-w-3xl mx-auto space-y-6">
+              {/* Header Banner */}
+              <div className="text-center py-4">
+                <div className="inline-flex p-3 bg-sky-500/10 rounded-2xl mb-3 border border-sky-500/20">
+                  <Globe className="w-8 h-8 text-sky-400" />
+                </div>
+                <h1 className="text-xl font-bold text-slate-100 tracking-tight">
+                  WebOS Navigator
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Surf websites and search the live internet directly inside WebOS.
+                </p>
+              </div>
+
+              {/* In-Page Quick Search Box */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (inputUrl && inputUrl !== 'retrium://welcome') {
+                    navigateTo(inputUrl);
+                  }
+                }}
+                className="flex items-center px-4 py-2.5 bg-slate-900 border border-slate-700 focus-within:border-sky-500 rounded-xl shadow-lg transition-colors"
+              >
+                <Search className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search the web or type a URL..."
+                  value={inputUrl === 'retrium://welcome' ? '' : inputUrl}
+                  onChange={(e) => setInputUrl(e.target.value)}
+                  className="w-full bg-transparent outline-none text-slate-100 text-xs font-mono"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-medium cursor-pointer transition-colors shrink-0 ml-2"
+                >
+                  Go
+                </button>
+              </form>
+
+              {/* Quick Launch Website Tiles */}
+              <div>
+                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                  Featured Web Destinations
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {QUICK_TILES.map((tile) => (
+                    <button
+                      key={tile.name}
+                      type="button"
+                      onClick={() => navigateTo(tile.url)}
+                      className="flex flex-col text-left p-3.5 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 rounded-xl transition-all cursor-pointer group shadow-sm"
+                    >
+                      <div className="flex items-center space-x-2.5 mb-1.5">
+                        <span className="text-lg">{tile.icon}</span>
+                        <span className="text-xs font-semibold text-slate-200 group-hover:text-sky-400 transition-colors">
+                          {tile.name}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                        {tile.desc}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* System Emulation Details */}
+              <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 space-y-2">
+                <div className="flex items-center space-x-2 text-slate-300 font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Sandboxed Web Surfing</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Web pages load directly inside the WebOS window with sandbox protections. External navigation supports live searching, Wikipedia articles, technical blogs, documentation portals, and web utilities.
+                </p>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-slate-900 rounded-xl border border-slate-800">
-            <Globe className="w-12 h-12 text-sky-400 mb-3 animate-pulse" />
-            <h2 className="text-sm font-bold text-slate-200 mb-1">External Web Destination</h2>
-            <p className="text-xs text-slate-400 max-w-md mb-4 font-mono truncate">
-              {currentUrl}
-            </p>
-            <a
-              href={currentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-1.5 px-4 py-2 bg-sky-600 hover:bg-sky-500 rounded-lg text-xs font-semibold text-white shadow-md transition-colors"
-            >
-              <span>Open in New Browser Tab</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+          <div className="w-full h-full relative">
+            <iframe
+              key={`${currentUrl}-${reloadKey}`}
+              ref={iframeRef}
+              src={currentUrl}
+              title="Web Browser Viewport"
+              className="w-full h-full border-0 bg-white"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+              allow="fullscreen; clipboard-read; clipboard-write"
+            />
           </div>
         )}
       </div>
 
       {/* Bottom Status Bar */}
       <div className="h-6 px-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 shrink-0">
-        <span>WebOS Sandboxed Navigator</span>
-        <span>Status: 200 OK</span>
+        <span className="truncate max-w-xs">{currentUrl}</span>
+        <span>Sandboxed HTML5 Navigator</span>
       </div>
     </div>
   );
