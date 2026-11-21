@@ -11,8 +11,6 @@ import {
   Search,
   FileCode,
   Image as ImageIcon,
-  Check,
-  Sparkles,
 } from 'lucide-react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
 import { useSettings } from '@/features/settings/useSettings';
@@ -125,7 +123,6 @@ export const FileExplorerApp: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const [selectedFile, setSelectedFile] = useState<VirtualFile | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
   const navigateTo = (path: string) => {
     if (path === currentPath) return;
@@ -160,8 +157,6 @@ export const FileExplorerApp: React.FC = () => {
   const handleApplyWallpaper = (item: VirtualFile) => {
     const targetUrl = item.url || `/wallpapers/${encodeURIComponent(item.name)}`;
     setWallpaper(targetUrl);
-    setNotificationMsg(`Desktop wallpaper updated to "${item.name}"!`);
-    setTimeout(() => setNotificationMsg(null), 3500);
   };
 
   const handleItemDoubleClick = (item: VirtualFile) => {
@@ -247,17 +242,6 @@ export const FileExplorerApp: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Notification Toast for Wallpaper Change */}
-      {notificationMsg && (
-        <div className="h-8 px-3 bg-emerald-950 border-b border-emerald-800 flex items-center justify-between text-xs text-emerald-300 animate-in fade-in duration-150">
-          <div className="flex items-center space-x-2">
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-medium">{notificationMsg}</span>
-          </div>
-          <span className="text-[10px] text-emerald-400 font-mono">Persisted</span>
-        </div>
-      )}
 
       {/* Main Area: Sidebar + Grid */}
       <div className="flex-1 flex overflow-hidden">
@@ -404,34 +388,10 @@ export const FileExplorerApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Status Bar with Apply Button for Selected Images */}
-      <div className="h-8 px-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400 shrink-0">
-        <div>
-          <span>{currentItems.length} items</span>
-          {currentPath.includes('Wallpapers') && (
-            <span className="text-slate-500 ml-2 hidden sm:inline">
-              (Double-click any wallpaper to set desktop background)
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center space-x-2">
-          {selectedFile &&
-            (selectedFile.ext === 'jpg' ||
-              selectedFile.ext === 'png' ||
-              selectedFile.ext === 'jpeg' ||
-              selectedFile.ext === 'webp') && (
-              <button
-                type="button"
-                onClick={() => handleApplyWallpaper(selectedFile)}
-                className="flex items-center space-x-1.5 px-2.5 py-0.5 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-sans font-medium cursor-pointer transition-colors"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>Set as Wallpaper</span>
-              </button>
-            )}
-          <span>{selectedFile ? `Selected: ${selectedFile.name}` : 'Ready'}</span>
-        </div>
+      {/* Bottom Status Bar */}
+      <div className="h-6 px-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 shrink-0">
+        <span>{currentItems.length} items</span>
+        <span>Ready</span>
       </div>
     </div>
   );
