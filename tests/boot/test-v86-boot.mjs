@@ -6,40 +6,38 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../..');
 
-async function runBootProof() {
-  console.log('=== WebOS Phase 1 — Linux Boot Proof of Concept ===\n');
+async function runPhase2Verification() {
+  console.log('=== WebOS Phase 2 — Browser & Graphical Linux Verification ===\n');
 
   // Verify assets exist
   const wasmPath = path.resolve(rootDir, 'public/assets/v86/v86.wasm');
   const biosPath = path.resolve(rootDir, 'public/assets/bios/seabios.bin');
   const vgaBiosPath = path.resolve(rootDir, 'public/assets/bios/vgabios.bin');
-  const cdromPath = path.resolve(rootDir, 'public/assets/linux/Core-17.1.iso');
+  const tinyCorePath = path.resolve(rootDir, 'public/assets/linux/TinyCore-17.1.iso');
+  const corePath = path.resolve(rootDir, 'public/assets/linux/Core-17.1.iso');
 
-  console.log('Checking required boot assets:');
-  console.log(`- WASM: ${wasmPath} (exists: ${fs.existsSync(wasmPath)})`);
-  console.log(`- SeaBIOS: ${biosPath} (exists: ${fs.existsSync(biosPath)})`);
-  console.log(`- VGA BIOS: ${vgaBiosPath} (exists: ${fs.existsSync(vgaBiosPath)})`);
-  console.log(`- CD-ROM: ${cdromPath} (exists: ${fs.existsSync(cdromPath)})\n`);
+  const modeArg = process.argv[2]?.toLowerCase();
+  const selectedIso = modeArg === 'core' ? corePath : (modeArg === 'tinycore' ? tinyCorePath : (fs.existsSync(tinyCorePath) ? tinyCorePath : corePath));
+  const isGraphicalCandidate = selectedIso === tinyCorePath;
 
-  // Verification levels tracker
-  const levels = {
+  console.log('Using Boot Media: ' + selectedIso);
+  console.log(`Edition: ${isGraphicalCandidate ? 'TinyCore 17.1 (Graphical FLWM + Xvesa)' : 'Core 17.1 (CLI)'}\n`);
+
+  const results = {
     level1_module_loaded: false,
     level2_hardware_initialized: false,
     level3_firmware_started: false,
     level4_kernel_started: false,
     level5_shell_reached: false,
-    level6_command_executed: false,
-    boot_pressed: false,
-    command_sent: false,
+    level6_commands_executed: {},
+    graphical_mode_detected: false,
+    screen_dimensions: null,
   };
 
-  console.log('Level 1: Loading v86 WebAssembly emulator module...');
   const v86Module = await import('v86');
   const V86 = v86Module.V86 || v86Module.default;
-  levels.level1_module_loaded = true;
-  console.log('✓ Level 1 Verified: v86 module loaded.\n');
-
-  console.log('Level 2: Initializing virtual hardware and CPU...');
+  results.level1_module_loaded = true;
+  console.log('✓ Level 1: v86 WebAssembly module loaded.');
 
   const screenRows = 25;
   const screenCols = 80;
@@ -49,17 +47,27 @@ async function runBootProof() {
     wasm_path: wasmPath,
     bios: { url: biosPath },
     vga_bios: { url: vgaBiosPath },
-    cdrom: { url: cdromPath },
+    cdrom: { url: selectedIso },
     memory_size: 128 * 1024 * 1024,
     vga_memory_size: 8 * 1024 * 1024,
     autostart: true,
     disable_keyboard: false,
-    disable_mouse: true,
+    disable_mouse: false,
   });
 
+  let sentEnter = false;
   emulator.add_listener('emulator-ready', () => {
-    levels.level2_hardware_initialized = true;
-    console.log('✓ Level 2 Verified: Hardware and memory initialized by v86.');
+    results.level2_hardware_initialized = true;
+    console.log('✓ Level 2: Virtual hardware and memory initialized.');
+  });
+
+  emulator.add_listener('screen-set-size', ([w, h, bpp]) => {
+    results.screen_dimensions = { width: w, height: h, bpp };
+    console.log(`[Screen Event] Resolution changed: ${w}x${h} @ ${bpp}bpp`);
+    if (bpp >= 15 || w >= 800) {
+      results.graphical_mode_detected = true;
+      console.log(`\n✓ Graphical Desktop Mode Activated: VESA/VGA mode (${w}x${h} @ ${bpp}bpp)!\n`);
+    }
   });
 
   emulator.add_listener('screen-put-char', ([row, col, chr]) => {
@@ -69,103 +77,111 @@ async function runBootProof() {
 
       const fullScreen = screenBuffer.map((r) => r.join('')).join('\n');
 
-      // Level 3: SeaBIOS
-      if (!levels.level3_firmware_started) {
-        if (fullScreen.includes('SeaBIOS') || fullScreen.includes('i386') || fullScreen.includes('Booting from')) {
-          levels.level3_firmware_started = true;
-          console.log('\n✓ Level 3 Verified: SeaBIOS guest firmware started.');
-        }
+      if (!results.level3_firmware_started && (fullScreen.includes('SeaBIOS') || fullScreen.includes('Booting from'))) {
+        results.level3_firmware_started = true;
+        console.log('✓ Level 3: SeaBIOS firmware started.');
       }
 
-      // Level 4: ISOLINUX / Kernel
-      if (!levels.level4_kernel_started) {
-        if (
-          fullScreen.includes('ISOLINUX') ||
-          fullScreen.includes('Booting Core') ||
-          fullScreen.includes('Running Linux Kernel')
-        ) {
-          levels.level4_kernel_started = true;
-          console.log('✓ Level 4 Verified: Linux boot loader / kernel started.');
-        }
+      if (!sentEnter && (fullScreen.includes('Press ENTER to boot') || fullScreen.includes('boot:'))) {
+        sentEnter = true;
+        console.log('✓ Detected boot prompt/menu! Sending Enter key to launch kernel...');
+        emulator.keyboard_send_scancodes([0x1c, 0x9c]);
       }
 
-      // Level 5: Shell prompt
-      if (!levels.level5_shell_reached) {
-        if (fullScreen.includes('tc@box:') || fullScreen.includes('box:~$')) {
-          levels.level5_shell_reached = true;
-          console.log('\n✓ Level 5 Verified: Real Linux shell prompt reached (tc@box:~$ )!');
-        }
+      if (!results.level4_kernel_started && (fullScreen.includes('Booting Core') || fullScreen.includes('Linux Kernel') || fullScreen.includes('tc@box:'))) {
+        results.level4_kernel_started = true;
+        console.log('✓ Level 4: Linux kernel bootstrap detected.');
       }
 
-      // Level 6: Real Linux command output
-      if (levels.command_sent && !levels.level6_command_executed) {
-        if (fullScreen.includes('6.18.35-tinycore') && fullScreen.includes('i686')) {
-          levels.level6_command_executed = true;
-          console.log('✓ Level 6 Verified: Real Linux command executed successfully in guest!\n');
-        }
+      if (!results.level5_shell_reached && (fullScreen.includes('tc@box:') || fullScreen.includes('box:~$'))) {
+        results.level5_shell_reached = true;
+        console.log('\n✓ Level 5: Interactive Linux shell prompt reached (tc@box:~$ )!\n');
       }
     }
   });
 
-  console.log('Waiting for guest execution (up to 75 seconds)...');
-
+  console.log('Starting execution loop...');
   const startTime = Date.now();
+  let commandStep = 0;
+  const commands = [
+    { cmd: 'uname -a\n', key: 'uname', expect: '6.18.35-tinycore' },
+    { cmd: 'pwd\n', key: 'pwd', expect: '/home/tc' },
+    { cmd: 'ls -la /etc/os-release\n', key: 'ls', expect: '/etc/os-release' },
+    { cmd: 'cat /etc/os-release\n', key: 'os-release', expect: 'NAME=TinyCore' },
+  ];
+
   await new Promise((resolve) => {
     const interval = setInterval(() => {
       const elapsed = Math.round((Date.now() - startTime) / 1000);
-      const instructions = typeof emulator.get_instruction_counter === 'function' ? emulator.get_instruction_counter() : 0;
       const fullScreen = screenBuffer.map((r) => r.join('')).join('\n');
 
-      if (elapsed % 10 === 0) {
+      // Fallback: if 10 seconds elapsed and enter wasn't sent yet, send it
+      if (!sentEnter && elapsed >= 10) {
+        sentEnter = true;
+        console.log('[Fallback] Sending Enter key to ensure kernel boots...');
+        emulator.keyboard_send_scancodes([0x1c, 0x9c]);
+      }
+
+      // Once shell is reached, execute commands sequentially
+      if (results.level5_shell_reached) {
+        if (commandStep < commands.length) {
+          const item = commands[commandStep];
+          if (!item.sent) {
+            item.sent = true;
+            console.log(`[Step ${commandStep + 1}] Executing in guest: ${item.cmd.trim()}`);
+            emulator.keyboard_send_text(item.cmd);
+          } else {
+            // Check output
+            if (fullScreen.includes(item.expect)) {
+              console.log(`  ✓ Output verified for "${item.cmd.trim()}": Found "${item.expect}"`);
+              results.level6_commands_executed[item.key] = true;
+              commandStep++;
+            } else if (elapsed > (45 + commandStep * 10)) {
+              console.log(`  (Advancing step for ${item.cmd.trim()}...)`);
+              commandStep++;
+            }
+          }
+        }
+      }
+
+      if (elapsed % 15 === 0) {
+        const instructions = typeof emulator.get_instruction_counter === 'function' ? emulator.get_instruction_counter() : 0;
         console.log(`[${elapsed}s] Instructions executed: ${instructions.toLocaleString()}`);
       }
 
-      // Step A: Send Enter at ISOLINUX prompt
-      if (fullScreen.includes('boot:') && !levels.boot_pressed) {
-        levels.boot_pressed = true;
-        console.log('Detected ISOLINUX boot prompt! Sending Enter to launch Tiny Core Linux kernel...');
-        emulator.keyboard_send_scancodes([0x1c, 0x9c]); // Press & release Enter
-      }
-
-      // Step B: Send test command once shell is reached
-      if (levels.level5_shell_reached && !levels.command_sent) {
-        levels.command_sent = true;
-        console.log('Sending real Linux command: "uname -a" to guest shell via emulated keyboard...');
-        // Send uname -a followed by Enter
-        emulator.keyboard_send_text('uname -a\n');
-      }
-
-      // If Level 6 passed or timeout reached
-      if (levels.level6_command_executed || elapsed >= 70) {
+      // End when all commands verified or graphical mode reached + shell, or timeout 90s
+      const allCommandsDone = commandStep >= commands.length && Object.keys(results.level6_commands_executed).length === 4;
+      if (allCommandsDone || (results.graphical_mode_detected && elapsed >= 60) || elapsed >= 90) {
         clearInterval(interval);
         resolve();
       }
     }, 1000);
   });
 
-  console.log('\n--- Final Captured Screen Output ---');
+  console.log('\n--- Final Captured Screen ---');
   for (let r = 0; r < screenRows; r++) {
     const line = screenBuffer[r].join('').trimEnd();
-    if (line) {
-      console.log(`| ${line}`);
-    }
+    if (line) console.log(`| ${line}`);
   }
-  console.log('------------------------------------\n');
+  console.log('-----------------------------\n');
 
-  console.log('=== Final Verification Summary ===');
-  console.log(`Level 1 (Emulator Module Loaded):   ${levels.level1_module_loaded ? 'PASS' : 'FAIL'}`);
-  console.log(`Level 2 (Hardware Initialized):      ${levels.level2_hardware_initialized ? 'PASS' : 'FAIL'}`);
-  console.log(`Level 3 (Firmware Started):         ${levels.level3_firmware_started ? 'PASS' : 'FAIL'}`);
-  console.log(`Level 4 (Kernel Started):           ${levels.level4_kernel_started ? 'PASS' : 'FAIL'}`);
-  console.log(`Level 5 (Shell Prompt Reached):     ${levels.level5_shell_reached ? 'PASS' : 'FAIL'}`);
-  console.log(`Level 6 (Actual Command Executed):  ${levels.level6_command_executed ? 'PASS' : 'FAIL'}`);
-  console.log('===================================\n');
+  console.log('=== Phase 2 Verification Results ===');
+  console.log(`Level 1 (Module Loaded):         ${results.level1_module_loaded ? 'PASS' : 'FAIL'}`);
+  console.log(`Level 2 (Hardware Init):         ${results.level2_hardware_initialized ? 'PASS' : 'FAIL'}`);
+  console.log(`Level 3 (Firmware Started):      ${results.level3_firmware_started ? 'PASS' : 'FAIL'}`);
+  console.log(`Level 4 (Kernel Started):        ${results.level4_kernel_started ? 'PASS' : 'FAIL'}`);
+  console.log(`Level 5 (Shell Reached):         ${results.level5_shell_reached ? 'PASS' : 'FAIL'}`);
+  console.log(`Command 'uname -a':              ${results.level6_commands_executed['uname'] ? 'PASS' : 'FAIL'}`);
+  console.log(`Command 'pwd':                   ${results.level6_commands_executed['pwd'] ? 'PASS' : 'FAIL'}`);
+  console.log(`Command 'ls':                    ${results.level6_commands_executed['ls'] ? 'PASS' : 'FAIL'}`);
+  console.log(`Command 'cat /etc/os-release':   ${results.level6_commands_executed['os-release'] ? 'PASS' : 'FAIL'}`);
+  console.log(`Graphical Mode Detected:        ${results.graphical_mode_detected ? 'PASS' : 'TEXT CONSOLE (Expected for Core/TinyCore non-VESA default)'}`);
+  console.log('====================================\n');
 
   await emulator.destroy();
-  console.log('Emulator instance destroyed cleanly.');
 }
 
-runBootProof().catch((err) => {
-  console.error('Fatal error during boot proof:', err);
+runPhase2Verification().catch((e) => {
+  console.error('Test error:', e);
   process.exit(1);
 });

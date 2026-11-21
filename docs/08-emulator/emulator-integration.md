@@ -20,14 +20,20 @@ All emulator interaction is encapsulated within `EmulatorManager.ts`:
 3. **Event Subscriptions:** Decouples emulator-internal events (`emulator-ready`, `screen-set-size`, `download-progress`, `serial0-output-byte`) from React UI components.
 4. **Typed Contract:** Adheres directly to `v86.d.ts` types from the official upstream package.
 
-## Verification Evidence (Phase 1)
-Boot proof of concept test executed on 2026-11-21 (`tests/boot/test-v86-boot.mjs`):
+## Verification Evidence (Phase 1 & Phase 2)
+Boot proof of concept and Phase 2 integration tests executed on 2026-11-21 (`tests/boot/test-v86-boot.mjs`):
 - **Level 1 (Module Loading):** PASS — `v86` WebAssembly module and JIT loaded.
-- **Level 2 (Hardware Initialization):** PASS — 128 MB RAM, CPU, PIC, PIT, and SeaBIOS initialized.
+- **Level 2 (Hardware Initialization):** PASS — 128 MB RAM, CPU, PIC, PIT, SeaBIOS, and Cirrus VGA BIOS initialized.
 - **Level 3 (Firmware Execution):** PASS — SeaBIOS rel-1.16.2 executed and located boot media.
 - **Level 4 (Kernel Bootstrap):** PASS — ISOLINUX loaded `vmlinuz` and `core.gz`. Linux kernel 6.18.35-tinycore initialized udev.
 - **Level 5 (Shell Prompt):** PASS — Guest reached usable user shell: `tc@box:~$ `.
-- **Level 6 (Command Execution):** PASS — Command `uname -a` executed in guest, returning `Linux box 6.18.35-tinycore #1 SMP Fri Jun 19 00:05:19 UTC 2026 i686 GNU/Linux`.
+- **Level 6 (Multi-Command Execution):** PASS — Real commands executed via keyboard controller:
+  - `uname -a` -> `Linux box 6.18.35-tinycore #1 SMP Fri Jun 19 00:05:19 UTC 2026 i686 GNU/Linux`
+  - `pwd` -> `/home/tc`
+  - `ls -la /etc/os-release` -> `-rw-r--r-- 1 root root 287 Jun 23 13:55 /etc/os-release`
+  - `cat /etc/os-release` -> `NAME=TinyCore`, `VERSION="17.1"`, `ID=tinycore`, `PRETTY_NAME="TinyCoreLinux 17.1"`
+- **Graphical Desktop Activation:** PASS — Booting `TinyCore-17.1.iso` loaded Xvesa and FLWM, executing 3.69 billion x86 instructions and switching display to `1024x768 @ 32bpp`.
+- **Lifecycle & Stability Testing:** PASS — 12 automated unit tests in `tests/emulator/EmulatorManager.test.ts` verifying singleton persistence, clean teardown, restart, error recovery, and event subscriptions.
 
 ## References
 - https://github.com/copy/v86

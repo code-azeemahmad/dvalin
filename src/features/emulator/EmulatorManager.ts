@@ -36,6 +36,9 @@ export class EmulatorManager {
   private lastError: string | null = null;
   private screenDimensions: ScreenDimensions = { width: 640, height: 400, bpp: 8 };
   private instructionCount: number = 0;
+  private isShellReady: boolean = false;
+  private sentEnterToIsolinux: boolean = false;
+  private autoBootTimer: any = null;
 
   // Listeners
   private stateListeners = new Set<StateChangeListener>();
@@ -71,6 +74,10 @@ export class EmulatorManager {
 
   public getScreenDimensions(): ScreenDimensions {
     return this.screenDimensions;
+  }
+
+  public getIsShellReady(): boolean {
+    return this.isShellReady;
   }
 
   public getInstructionCount(): number {
@@ -111,6 +118,8 @@ export class EmulatorManager {
 
     this.setStatus('initializing');
     this.lastError = null;
+    this.isShellReady = false;
+    this.sentEnterToIsolinux = false;
     this.addLog('info', 'Starting WebOS virtual machine initialization...');
 
     try {
@@ -126,22 +135,36 @@ export class EmulatorManager {
 
       // Prepare screen container structure as required by v86
       let container: HTMLElement | null = this.screenContainer;
-      if (!container) {
+      if (!container && typeof document !== 'undefined') {
         container = document.getElementById('v86-screen-container');
       }
 
+      // In Node.js testing environments, resolve root-relative paths to public/
+      let wasmPath = this.config.wasmPath;
+      let biosUrl = this.config.biosUrl;
+      let vgaBiosUrl = this.config.vgaBiosUrl;
+      let cdromUrl = this.config.cdromUrl;
+
+      if (typeof window === 'undefined' && typeof process !== 'undefined') {
+        const root = process.cwd();
+        if (wasmPath.startsWith('/')) wasmPath = root + '/public' + wasmPath;
+        if (biosUrl.startsWith('/')) biosUrl = root + '/public' + biosUrl;
+        if (vgaBiosUrl.startsWith('/')) vgaBiosUrl = root + '/public' + vgaBiosUrl;
+        if (cdromUrl && cdromUrl.startsWith('/')) cdromUrl = root + '/public' + cdromUrl;
+      }
+
       const v86Options: any = {
-        wasm_path: this.config.wasmPath,
+        wasm_path: wasmPath,
         memory_size: this.config.memorySize,
         vga_memory_size: this.config.vgaMemorySize,
-        bios: { url: this.config.biosUrl },
-        vga_bios: { url: this.config.vgaBiosUrl },
+        bios: { url: biosUrl },
+        vga_bios: { url: vgaBiosUrl },
         autostart: true,
         screen_container: container,
       };
 
-      if (this.config.cdromUrl) {
-        v86Options.cdrom = { url: this.config.cdromUrl };
+      if (cdromUrl) {
+        v86Options.cdrom = { url: cdromUrl };
       }
       if (this.config.hdaUrl) {
         v86Options.hda = { url: this.config.hdaUrl };
@@ -178,6 +201,21 @@ export class EmulatorManager {
       emulator.add_listener('emulator-ready', () => {
         this.addLog('info', 'SeaBIOS and hardware initialized. Booting Linux kernel...');
         this.setStatus('booting');
+
+        // Fallback auto-send Enter scancodes (press 0x1c, release 0x9c) to ISOLINUX
+        // in case screen detection does not fire
+        if (this.autoBootTimer) clearTimeout(this.autoBootTimer);
+        this.autoBootTimer = setTimeout(() => {
+          if (!this.sentEnterToIsolinux && this.v86Instance && (this.status === 'booting' || this.status === 'running')) {
+            this.sentEnterToIsolinux = true;
+            try {
+              this.v86Instance.keyboard_send_scancodes([0x1c, 0x9c]);
+              this.addLog('info', 'Dispatched Enter key to launch Linux kernel.');
+            } catch {
+              // Ignore
+            }
+          }
+        }, 5000);
       });
 
       emulator.add_listener('emulator-started', () => {
@@ -197,6 +235,31 @@ export class EmulatorManager {
         this.screenDimensions = { width, height, bpp };
         this.addLog('info', `Display resolution changed: ${width}x${height} @ ${bpp}bpp`);
         this.screenSizeListeners.forEach((fn) => fn(this.screenDimensions));
+      });
+
+      let textBuffer = '';
+      emulator.add_listener('screen-put-char', ([_row, _col, chr]: [number, number, number]) => {
+        const char = String.fromCharCode(chr);
+        textBuffer += char;
+        if (textBuffer.length > 500) {
+          textBuffer = textBuffer.slice(-300);
+        }
+
+        // Fast-path prompt-aware Enter dispatch
+        if (!this.sentEnterToIsolinux && (textBuffer.includes('Press ENTER to boot') || textBuffer.includes('boot:'))) {
+          this.sentEnterToIsolinux = true;
+          try {
+            this.v86Instance?.keyboard_send_scancodes([0x1c, 0x9c]);
+            this.addLog('info', 'Detected ISOLINUX menu; dispatched Enter key to trigger Linux boot.');
+          } catch {
+            // Ignore
+          }
+        }
+
+        if (!this.isShellReady && (textBuffer.includes('tc@box:') || textBuffer.includes('box:~$'))) {
+          this.isShellReady = true;
+          this.addLog('info', 'Real Linux shell prompt reached: tc@box:~$');
+        }
       });
 
       emulator.add_listener('serial0-output-byte', (byte: number) => {
@@ -220,6 +283,7 @@ export class EmulatorManager {
     if (!this.v86Instance) return;
     this.setStatus('stopping');
     this.addLog('info', 'Stopping emulator...');
+    if (this.autoBootTimer) clearTimeout(this.autoBootTimer);
     try {
       await this.v86Instance.stop();
       this.setStatus('stopped');
@@ -232,6 +296,7 @@ export class EmulatorManager {
   public async restart(): Promise<void> {
     if (!this.v86Instance) return;
     this.addLog('info', 'Triggering guest hardware reset...');
+    this.isShellReady = false;
     try {
       this.v86Instance.restart();
       this.setStatus('booting');
@@ -241,6 +306,13 @@ export class EmulatorManager {
   }
 
   public async destroy(): Promise<void> {
+    if (this.autoBootTimer) {
+      clearTimeout(this.autoBootTimer);
+      this.autoBootTimer = null;
+    }
+    this.lastError = null;
+    this.isShellReady = false;
+    this.sentEnterToIsolinux = false;
     if (!this.v86Instance) {
       this.setStatus('idle');
       return;
@@ -254,6 +326,12 @@ export class EmulatorManager {
       this.v86Instance = null;
       this.setStatus('idle');
     }
+  }
+
+  public reportError(message: string): void {
+    this.lastError = message;
+    this.addLog('error', message);
+    this.setStatus('error');
   }
 
   public sendSerialCommand(cmd: string): void {
@@ -272,13 +350,21 @@ export class EmulatorManager {
 
   public lockMouse(): void {
     if (this.v86Instance && typeof this.v86Instance.lock_mouse === 'function') {
-      this.v86Instance.lock_mouse();
+      try {
+        this.v86Instance.lock_mouse();
+      } catch (e: any) {
+        this.addLog('warn', `Mouse lock: ${e?.message || e}`);
+      }
     }
   }
 
   public goFullscreen(): void {
     if (this.v86Instance && typeof this.v86Instance.screen_go_fullscreen === 'function') {
-      this.v86Instance.screen_go_fullscreen();
+      try {
+        this.v86Instance.screen_go_fullscreen();
+      } catch (e: any) {
+        this.addLog('warn', `Fullscreen: ${e?.message || e}`);
+      }
     }
   }
 

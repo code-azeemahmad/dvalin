@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useEmulator } from '@/features/emulator/useEmulator';
+import { EmulatorManager } from '@/features/emulator/EmulatorManager';
+import { GUEST_EDITIONS } from '@/features/emulator/config';
 import { SystemToolbar } from '@/components/SystemToolbar/SystemToolbar';
-import { WelcomeScreen } from '@/components/WelcomeScreen/WelcomeScreen';
+import { WelcomeScreen, GuestEditionKey } from '@/components/WelcomeScreen/WelcomeScreen';
 import { BootScreen } from '@/components/BootScreen/BootScreen';
 import { EmulatorDisplay } from '@/components/EmulatorDisplay/EmulatorDisplay';
 import { StatusBar } from '@/components/StatusBar/StatusBar';
@@ -24,6 +26,19 @@ export const DesktopFrame: React.FC = () => {
 
   const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
   const [commandInput, setCommandInput] = useState<string>('');
+  const [selectedEdition, setSelectedEdition] = useState<GuestEditionKey>('tinycore');
+
+  const handleStart = (edition: GuestEditionKey) => {
+    const editionConfig = GUEST_EDITIONS[edition];
+    try {
+      EmulatorManager.getInstance().configure({
+        cdromUrl: editionConfig.cdromUrl,
+      });
+    } catch {
+      // Ignore if already running
+    }
+    boot();
+  };
 
   const handleCommandSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,21 +63,34 @@ export const DesktopFrame: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 relative flex overflow-hidden">
         <div className="flex-1 flex items-center justify-center relative overflow-hidden bg-slate-950">
-          {status === 'idle' ? (
-            <WelcomeScreen onStart={() => boot()} />
-          ) : status === 'initializing' || (status === 'booting' && !serialOutput) ? (
-            <BootScreen
-              progress={progress}
-              logs={logs}
-              error={error}
-              onRetry={() => boot()}
-            />
-          ) : (
-            <EmulatorDisplay
-              status={status}
-              width={screenDimensions.width}
-              height={screenDimensions.height}
-            />
+          {/* Emulator Display: ALWAYS mounted so that v86 attaches canvas to DOM container */}
+          <EmulatorDisplay
+            status={status}
+            width={screenDimensions.width}
+            height={screenDimensions.height}
+          />
+
+          {/* Welcome Screen Overlay: shown when idle */}
+          {status === 'idle' && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950">
+              <WelcomeScreen
+                selectedEdition={selectedEdition}
+                onSelectEdition={setSelectedEdition}
+                onStart={handleStart}
+              />
+            </div>
+          )}
+
+          {/* Boot Screen Overlay: shown during initializing / initial download */}
+          {(status === 'initializing' || (status === 'booting' && progress && progress.percent < 100)) && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm">
+              <BootScreen
+                progress={progress}
+                logs={logs}
+                error={error}
+                onRetry={() => boot()}
+              />
+            </div>
           )}
         </div>
 
@@ -76,7 +104,7 @@ export const DesktopFrame: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsConsoleOpen(false)}
-                className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white"
+                className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-white cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

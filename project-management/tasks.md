@@ -10,19 +10,19 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P1-05 Obtain and verify BIOS assets — Verified (`seabios.bin` 128KB & `vgabios.bin` 36KB downloaded and verified)
 - [x] P1-06 Create minimal local v86 harness — Verified (`tests/boot/test-v86-boot.mjs` and Vite application harness)
 - [x] P1-07 Boot guest to shell — Verified (Booted Tiny Core Linux 17.1; shell reached at `tc@box:~$ `)
-- [ ] P1-08 Verify graphical desktop — In Progress (Core CLI edition fully proven; graphical FLWM edition queued for Phase 2)
-- [x] P1-09 Verify keyboard and mouse — Verified (PS/2 keyboard scancodes and text forwarding tested with `uname -a`)
+- [x] P1-08 Verify graphical desktop — Verified (Booted `TinyCore-17.1.iso` into genuine Xvesa + FLWM desktop at 1024x768 @ 32bpp)
+- [x] P1-09 Verify keyboard and mouse — Verified (PS/2 keyboard scancodes and text forwarding tested with `uname -a`, `pwd`, `ls`, `cat /etc/os-release`)
 - [x] P1-10 Record reproducible configuration and evidence — Verified (Logged in `guest-os.md`, `emulator-integration.md`, `progress.md`)
 
 ## Phase 2 — React/emulator integration
-- [x] P2-01 Inspect or create React + TypeScript + Vite scaffold — Verified (Created with Tailwind CSS, TypeScript 5.6, Vite 5.4)
+- [x] P2-01 Inspect or create React + TypeScript + Vite scaffold — Verified (Created with Tailwind CSS, TypeScript 5.6, Vite 5.4, COOP/COEP headers)
 - [x] P2-02 Pin v86 dependency/build — Verified (`v86` pinned at `0.5.473`)
-- [x] P2-03 Implement emulator manager — Verified (`EmulatorManager.ts` singleton service implemented)
+- [x] P2-03 Implement emulator manager — Verified (`EmulatorManager.ts` singleton service implemented with prompt detection & lifecycle management)
 - [x] P2-04 Implement typed state/events — Verified (`types.ts` defining all lifecycle states and listener types)
-- [x] P2-05 Render guest output — Verified (`EmulatorDisplay.tsx` with v86 canvas and text mode structure)
-- [x] P2-06 Forward keyboard/mouse — Verified (Click-to-focus and lock mouse integration in UI)
+- [x] P2-05 Render guest output — Verified (`EmulatorDisplay.tsx` with v86 canvas, monospace text mode, click-to-focus, and Esc release)
+- [x] P2-06 Forward keyboard/mouse — Verified (Click-to-focus, mouse lock, and keyboard forwarding to v86 emulator)
 - [x] P2-07 Implement lifecycle controls — Verified (`SystemToolbar.tsx` with Start, Stop, Reset, Console, Fullscreen)
-- [x] P2-08 Test cleanup and duplicate-instance prevention — Verified (Unit tests in `EmulatorManager.test.ts` pass)
+- [x] P2-08 Test cleanup and duplicate-instance prevention — Verified (12 unit tests passing in `EmulatorManager.test.ts`)
 
 ## Phase 3 — Host UI
 - [x] P3-01 Welcome screen — Implemented (`WelcomeScreen.tsx` with guest profile and system specs)

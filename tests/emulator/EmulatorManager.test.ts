@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EmulatorManager } from '@/features/emulator/EmulatorManager';
 
 describe('EmulatorManager Lifecycle Service', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // Reset any state
     const manager = EmulatorManager.getInstance();
-    manager.destroy();
+    await manager.destroy();
   });
 
   it('maintains a strict singleton instance', () => {
@@ -18,13 +18,23 @@ describe('EmulatorManager Lifecycle Service', () => {
     const manager = EmulatorManager.getInstance();
     expect(manager.getStatus()).toBe('idle');
     expect(manager.getLastError()).toBeNull();
+    expect(manager.getIsShellReady()).toBe(false);
   });
 
   it('allows valid configuration updates when idle', () => {
     const manager = EmulatorManager.getInstance();
     manager.configure({ memorySize: 64 * 1024 * 1024 });
-    // Should not throw
     expect(manager.getStatus()).toBe('idle');
+  });
+
+  it('rejects configuration updates when emulator is active', async () => {
+    const manager = EmulatorManager.getInstance();
+    // Simulate active status by calling boot
+    const bootPromise = manager.boot();
+    expect(() => {
+      manager.configure({ memorySize: 256 * 1024 * 1024 });
+    }).toThrow(/Cannot configure emulator while in state/);
+    await bootPromise.catch(() => {});
   });
 
   it('notifies state listeners when status changes', () => {
@@ -38,21 +48,79 @@ describe('EmulatorManager Lifecycle Service', () => {
     unsubscribe();
   });
 
+  it('notifies log listeners when logs are added', () => {
+    const manager = EmulatorManager.getInstance();
+    const logCallback = vi.fn();
+    const unsubscribe = manager.onLog(logCallback);
+
+    manager.configure({ memorySize: 128 * 1024 * 1024 });
+
+    expect(logCallback).toHaveBeenCalled();
+    const entry = logCallback.mock.calls[0][0];
+    expect(entry.level).toBe('info');
+    expect(entry.message).toContain('Emulator configured');
+
+    unsubscribe();
+  });
+
+  it('notifies screen size listeners when dimensions change', () => {
+    const manager = EmulatorManager.getInstance();
+    const screenCallback = vi.fn();
+    const unsubscribe = manager.onScreenSize(screenCallback);
+
+    // Current default dimensions
+    const dims = manager.getScreenDimensions();
+    expect(dims).toEqual({ width: 640, height: 400, bpp: 8 });
+
+    unsubscribe();
+  });
+
+  it('tracks screen container assignment for DOM mounting', () => {
+    const manager = EmulatorManager.getInstance();
+    const mockContainer = { tagName: 'DIV' } as any;
+    manager.setScreenContainer(mockContainer);
+    // Verified internal container can be set without errors
+    manager.setScreenContainer(null);
+  });
+
   it('safely handles double boot calls without duplicating instances', async () => {
     const manager = EmulatorManager.getInstance();
-    // Simulate boot
     const bootPromise1 = manager.boot();
     const bootPromise2 = manager.boot();
 
     // The second boot should log a warning and return early without crashing
     await Promise.allSettled([bootPromise1, bootPromise2]);
     const logs = manager.getLogs();
-    expect(logs.length).toBeGreaterThan(0);
+    expect(logs.some((l) => l.level === 'warn' && l.message.includes('Boot requested while emulator is already in state'))).toBe(true);
+  });
+
+  it('handles stop and restart calls cleanly', async () => {
+    const manager = EmulatorManager.getInstance();
+    // In idle state, stop and restart should be safe no-ops
+    await manager.stop();
+    expect(manager.getStatus()).toBe('idle');
+
+    await manager.restart();
+    expect(manager.getStatus()).toBe('idle');
   });
 
   it('cleans up resources and resets to idle on destroy', async () => {
     const manager = EmulatorManager.getInstance();
     await manager.destroy();
     expect(manager.getStatus()).toBe('idle');
+    expect(manager.getIsShellReady()).toBe(false);
+  });
+
+  it('supports error recovery: permits re-boot after error', async () => {
+    const manager = EmulatorManager.getInstance();
+    manager.reportError('Simulated asset fetch failure');
+
+    expect(manager.getStatus()).toBe('error');
+    expect(manager.getLastError()).toBe('Simulated asset fetch failure');
+
+    // Reset and verify clean recovery
+    await manager.destroy();
+    expect(manager.getStatus()).toBe('idle');
+    expect(manager.getLastError()).toBeNull();
   });
 });

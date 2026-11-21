@@ -2,7 +2,31 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
-## [0.1.0] — 2026-11-21 — Phase 1: Boot Proof of Concept & Foundation
+## [0.2.0] — 2026-11-21 — Phase 2: Browser Integration & Graphical Linux Implementation
+
+### Added
+- Genuine graphical Linux desktop support: acquired and verified `TinyCore-17.1.iso` (26.0 MB) containing Xvesa and FLWM window manager.
+- Guest Edition selection in `WelcomeScreen.tsx`: users can select between "Graphical Desktop (FLWM + Xvesa)" and "Command-Line Console (Fast Shell)".
+- Prompt-aware bootloader Enter key dispatcher in `EmulatorManager.ts`: detects ISOLINUX boot menu immediately and launches default kernel without timer delays.
+- Full display interaction in `EmulatorDisplay.tsx`:
+  - VGA canvas rendering inside React DOM.
+  - Display resolution listener dynamically tracking resolution changes up to 1024×768 @ 32bpp.
+  - Click-to-focus overlay and mouse pointer lock integration.
+  - Esc key capture release (`document.exitPointerLock`).
+  - Fullscreen toggle via `screen_go_fullscreen`.
+- Comprehensive lifecycle and stability test suite (`tests/emulator/EmulatorManager.test.ts`): expanded from 6 to 12 tests covering state notifications, config protection, restart, stop, error reporting/recovery, and clean teardown.
+- Multi-command test harness in `tests/boot/test-v86-boot.mjs` verifying sequential command execution and screen capture.
+
+### Verified
+- **Graphical Linux Desktop:** `TinyCore-17.1.iso` bootstraps Linux kernel 6.18.35, loads FLWM/Xvesa, executes 3.69 billion x86 instructions, and activates VESA mode at 1024×768 @ 32bpp.
+- **Interactive Linux Commands:** Executed real commands in guest shell:
+  - `uname -a` -> Verified Linux 6.18.35-tinycore i686.
+  - `pwd` -> Verified `/home/tc`.
+  - `ls -la /etc/os-release` -> Verified `-rw-r--r-- 1 root root 287 /etc/os-release`.
+  - `cat /etc/os-release` -> Verified `NAME=TinyCore`, `VERSION="17.1"`, `ID=tinycore`.
+- **Browser HTTP Delivery:** Verified HTTP 200 responses with COOP (`same-origin`) and COEP (`credentialless`) headers.
+- **Test Suite:** 12/12 unit tests passing in Vitest.
+- **Typecheck & Build:** 0 TypeScript errors; production build completed in 3.42s.
 
 ### Added
 - Comprehensive initial repository audit report (`project-management/initial-project-audit.md`).

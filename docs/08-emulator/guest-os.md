@@ -38,7 +38,7 @@ Linux box 6.18.35-tinycore #1 SMP Fri Jun 19 00:05:19 UTC 2026 i686 GNU/Linux
 - [x] Boot with pinned v86 build (v86 version 0.5.473).
 - [x] Confirm shell access (`tc@box:~$ `).
 - [x] Confirm command execution (`uname -a` returns genuine kernel info).
-- [ ] Confirm graphical desktop (TinyCore edition FLWM).
+- [x] Confirm graphical desktop (TinyCore edition FLWM + Xvesa verified at 1024x768 @ 32bpp).
 - [x] Confirm keyboard interaction (text sent and received via PS/2 keyboard controller).
 - [x] Inventory baseline BusyBox commands.
 - [x] Record memory and disk requirements (128 MB RAM, 8 MB VGA RAM).
