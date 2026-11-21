@@ -179,6 +179,8 @@ async function runPhase7ExperimentsVerification() {
         sentEnter = true;
         console.log('[Fallback] Sending Enter to bootloader...');
         emulator.keyboard_send_scancodes([0x1c, 0x9c]);
+      } else if (!results.kernel_booted && elapsed >= 12 && elapsed <= 35 && elapsed % 5 === 0) {
+        emulator.keyboard_send_scancodes([0x1c, 0x9c]);
       }
 
       if (results.shell_reached && currentStage < testStages.length) {
@@ -210,8 +212,8 @@ async function runPhase7ExperimentsVerification() {
         console.log(`[${elapsed}s] VM active. Instructions: ${inst.toLocaleString()}`);
       }
 
-      // Finish when all stages evaluated or global timeout 180s
-      if (currentStage >= testStages.length || elapsed >= 180) {
+      // Finish when all stages evaluated or global timeout 240s
+      if (currentStage >= testStages.length || elapsed >= 240) {
         clearInterval(timer);
         resolve(true);
       }

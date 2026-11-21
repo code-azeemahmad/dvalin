@@ -1,30 +1,71 @@
 # WebOS Progress Log
 
 ## Current Status
-**Phases 1, 2, 3, 4, 5, 6 & 7 Verified:** Full browser-hosted desktop operating system environment and interactive educational operating systems laboratory (OS Lab) implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, 12-stage verified CLI & OS capability suite in the real Linux guest, complete IndexedDB session persistence service with SHA-256 integrity checks, sub-3-second browser reload recovery, guest filesystem state durability proof, graceful ACPI shutdown, host session management UI in Settings and Start Menu, 20 structured real-guest & hybrid OS experiments across 7 categories, workspace isolation with safety validation and delimited marker execution protocol, interactive step runner with live output terminal and knowledge-check quizzes, persistent lab progress in localStorage, bounded real-time telemetry separating in-guest Linux kernel metrics from host browser metrics, 69 unit tests passing across 11 test suites, and 12/12 live guest experiment verification stages passing in real VM.
+**Phases 1, 2, 3, 4, 5, 6, 7 & 8 Verified:** Full browser-hosted desktop operating system environment and interactive educational operating systems laboratory (OS Lab) implemented, verified, hardened, and prepared for production release (v0.8.0). Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence, 12-stage verified CLI & OS capability suite in the real Linux guest, complete IndexedDB session persistence service with SHA-256 integrity checks, sub-second browser reload recovery, guest filesystem state durability proof, graceful ACPI shutdown, host session management UI, 20 structured real-guest & hybrid OS experiments across 7 categories, workspace isolation with safety validation and nonce delimited marker execution protocol, interactive step runner with live output terminal and knowledge-check quizzes, persistent lab progress, bounded real-time telemetry separating in-guest Linux kernel metrics from host browser metrics, 71 unit tests passing across 11 test suites, production preview server verified with COOP/COEP headers, deployment configurations for Cloudflare Pages, Netlify, and Docker/Nginx, comprehensive security audit, browser compatibility matrix, user guide, and troubleshooting documentation.
 
 ## Current Milestone
-**Phase 7 Complete / Phase 8 Testing and Deployment Ready**
+**Phase 8 Complete — Production Ready (v0.8.0)**
 
-### Exit Criteria Status for Phase 7:
-- [x] OS Experiments Architecture in `docs/experiments/EXPERIMENT_ARCHITECTURE.md`.
-- [x] Complete 20-Experiment Catalog across 7 categories in `docs/experiments/EXPERIMENT_CATALOG.md`.
-- [x] Safety, Isolation & Validation Rules in `docs/experiments/EXPERIMENT_SAFETY.md`.
-- [x] Real-Time Resource Monitoring Architecture in `docs/experiments/RESOURCE_MONITORING.md`.
-- [x] Domain types and contracts in `src/features/experiments/types/ExperimentTypes.ts`.
-- [x] Safety engine with blocked command patterns and delimited marker protocol in `src/features/experiments/services/ExperimentSafety.ts`.
-- [x] 20 fully specified experiment definitions in `src/features/experiments/data/experiments.ts`.
-- [x] Singleton registry and catalog indexer in `src/features/experiments/services/ExperimentRegistry.ts`.
-- [x] LocalStorage progress persistence in `src/features/experiments/services/ExperimentProgressService.ts`.
-- [x] Step runner with real guest command dispatch and marker parsing in `src/features/experiments/services/ExperimentRunner.ts`.
-- [x] Bounded 3000ms resource monitoring separating guest Linux metrics from host browser metrics in `src/features/experiments/services/ResourceMonitoringService.ts`.
-- [x] React hook `useExperiments` in `src/features/experiments/hooks/useExperiments.ts`.
-- [x] OS Lab UI components (`ExperimentsApp.tsx`, `ExperimentCatalog.tsx`, `ExperimentDetail.tsx`, `ExperimentVisualization.tsx`, `ResourceMonitorView.tsx`).
-- [x] Host desktop integration: registered in `appRegistry.ts`, mounted in `DesktopShell.tsx`, icons in Taskbar, DesktopIcons, and StartMenu.
-- [x] 26 unit tests passing across 4 test suites in `tests/experiments/` (69 total unit tests passing in Vitest).
-- [x] 0 TypeScript compiler errors and clean production build.
-- [x] Automated live guest verification harness `tests/boot/test-phase7-experiments.mjs` passing 12/12 stages in 68 seconds on live v86 VM.
-- [x] Recorded empirical results in `docs/experiments/EXPERIMENT_VERIFICATION_RESULTS.md` and `docs/experiments/PHASE7_IMPLEMENTATION_REPORT.md`.
+### Exit Criteria Status for Phase 8:
+- [x] Architecture & Repository Audit in `docs/release/ARCHITECTURE_AUDIT.md`.
+- [x] Comprehensive Regression Test Results in `docs/release/REGRESSION_TEST_RESULTS.md` (71 unit tests passing, live VM harnesses passing).
+- [x] Browser End-to-End Testing & Verification in `docs/release/BROWSER_E2E_RESULTS.md`.
+- [x] Security Threat Model in `docs/security/THREAT_MODEL.md`.
+- [x] Application Security Audit & Vulnerability Assessment in `docs/security/SECURITY_AUDIT.md`.
+- [x] Browser Compatibility Matrix & Capabilities in `docs/release/BROWSER_COMPATIBILITY.md`.
+- [x] Performance & Reliability Evaluation in `docs/release/PERFORMANCE_REPORT.md`.
+- [x] Production Static Deployment Guide in `docs/deployment/DEPLOYMENT_GUIDE.md`.
+- [x] Production Asset & Headers Verification in `docs/deployment/PRODUCTION_VERIFICATION.md`.
+- [x] User Guide & Operating Manual in `docs/release/USER_GUIDE.md`.
+- [x] Troubleshooting & Diagnostic Guide in `docs/release/TROUBLESHOOTING.md`.
+- [x] Release Notes (v0.8.0) in `docs/release/RELEASE_NOTES.md`.
+- [x] Updated Main Readme in `README.md`.
+- [x] Repeatable CI Pipeline in `.github/workflows/ci.yml`.
+- [x] Static hosting configurations: `public/_headers`, `netlify.toml`, `nginx.conf`, `Dockerfile`.
+- [x] Production preview server configuration with COOP/COEP in `vite.config.ts`.
+- [x] Final Phase 8 Implementation Report in `docs/release/PHASE8_IMPLEMENTATION_REPORT.md`.
+
+---
+
+## Progress Entries
+
+### 2026-11-21 — Phase 8 Execution: Testing, Security Audit & Production Deployment
+- **Phase/task:** Phase 8 (Repository Audit, Comprehensive Regression, Security Hardening, Browser Compatibility, Performance Profiling, Static Production Deployment Preparation, CI Pipeline, Complete Release Documentation).
+- **Status:** Complete — Deployment Pending (All code, security hardening, regression suites, and production preview verified).
+- **Work completed:**
+  1. Conducted repository and architecture audit (`docs/release/ARCHITECTURE_AUDIT.md`).
+  2. Implemented security hardening:
+     - Added randomized execution nonces to `ExperimentSafety.wrapCommandForExecution()` preventing marker collisions.
+     - Enforced `MAX_SNAPSHOT_BYTES` (512 MB) safety ceiling and name/description sanitization in `SnapshotStorage.ts`.
+     - Added `preview.headers` block in `vite.config.ts` delivering `COOP: same-origin` and `COEP: credentialless`.
+  3. Added and expanded unit test coverage to 71 passing tests across 11 suites (`SnapshotStorage.test.ts`, `ExperimentSafety.test.ts`).
+  4. Executed live guest harnesses:
+     - Phase 6 reload recovery test: verified sub-second cold resume (**969 ms**) and proof token durability across total VM destruction.
+     - Phase 7 live experiments test: verified 12/12 real guest stages in 118s.
+  5. Built and verified automated production preview server test harness `tests/e2e/test-production-server.mjs` verifying HTTP 200, COOP, COEP, and MIME types for `.wasm`, `.iso`, and `.bin`.
+  6. Conducted comprehensive security audit (`docs/security/SECURITY_AUDIT.md`) and threat model (`docs/security/THREAT_MODEL.md`).
+  7. Formulated browser compatibility matrix (`docs/release/BROWSER_COMPATIBILITY.md`) across Chromium, Gecko, and WebKit.
+  8. Evaluated performance and established budgets in `docs/release/PERFORMANCE_REPORT.md`.
+  9. Created deployment configurations (`public/_headers`, `netlify.toml`, `nginx.conf`, `Dockerfile`) and CI workflow (`.github/workflows/ci.yml`).
+  10. Authored complete documentation suite (`USER_GUIDE.md`, `TROUBLESHOOTING.md`, `RELEASE_NOTES.md`, `README.md`, `PHASE8_IMPLEMENTATION_REPORT.md`).
+- **Files changed / created:**
+  - `vite.config.ts`
+  - `src/features/experiments/services/ExperimentSafety.ts`
+  - `src/features/experiments/services/ExperimentRunner.ts`
+  - `src/services/persistence/SnapshotStorage.ts`
+  - `tests/experiments/ExperimentSafety.test.ts`
+  - `tests/persistence/SnapshotStorage.test.ts`
+  - `tests/boot/test-phase7-experiments.mjs`
+  - `tests/e2e/test-production-server.mjs`
+  - `public/_headers`
+  - `netlify.toml`
+  - `nginx.conf`
+  - `Dockerfile`
+  - `.github/workflows/ci.yml`
+  - `README.md`
+  - `docs/release/` (8 documentation files)
+  - `docs/security/` (2 documentation files)
+  - `docs/deployment/` (2 documentation files)
 
 ---
 

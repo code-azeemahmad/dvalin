@@ -66,14 +66,16 @@ export class ExperimentRunner {
 
     this.isRunning = true;
     try {
+      const nonce = Math.random().toString(36).substring(2, 8);
       const wrappedCmd = ExperimentSafety.wrapCommandForExecution(
         step.command,
         experiment.id,
-        step.id
+        step.id,
+        nonce
       );
 
-      const startMarker = `___START_${step.id}___`;
-      const endMarker = `___END_${step.id}___`;
+      const startMarker = `___START_${step.id}_${nonce}___`;
+      const endMarker = `___END_${step.id}_${nonce}___`;
 
       const result = await this.dispatchCommandToGuest(manager, wrappedCmd, startMarker, endMarker, timeoutMs);
       const durationMs = Date.now() - startTime;

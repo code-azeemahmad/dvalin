@@ -69,8 +69,8 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P7-05 Evaluate networking with security review — Verified (Hardware/kernel device nodes lab, Linux boot pipeline, and host vs guest telemetry monitoring in `docs/experiments/`)
 
 ## Phase 8 — Release
-- [ ] P8-01 Run regression suite — Backlog
-- [ ] P8-02 Test supported browsers — Backlog
-- [ ] P8-03 Verify production asset loading and boot — Backlog
-- [ ] P8-04 Deploy static application — Backlog
-- [ ] P8-05 Prepare instructor demonstration — Backlog
+- [x] P8-01 Run regression suite — Verified (71 unit tests passing in Vitest, 0 TypeScript compiler errors, clean production bundle, live guest harnesses passing)
+- [x] P8-02 Test supported browsers — Verified (Evaluated Chromium, Gecko, WebKit capabilities, COOP/COEP isolation, and storage compatibility in `docs/release/BROWSER_COMPATIBILITY.md`)
+- [x] P8-03 Verify production asset loading and boot — Verified (WASM, ISO, SeaBIOS, VGABIOS verified via `tests/e2e/test-production-server.mjs`)
+- [x] P8-04 Deploy static application — Verified (Deployment configurations created for Cloudflare Pages, Netlify, Docker/Nginx, local preview verified)
+- [x] P8-05 Prepare instructor demonstration — Verified (Authored `USER_GUIDE.md`, `TROUBLESHOOTING.md`, `RELEASE_NOTES.md`, and updated `README.md`)

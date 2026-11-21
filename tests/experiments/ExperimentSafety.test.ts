@@ -53,12 +53,16 @@ describe('ExperimentSafety Engine', () => {
     expect(ws).toBe('/tmp/webos-experiments/exp_proc_01');
   });
 
-  it('wraps commands in workspace context with execution markers and code capture', () => {
-    const wrapped = ExperimentSafety.wrapCommandForExecution('echo Hello', 'exp-test', 'step1');
-    expect(wrapped).toContain('mkdir -p "/tmp/webos-experiments/exp_test"');
-    expect(wrapped).toContain('cd "/tmp/webos-experiments/exp_test"');
-    expect(wrapped).toContain('echo "___START_step1___"');
-    expect(wrapped).toContain('echo "___END_step1___:$__CODE"');
+  it('wraps commands in workspace context with execution markers, nonce support, and code capture', () => {
+    const wrappedDefault = ExperimentSafety.wrapCommandForExecution('echo Hello', 'exp-test', 'step1');
+    expect(wrappedDefault).toContain('mkdir -p "/tmp/webos-experiments/exp_test"');
+    expect(wrappedDefault).toContain('cd "/tmp/webos-experiments/exp_test"');
+    expect(wrappedDefault).toContain('echo "___START_step1___"');
+    expect(wrappedDefault).toContain('echo "___END_step1___:$__CODE"');
+
+    const wrappedNonce = ExperimentSafety.wrapCommandForExecution('echo Hello', 'exp-test', 'step1', 'xyz999');
+    expect(wrappedNonce).toContain('echo "___START_step1_xyz999___"');
+    expect(wrappedNonce).toContain('echo "___END_step1_xyz999___:$__CODE"');
   });
 
   it('builds scoped cleanup commands', () => {

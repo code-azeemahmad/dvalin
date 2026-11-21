@@ -13,5 +13,8 @@
 | R-09 | Browser intercepts keyboard shortcuts | Medium | Implemented click-to-capture overlay and Esc key release; scoped keyboard focus strictly to active window. | **Resolved / Closed** |
 | R-10 | Licensing/distribution restrictions for guest assets | High | Tiny Core Linux is licensed under GNU GPL v2; SeaBIOS is LGPL v3 / GPL v3; v86 is BSD-2-Clause. All licenses are free and redistributable. | Managed |
 | R-11 | Window minimization or closure unmounts v86 canvas | High | Implemented permanent DOM mounting pattern in `DesktopWindow.tsx`: windows toggle `display: none`, keeping the v86 canvas and WebAssembly runtime active without restarts. | **Resolved / Closed** |
+| R-12 | WebAssembly high-res timers blocked without cross-origin isolation | High | Configured `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless` across Vite dev, preview, Cloudflare Pages (`public/_headers`), Netlify (`netlify.toml`), and Nginx (`nginx.conf`). | **Resolved / Closed** |
+| R-13 | Oversized snapshot import causes browser tab memory exhaustion | Medium | Enforced `MAX_SNAPSHOT_BYTES` safety ceiling (512 MB) in `SnapshotStorage.ts`, rejecting oversized buffers before allocation. | **Resolved / Closed** |
+| R-14 | Delimited serial marker collision across sequential runs | Low | Implemented unique randomized execution nonces in `ExperimentSafety.wrapCommandForExecution()`. | **Resolved / Closed** |
 
 Review this register at each phase gate and whenever architecture changes.

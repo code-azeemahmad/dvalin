@@ -1,54 +1,150 @@
-# WebOS — Browser-Based Linux Operating System
+# WebOS — Browser-Hosted x86 Linux Operating System
 
-WebOS is an educational, browser-based environment intended to boot and run a real Linux guest inside a browser using the v86 x86 emulator and WebAssembly.
+WebOS is a browser-hosted operating system environment running a genuine 32-bit x86 Linux guest (Tiny Core Linux 17.1, Linux kernel 6.18.35-tinycore) inside the v86 PC emulator, wrapped in a React desktop environment.
 
-The browser application provides the user interface and emulator controls. Linux—not JavaScript—executes guest commands, manages guest processes, and operates the guest filesystem.
+This is not a mock terminal or simulated JavaScript shell: Linux executes all guest commands, manages virtual memory, operates the filesystem, and schedules real guest processes.
 
-## Project status
+---
 
-This repository's documentation describes the **proposed project scope and implementation plan**. Unless a task is explicitly marked complete and supported by test evidence, treat it as planned or unverified.
+## Key Features
 
-**First technical gate:** boot the selected 32-bit x86 Tiny Core Linux image in v86 and verify both a working shell and graphical desktop. Tiny Core Linux 17.1 is the selected candidate, not a verified compatible image yet.
+- **Genuine x86 Linux Guest:** Runs Tiny Core Linux 17.1 (i686) with BusyBox v1.36.1 and Linux kernel 6.18.35 via WebAssembly.
+- **Windowed React Desktop:** Full desktop shell with draggable, resizable, minimizable, and maximizable windows, bottom taskbar, start menu, desktop icons, and customizable ambient wallpapers.
+- **Persistent State Snapshots:** Captures complete VM memory snapshots into browser IndexedDB with SHA-256 integrity verification, enabling cold session recovery in **under 1 second**.
+- **Interactive OS Laboratory:** 20 structured, hands-on operating systems experiments across 7 categories (Processes, Memory, Filesystem, Permissions, Shell, Kernel, Devices) with live step runners and knowledge-check quizzes.
+- **Real-Time Telemetry:** Bounded 3000ms resource monitoring strictly separating guest Linux kernel metrics (`/proc/uptime`, `/proc/meminfo`, process count) from host browser metrics.
+- **Dual Display Modes:** Integrated text-mode monospace terminal and high-resolution graphical framebuffer (1024×768 @ 32bpp) running FLWM and Xvesa.
+- **Graceful ACPI Power Management:** Clean guest shutdown (`sudo poweroff`), reboot (`sudo reboot`), and hardware reset.
 
-## Proposed stack
+---
 
-- Guest OS: Tiny Core Linux x86 TinyCore edition (candidate)
-- Emulator: v86
-- Execution: WebAssembly in a modern browser
-- Frontend: React, TypeScript, Vite, Tailwind CSS
-- Optional terminal component: xterm.js only if a real guest serial/terminal connection is implemented
-- Persistence: v86 state APIs plus browser storage; persistent guest files require a separately verified strategy
-- Hosting: static HTTPS hosting (Cloudflare Pages or GitHub Pages)
+## Architecture & Technology Stack
 
-## Documentation map
+```
++---------------------------------------------------------------------------------+
+|                                Host Web Browser                                 |
+|  +---------------------------------------------------------------------------+  |
+|  |                          React Desktop Shell                              |  |
+|  |  - Window Manager, Taskbar, Start Menu, Settings, About                   |  |
+|  |  - OS Lab App (Catalog, Step Runner, Visualizations, Quizzes)             |  |
+|  |  - Persistence Service (IndexedDB: webos_persistence_db, SHA-256)         |  |
+|  |  - Resource Monitoring (3000ms bounded guest vs host telemetry)           |  |
+|  +-------------------------------------+-------------------------------------+  |
+|                                        | (WebAssembly & Serial Stream)          |
+|                                        v                                        |
+|  +---------------------------------------------------------------------------+  |
+|  |                       v86 x86 PC Emulator (WASM)                          |  |
+|  |  - Virtual Hardware: 32-bit x86 CPU, 128 MB RAM, 8 MB Cirrus/Bochs VGA    |  |
+|  |  - Firmware: SeaBIOS 128 KB, VGABIOS 36 KB                                |  |
+|  |  +---------------------------------------------------------------------+  |  |
+|  |  | Tiny Core Linux 17.1 Guest                                          |  |  |
+|  |  | - Kernel: Linux 6.18.35-tinycore (i686)                             |  |  |
+|  |  | - Shell & Userspace: BusyBox v1.36.1 ash shell (221 applets)        |  |  |
+|  |  | - GUI: Xvesa 1024x768 framebuffer + FLWM window manager             |  |  |
+|  |  | - Workspace Sandbox: /tmp/webos-experiments/<expId>/                 |  |  |
+|  |  +---------------------------------------------------------------------+  |  |
+|  +---------------------------------------------------------------------------+  |
++---------------------------------------------------------------------------------+
+```
 
-- `AGENTS.md`: shared agent instructions
-- `GEMINI.md`: Gemini / Antigravity-specific entry instructions
-- `CLAUDE.md`: Claude Code-specific entry instructions
-- `docs/`: product, architecture, design, emulator, storage, security and test specifications
-- `project-management/`: roadmap, implementation plan, tasks, progress and change history
-- `.agents/rules/`: focused Antigravity agent rules
-- `.agents/workflows/`: reusable development workflows
+### Technology Versions:
+- **Host Application:** React 18.3, TypeScript 5.6, Tailwind CSS 3.4, Vite 5.4, Lucide React
+- **Emulator:** v86 0.5.473 (WebAssembly)
+- **Guest OS:** Tiny Core Linux 17.1 (i686)
+- **Guest Kernel:** Linux 6.18.35-tinycore
+- **Test Framework:** Vitest 2.1 (71 unit tests passing)
 
-## Development principle
+---
 
-Build and prove the Linux guest first. Do not spend time polishing the surrounding web interface before the emulator can boot the selected guest image and expose a usable terminal and desktop.
+## Quick Start (Local Development)
 
-## Local setup
+### 1. Prerequisites
+- Node.js v18.x or v20.x LTS
+- npm v9+ or v10+
 
-The exact package scripts and dependency versions must be determined from the actual repository and lockfile. Do not invent commands or versions. Once the application scaffold exists:
+### 2. Install & Run
+```bash
+# Clone the repository
+git clone https://github.com/example/webos.git
+cd webos
 
-1. Install dependencies using the package manager indicated by the lockfile.
-2. Start the development server using the script defined in `package.json`.
-3. Serve emulator BIOS and disk assets over HTTP(S); do not assume `file://` loading works.
-4. Test in a current desktop browser, initially Chrome or Edge.
+# Install dependencies
+npm ci
 
-## Technical references
+# Start local development server with COOP/COEP headers
+npm run dev
+```
+Open `http://localhost:5173/` in Google Chrome, Microsoft Edge, or Mozilla Firefox.
 
-- [v86 repository and compatibility notes](https://github.com/copy/v86)
-- [v86 filesystem documentation](https://github.com/copy/v86/blob/master/docs/filesystem.md)
-- [v86 networking documentation](https://github.com/copy/v86/blob/master/docs/networking.md)
-- [Tiny Core Linux downloads](https://distro.ibiblio.org/tinycorelinux/downloads.html)
-- [Buildroot documentation](https://buildroot.org/docs.html)
+### 3. Production Build & Preview
+```bash
+# Typecheck and build production static bundle
+npm run build
 
-Always re-check upstream documentation when implementing against v86 APIs because APIs and compatibility details can change.
+# Preview production build locally on port 4173
+npm run preview
+```
+
+---
+
+## Running Automated Verification Tests
+
+WebOS includes comprehensive unit tests and automated live guest VM verification harnesses:
+
+```bash
+# Run all 71 unit tests
+npm test -- --run
+
+# Run TypeScript compiler check
+npx tsc --noEmit
+
+# Run production HTTP headers & asset verification
+node tests/e2e/test-production-server.mjs
+
+# Run live guest browser reload recovery test
+node tests/boot/test-phase6-reload-recovery.mjs
+
+# Run live guest 12-stage OS experiments test
+node tests/boot/test-phase7-experiments.mjs
+```
+
+---
+
+## Deployment
+
+WebOS compiles to a pure static frontend in `dist/`. Because it utilizes WebAssembly and high-resolution timers, the production server must deliver Cross-Origin Isolation headers:
+```http
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: credentialless
+```
+
+Ready-to-use deployment configurations are included:
+- **Cloudflare Pages:** `public/_headers`
+- **Netlify:** `netlify.toml`
+- **Docker / Nginx:** `Dockerfile` and `nginx.conf`
+
+See [Deployment Guide](file:///home/ubuntu/projects/webos/docs/deployment/DEPLOYMENT_GUIDE.md) for detailed platform walkthroughs.
+
+---
+
+## Documentation Directory Map
+
+- [Architecture & Repository Audit](file:///home/ubuntu/projects/webos/docs/release/ARCHITECTURE_AUDIT.md)
+- [Comprehensive Regression Results](file:///home/ubuntu/projects/webos/docs/release/REGRESSION_TEST_RESULTS.md)
+- [Browser End-to-End Testing](file:///home/ubuntu/projects/webos/docs/release/BROWSER_E2E_RESULTS.md)
+- [Security Threat Model](file:///home/ubuntu/projects/webos/docs/security/THREAT_MODEL.md)
+- [Security Audit & Vulnerability Assessment](file:///home/ubuntu/projects/webos/docs/security/SECURITY_AUDIT.md)
+- [Browser Compatibility Matrix](file:///home/ubuntu/projects/webos/docs/release/BROWSER_COMPATIBILITY.md)
+- [Performance & Reliability Report](file:///home/ubuntu/projects/webos/docs/release/PERFORMANCE_REPORT.md)
+- [Production Deployment Guide](file:///home/ubuntu/projects/webos/docs/deployment/DEPLOYMENT_GUIDE.md)
+- [Production Verification Report](file:///home/ubuntu/projects/webos/docs/deployment/PRODUCTION_VERIFICATION.md)
+- [User Guide & Operating Manual](file:///home/ubuntu/projects/webos/docs/release/USER_GUIDE.md)
+- [Troubleshooting & Diagnostics](file:///home/ubuntu/projects/webos/docs/release/TROUBLESHOOTING.md)
+- [Release Notes (v0.8.0)](file:///home/ubuntu/projects/webos/docs/release/RELEASE_NOTES.md)
+- [Phase 8 Implementation Report](file:///home/ubuntu/projects/webos/docs/release/PHASE8_IMPLEMENTATION_REPORT.md)
+
+---
+
+## License
+
+This project is licensed under the MIT License. Linux guest assets are subject to the GPL and Tiny Core Linux distribution terms.

@@ -183,4 +183,37 @@ describe('SnapshotStorage Persistence Service', () => {
     const importedRecord = await storage.getSnapshot(importedMeta.id);
     expect(new Uint8Array(importedRecord.data)).toEqual(originalBytes);
   });
+
+  it('rejects oversized snapshot buffers exceeding MAX_SNAPSHOT_BYTES', async () => {
+    const hash = computeHardwareConfigHash({});
+    // Create an object claiming oversized byteLength
+    const fakeOversizedBuffer = {
+      byteLength: 600 * 1024 * 1024, // 600 MB
+    } as unknown as ArrayBuffer;
+
+    // Use Object.setPrototypeOf to pass instanceof ArrayBuffer check if needed or mock
+    Object.setPrototypeOf(fakeOversizedBuffer, ArrayBuffer.prototype);
+
+    await expect(
+      storage.saveSnapshot({
+        name: 'Oversized Session',
+        data: fakeOversizedBuffer,
+        hardwareConfigHash: hash,
+      })
+    ).rejects.toThrow(/exceeds maximum allowed limit/);
+  });
+
+  it('truncates snapshot names to 100 characters max for storage hygiene', async () => {
+    const hash = computeHardwareConfigHash({});
+    const veryLongName = 'A'.repeat(250);
+
+    const meta = await storage.saveSnapshot({
+      name: veryLongName,
+      data: new Uint8Array([1, 2, 3]).buffer,
+      hardwareConfigHash: hash,
+    });
+
+    expect(meta.name.length).toBe(100);
+    expect(meta.name).toBe('A'.repeat(100));
+  });
 });

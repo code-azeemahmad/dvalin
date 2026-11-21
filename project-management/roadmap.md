@@ -72,16 +72,17 @@ The project is divided into eight phases. Each phase must produce a testable del
 
 **Deliverable:** educational OS laboratory (documented in `docs/experiments/`).
 
-## Phase 8 — Testing and deployment [READY]
-- Clean browser startup.
-- Core command tests.
-- GUI/input tests.
-- Persistence tests.
-- Browser compatibility.
-- Deployment.
-- Instructor demonstration preparation.
+## Phase 8 — Testing and deployment [COMPLETE & PRODUCTION READY]
+- Clean browser startup and asset loading verified.
+- Core command and Linux CLI regression verified.
+- GUI/input tests and permanent canvas DOM mounting verified.
+- Persistence, snapshot storage, and reload recovery verified (sub-second cold restore).
+- Browser compatibility matrix (Chromium, Gecko, WebKit) and API assessments.
+- Production static build and deployment configurations (Cloudflare Pages, Netlify, Docker/Nginx).
+- Security audit, threat model, nonce marker protocol, and snapshot size boundaries verified.
+- User guide, troubleshooting, release notes, and instructor demonstration documentation complete.
 
-**Deliverable:** deployed WebOS release.
+**Deliverable:** production-ready WebOS release (v0.8.0).
 
 ## Priority rule
 Do not begin extensive UI polish before Phase 1 proves the selected guest can boot in v86.

@@ -2,6 +2,44 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
+## [0.8.0] — 2026-11-21 — Phase 8: Testing, Security Audit & Production Deployment
+
+### Added
+- **Security Hardening & Safety Controls:**
+  - `src/features/experiments/services/ExperimentSafety.ts`: Added execution nonces to `wrapCommandForExecution()` ensuring unique marker pairing and immunity to serial log collisions.
+  - `src/services/persistence/SnapshotStorage.ts`: Added `MAX_SNAPSHOT_BYTES` ceiling (512 MB) preventing out-of-memory denial of service during snapshot save and import; added 100-character name truncation and 500-character description sanitization.
+- **Production Server & Deployment Configurations:**
+  - `vite.config.ts`: Added `preview.headers` block configuring `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless` on port 4173.
+  - `public/_headers`: Security and isolation headers for Cloudflare Pages.
+  - `netlify.toml`: Build, headers, MIME types, and SPA rewrite configuration for Netlify.
+  - `nginx.conf` & `Dockerfile`: Multi-stage Docker build and Nginx configuration for containerized deployment.
+  - `.github/workflows/ci.yml`: GitHub Actions CI pipeline running typechecking, unit tests, production build, and live VM harness.
+- **Automated Verification Harnesses:**
+  - `tests/e2e/test-production-server.mjs`: Automated preview server test verifying HTTP 200, COOP, COEP, and MIME types for WebAssembly (`v86.wasm`), Linux ISO, SeaBIOS, and VGABIOS.
+  - Expanded unit test coverage in `tests/persistence/SnapshotStorage.test.ts` (11 tests) and `tests/experiments/ExperimentSafety.test.ts` (8 tests).
+- **Release Documentation Suite:**
+  - `docs/release/ARCHITECTURE_AUDIT.md`: Complete repository and architecture audit.
+  - `docs/release/REGRESSION_TEST_RESULTS.md`: Empirical regression results across all eight phases.
+  - `docs/release/BROWSER_E2E_RESULTS.md`: User journey verification and error resilience report.
+  - `docs/security/THREAT_MODEL.md`: Asset mapping, trust boundaries, and threat scenario analysis.
+  - `docs/security/SECURITY_AUDIT.md`: In-depth vulnerability audit and security checklist.
+  - `docs/release/BROWSER_COMPATIBILITY.md`: Compatibility matrix across Chromium, Gecko, and WebKit.
+  - `docs/release/PERFORMANCE_REPORT.md`: Measured baselines and performance budgets.
+  - `docs/deployment/DEPLOYMENT_GUIDE.md`: Static hosting walkthroughs for Cloudflare Pages, Netlify, Docker.
+  - `docs/deployment/PRODUCTION_VERIFICATION.md`: Production asset and response headers audit.
+  - `docs/release/USER_GUIDE.md`: Comprehensive user manual for desktop, terminal, persistence, and OS Lab.
+  - `docs/release/TROUBLESHOOTING.md`: Diagnostic guide for common issues and resolutions.
+  - `docs/release/RELEASE_NOTES.md`: v0.8.0 release notes.
+  - `docs/release/PHASE8_IMPLEMENTATION_REPORT.md`: Comprehensive Phase 8 completion report.
+  - `README.md`: Modernized documentation with architecture diagrams, quickstart, and testing guides.
+
+### Verified
+- **71/71 Vitest Tests Passed** across 11 test suites.
+- **Production Preview Server Verified (100% Pass):** COOP/COEP, MIME types, and asset sizes verified.
+- **Live Guest Reload Recovery Verified:** Sub-second resume (969 ms) and file durability verified.
+- **Live Guest OS Experiments Verified:** 12/12 stages passed in genuine Linux guest.
+- **TypeScript & Production Build:** 0 compiler errors; bundle built in 3.86s.
+
 ## [0.7.0] — 2026-11-21 — Phase 7: OS Experiments & Advanced Features
 
 ### Added

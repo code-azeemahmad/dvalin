@@ -21,6 +21,7 @@ import { SnapshotDatabase } from './SnapshotDatabase';
  * Enforces integrity verification, quota tracking, metadata indexing, and export/import.
  */
 export class SnapshotStorage {
+  public static readonly MAX_SNAPSHOT_BYTES = 512 * 1024 * 1024; // 512 MB safety limit
   private static instance: SnapshotStorage | null = null;
   private db: SnapshotDatabase;
 
@@ -41,6 +42,10 @@ export class SnapshotStorage {
   public async saveSnapshot(input: SaveSnapshotInput): Promise<SnapshotMetadata> {
     if (!input.data || !(input.data instanceof ArrayBuffer) || input.data.byteLength === 0) {
       throw new PersistenceServiceError('Invalid snapshot data: expected non-empty ArrayBuffer.');
+    }
+
+    if (input.data.byteLength > SnapshotStorage.MAX_SNAPSHOT_BYTES) {
+      throw new PersistenceServiceError(`Snapshot size (${(input.data.byteLength / 1024 / 1024).toFixed(1)} MB) exceeds maximum allowed limit of ${SnapshotStorage.MAX_SNAPSHOT_BYTES / 1024 / 1024} MB.`);
     }
 
     // Verify storage quota if supported
@@ -64,8 +69,8 @@ export class SnapshotStorage {
 
     const metadata: SnapshotMetadata = {
       id,
-      name: input.name.trim() || `Session ${new Date(timestamp).toLocaleTimeString()}`,
-      description: input.description?.trim() || '',
+      name: (input.name?.trim() || `Session ${new Date(timestamp).toLocaleTimeString()}`).slice(0, 100),
+      description: (input.description?.trim() || '').slice(0, 500),
       timestamp,
       byteLength: input.data.byteLength,
       sha256Checksum,

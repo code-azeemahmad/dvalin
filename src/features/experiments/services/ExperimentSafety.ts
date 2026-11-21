@@ -42,12 +42,18 @@ export class ExperimentSafety {
   }
 
   /**
-   * Wraps a command inside an isolated workspace context with unique markers and exit code capture.
+   * Wraps a command inside an isolated workspace context with unique markers, optional nonce, and exit code capture.
    */
-  public static wrapCommandForExecution(command: string, experimentId: string, stepId: string): string {
+  public static wrapCommandForExecution(
+    command: string,
+    experimentId: string,
+    stepId: string,
+    nonce?: string
+  ): string {
     const workspace = ExperimentSafety.getIsolatedWorkspace(experimentId);
-    const startMarker = `___START_${stepId}___`;
-    const endMarker = `___END_${stepId}___`;
+    const suffix = nonce ? `_${nonce}` : '';
+    const startMarker = `___START_${stepId}${suffix}___`;
+    const endMarker = `___END_${stepId}${suffix}___`;
 
     return `mkdir -p "${workspace}" && cd "${workspace}" && echo "${startMarker}" && (${command}) 2>&1; __CODE=$?; echo "${endMarker}:$__CODE"`;
   }
