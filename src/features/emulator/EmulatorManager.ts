@@ -139,13 +139,14 @@ export class EmulatorManager {
         container = document.getElementById('v86-screen-container');
       }
 
-      // In Node.js testing environments, resolve root-relative paths to public/
+      // In Node.js testing environments (including jsdom), resolve root-relative paths to public/
       let wasmPath = this.config.wasmPath;
       let biosUrl = this.config.biosUrl;
       let vgaBiosUrl = this.config.vgaBiosUrl;
       let cdromUrl = this.config.cdromUrl;
 
-      if (typeof window === 'undefined' && typeof process !== 'undefined') {
+      const isNodeEnvironment = typeof process !== 'undefined' && Boolean(process.versions?.node);
+      if (isNodeEnvironment) {
         const root = process.cwd();
         if (wasmPath.startsWith('/')) wasmPath = root + '/public' + wasmPath;
         if (biosUrl.startsWith('/')) biosUrl = root + '/public' + biosUrl;

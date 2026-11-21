@@ -1,7 +1,7 @@
-import { DesktopFrame } from '@/components/DesktopFrame/DesktopFrame';
+import { DesktopShell } from '@/components/desktop/DesktopShell';
 
 export function App() {
-  return <DesktopFrame />;
+  return <DesktopShell />;
 }
 
 export default App;

@@ -10,7 +10,8 @@
 | R-06 | Guest networking introduces security/complexity | High | Deferred beyond initial release; disabled by default. | Open |
 | R-07 | Large emulator/guest assets slow first load | Medium | `Core-17.1.iso` (19.7 MB) and `TinyCore-17.1.iso` (26.0 MB) load with browser caching and progress indicators. | Managed |
 | R-08 | React lifecycle creates duplicate emulator instances | High | Enforced strict singleton pattern in `EmulatorManager.ts`; verified with 12 automated unit tests in `EmulatorManager.test.ts`. | **Resolved / Closed** |
-| R-09 | Browser intercepts keyboard shortcuts | Medium | Implemented click-to-capture overlay and Esc key release; documented in UI status bar. | Managed |
+| R-09 | Browser intercepts keyboard shortcuts | Medium | Implemented click-to-capture overlay and Esc key release; scoped keyboard focus strictly to active window. | **Resolved / Closed** |
 | R-10 | Licensing/distribution restrictions for guest assets | High | Tiny Core Linux is licensed under GNU GPL v2; SeaBIOS is LGPL v3 / GPL v3; v86 is BSD-2-Clause. All licenses are free and redistributable. | Managed |
+| R-11 | Window minimization or closure unmounts v86 canvas | High | Implemented permanent DOM mounting pattern in `DesktopWindow.tsx`: windows toggle `display: none`, keeping the v86 canvas and WebAssembly runtime active without restarts. | **Resolved / Closed** |
 
 Review this register at each phase gate and whenever architecture changes.

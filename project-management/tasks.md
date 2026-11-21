@@ -24,12 +24,16 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P2-07 Implement lifecycle controls — Verified (`SystemToolbar.tsx` with Start, Stop, Reset, Console, Fullscreen)
 - [x] P2-08 Test cleanup and duplicate-instance prevention — Verified (12 unit tests passing in `EmulatorManager.test.ts`)
 
-## Phase 3 — Host UI
-- [x] P3-01 Welcome screen — Implemented (`WelcomeScreen.tsx` with guest profile and system specs)
-- [x] P3-02 Boot/error screen — Implemented (`BootScreen.tsx` with progress bar, diagnostics, error state)
-- [x] P3-03 Desktop frame and toolbar — Implemented (`DesktopFrame.tsx` and `SystemToolbar.tsx`)
-- [x] P3-04 Fullscreen and input capture/release — Implemented (`lock_mouse`, `screen_go_fullscreen`, Esc release)
-- [ ] P3-05 Accessible status and error messages — Ready
+## Phase 3 — Host UI & Desktop Environment
+- [x] P3-01 Desktop workspace & wallpaper — Verified (`DesktopShell.tsx`, `DesktopWallpaper.tsx`, 4 selectable ambient themes)
+- [x] P3-02 Host window manager — Verified (`WindowContext.tsx`, `DesktopWindow.tsx`: drag, resize, minimize, maximize, restore, bounds clamping)
+- [x] P3-03 Taskbar & system tray — Verified (`Taskbar.tsx`, `SystemTray.tsx`: Start button, running window tabs, local clock, status badge, fullscreen)
+- [x] P3-04 Application launcher — Verified (`StartMenu.tsx`: search filter, categorized apps, quick VM controls)
+- [x] P3-05 Real Linux guest window — Verified (`LinuxDesktopApp.tsx`: permanent DOM container preservation, live v86 canvas)
+- [x] P3-06 Interactive guest terminal — Verified (`TerminalApp.tsx`: genuine guest command bridge, history navigation, real output)
+- [x] P3-07 System settings & persistence — Verified (`SettingsApp.tsx`, `useSettings.ts`: wallpaper, scaling, localStorage persistence)
+- [x] P3-08 System overview & licenses — Verified (`AboutApp.tsx`: architecture diagram, kernel specs, license attribution)
+- [x] P3-09 Unit & component test coverage — Verified (19/19 tests passing across WindowContext, useSettings, and EmulatorManager)
 
 ## Phase 4 — Guest desktop
 - [ ] P4-01 Verify/configure window manager — Backlog

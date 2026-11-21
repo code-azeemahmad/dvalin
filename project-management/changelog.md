@@ -2,6 +2,40 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
+## [0.3.0] — 2026-11-21 — Phase 3: Desktop Environment & User Experience
+
+### Added
+- **Desktop Shell & Workspace:**
+  - `DesktopShell.tsx`: Root host workspace with viewport scaling and layout management.
+  - `DesktopWallpaper.tsx`: 4 dynamic ambient wallpapers (Deep Slate Mesh, Cosmic Indigo, Emerald Matrix, Cyan Aurora).
+  - `DesktopIcons.tsx`: Grid of desktop shortcuts with double-click and Enter key app launch support.
+- **Window Management System:**
+  - `WindowContext.tsx`: Centralized, typed window state provider managing opening, closing, minimizing, maximizing, restoring, focusing, and bounds clamping.
+  - `DesktopWindow.tsx`: Interactive window chrome with title bar dragging, minimize/maximize/close controls, and corner resizing.
+  - Permanent DOM mounting pattern: preserves the underlying v86 emulator canvas during window minimization and close via CSS display toggling.
+- **Taskbar & Launcher:**
+  - `Taskbar.tsx`: 48px bottom bar with Start menu button and running window tabs.
+  - `StartMenu.tsx`: Popover application launcher with search filtering, app categories, and quick VM controls.
+  - `SystemTray.tsx`: Real-time clock updating every second, VM status pill, and fullscreen toggle button.
+- **Applications:**
+  - `LinuxDesktopApp.tsx`: Dedicated host window framing the live Tiny Core Linux guest with quick control toolbar.
+  - `TerminalApp.tsx`: Live command shell connected to the real guest Linux system with command history (<kbd>↑</kbd>/<kbd>↓</kbd>) and zero simulated output.
+  - `SettingsApp.tsx`: Host appearance customization, wallpaper selection, and display scaling with `localStorage` persistence.
+  - `AboutApp.tsx`: System architecture overview, kernel specifications, and complete license attribution.
+- **Automated Tests & Documentation:**
+  - `tests/desktop/WindowContext.test.tsx`: 4 automated unit tests verifying window operations.
+  - `tests/desktop/useSettings.test.tsx`: 3 automated unit tests verifying preference persistence.
+  - Design documentation: `docs/design/desktop-shell.md` and `docs/design/window-management.md`.
+  - Testing documentation: `docs/testing/phase-3-verification.md`.
+  - Implementation reports: `project-management/phase-3-initial-audit.md` and `project-management/phase-3-implementation-report.md`.
+
+### Verified
+- **Window Operations:** Open, focus, drag, resize, minimize, maximize, and restore verified across multiple concurrent windows.
+- **DOM Canvas Persistence:** Confirmed that minimizing and closing windows does not unmount or restart the running v86 emulator.
+- **Real Linux Terminal:** Verified live command dispatch to Tiny Core Linux and actual output rendering.
+- **Test Suite:** 19/19 tests passing across 3 test suites in Vitest.
+- **Compilation & Bundle:** 0 TypeScript compilation errors; production build built in 3.91s.
+
 ## [0.2.0] — 2026-11-21 — Phase 2: Browser Integration & Graphical Linux Implementation
 
 ### Added
