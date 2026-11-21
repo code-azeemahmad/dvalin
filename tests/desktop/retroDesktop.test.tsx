@@ -372,7 +372,7 @@ describe('Retro Desktop Redesign Components', () => {
 
     // Check home portal elements
     expect(container.textContent).toContain('WebOS Navigator');
-    expect(container.textContent).toContain('FrogFind Search');
+    expect(container.textContent).toContain('FrogFind');
     expect(container.textContent).toContain('Wikipedia');
 
     // Click Wikipedia bookmark
@@ -384,9 +384,10 @@ describe('Retro Desktop Redesign Components', () => {
       wikiBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    // An iframe should now be mounted inside the browser with Wikipedia src!
+    // An iframe should now be mounted inside the browser with proxied Wikipedia src!
     const iframe = container.querySelector('iframe');
     expect(iframe).not.toBeNull();
+    expect(iframe?.getAttribute('src')).toContain('/api/proxy?url=');
     expect(iframe?.getAttribute('src')).toContain('wikipedia.org');
     expect(iframe?.getAttribute('sandbox')).toContain('allow-scripts');
 

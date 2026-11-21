@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,10 +23,16 @@ interface QuickTile {
 
 const QUICK_TILES: QuickTile[] = [
   {
-    name: 'FrogFind Search',
-    url: 'https://frogfind.com/',
+    name: 'DuckDuckGo Search',
+    url: 'https://html.duckduckgo.com/html/?q=',
     icon: '🔍',
-    desc: 'Live web search engine designed for retro and embedded browsers',
+    desc: 'Live privacy search engine returning instant web results',
+  },
+  {
+    name: 'FrogFind Web Search',
+    url: 'https://frogfind.com/',
+    icon: '🐸',
+    desc: 'Lightweight web search built specifically for retro and embedded browsers',
   },
   {
     name: 'Wikipedia',
@@ -66,7 +72,23 @@ export const BrowserApp: React.FC = () => {
   const [history, setHistory] = useState<string[]>(['retrium://welcome']);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const [reloadKey, setReloadKey] = useState<number>(0);
+  const [useProxy, setUseProxy] = useState<boolean>(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Listen for navigation messages from the proxied iframe
+  useEffect(() => {
+    const handleMsg = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'WEBOS_NAVIGATE' && typeof e.data.url === 'string') {
+        const newUrl = e.data.url;
+        setHistory((prev) => [...prev.slice(0, historyIndex + 1), newUrl]);
+        setHistoryIndex((prev) => prev + 1);
+        setCurrentUrl(newUrl);
+        setInputUrl(newUrl);
+      }
+    };
+    window.addEventListener('message', handleMsg);
+    return () => window.removeEventListener('message', handleMsg);
+  }, [historyIndex]);
 
   const formatUrl = (raw: string): string => {
     const trimmed = raw.trim();
@@ -81,8 +103,8 @@ export const BrowserApp: React.FC = () => {
     if (trimmed.includes('.') && !trimmed.includes(' ')) {
       return `https://${trimmed}`;
     }
-    // Otherwise treat as search query on FrogFind
-    return `https://frogfind.com/?q=${encodeURIComponent(trimmed)}`;
+    // Otherwise treat as search query on DuckDuckGo HTML
+    return `https://html.duckduckgo.com/html/?q=${encodeURIComponent(trimmed)}`;
   };
 
   const navigateTo = (url: string) => {
@@ -123,6 +145,7 @@ export const BrowserApp: React.FC = () => {
   };
 
   const isInternal = currentUrl.startsWith('retrium://') || currentUrl === 'about:blank';
+  const iframeSrc = useProxy ? `/api/proxy?url=${encodeURIComponent(currentUrl)}` : currentUrl;
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-900 text-slate-100 font-sans select-none overflow-hidden">
@@ -175,12 +198,27 @@ export const BrowserApp: React.FC = () => {
             type="text"
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
-            placeholder="Enter web address or search term..."
+            placeholder="Enter web address or search query..."
             className="w-full bg-transparent outline-none text-slate-200 font-mono text-xs select-text"
           />
         </form>
 
         <div className="flex items-center space-x-1">
+          {/* Toggle Proxy Bypass */}
+          <button
+            type="button"
+            onClick={() => setUseProxy(!useProxy)}
+            title={useProxy ? "Proxy active: frame blocks bypassed (Click to toggle direct)" : "Direct mode (Click to enable proxy)"}
+            className={`px-2 py-0.5 rounded text-[10px] font-mono flex items-center space-x-1 cursor-pointer transition-colors ${
+              useProxy
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                : 'bg-slate-800 text-slate-400 border border-slate-700'
+            }`}
+          >
+            <ShieldCheck className="w-3 h-3" />
+            <span className="hidden sm:inline">Proxy</span>
+          </button>
+
           {!isInternal && (
             <a
               href={currentUrl}
@@ -192,9 +230,6 @@ export const BrowserApp: React.FC = () => {
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
-          <span title="Sandbox Shield Active" className="p-1 text-emerald-400">
-            <ShieldCheck className="w-4 h-4" />
-          </span>
         </div>
       </div>
 
@@ -210,11 +245,19 @@ export const BrowserApp: React.FC = () => {
         <span className="text-slate-600">·</span>
         <button
           type="button"
+          onClick={() => navigateTo('https://html.duckduckgo.com/html/?q=')}
+          className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
+        >
+          <Search className="w-2.5 h-2.5 text-amber-400" />
+          <span>DuckDuckGo</span>
+        </button>
+        <span className="text-slate-600">·</span>
+        <button
+          type="button"
           onClick={() => navigateTo('https://frogfind.com/')}
           className="hover:text-white cursor-pointer hover:underline flex items-center space-x-1 shrink-0"
         >
-          <Search className="w-2.5 h-2.5" />
-          <span>Web Search</span>
+          <span>🐸 FrogFind</span>
         </button>
         <span className="text-slate-600">·</span>
         <button
@@ -268,7 +311,7 @@ export const BrowserApp: React.FC = () => {
                   WebOS Navigator
                 </h1>
                 <p className="text-xs text-slate-400 mt-1">
-                  Surf websites and search the live internet directly inside WebOS.
+                  Surf websites and search the live internet directly inside WebOS without connection errors.
                 </p>
               </div>
 
@@ -285,7 +328,7 @@ export const BrowserApp: React.FC = () => {
                 <Search className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
                 <input
                   type="text"
-                  placeholder="Search the web or type a URL..."
+                  placeholder="Search the web (e.g. linux commands, tech news)..."
                   value={inputUrl === 'retrium://welcome' ? '' : inputUrl}
                   onChange={(e) => setInputUrl(e.target.value)}
                   className="w-full bg-transparent outline-none text-slate-100 text-xs font-mono"
@@ -294,7 +337,7 @@ export const BrowserApp: React.FC = () => {
                   type="submit"
                   className="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-medium cursor-pointer transition-colors shrink-0 ml-2"
                 >
-                  Go
+                  Search
                 </button>
               </form>
 
@@ -329,10 +372,10 @@ export const BrowserApp: React.FC = () => {
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 space-y-2">
                 <div className="flex items-center space-x-2 text-slate-300 font-semibold">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Sandboxed Web Surfing</span>
+                  <span>CORS & Frame-Blocking Bypass Enabled</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">
-                  Web pages load directly inside the WebOS window with sandbox protections. External navigation supports live searching, Wikipedia articles, technical blogs, documentation portals, and web utilities.
+                  WebOS routes external websites through a built-in proxy bridge that strips <code className="text-sky-400">X-Frame-Options</code> and <code className="text-sky-400">Content-Security-Policy: frame-ancestors</code>. This ensures search engines and modern web pages load directly within the window without "refused to connect" errors.
                 </p>
               </div>
             </div>
@@ -340,9 +383,9 @@ export const BrowserApp: React.FC = () => {
         ) : (
           <div className="w-full h-full relative">
             <iframe
-              key={`${currentUrl}-${reloadKey}`}
+              key={`${currentUrl}-${reloadKey}-${useProxy}`}
               ref={iframeRef}
-              src={currentUrl}
+              src={iframeSrc}
               title="Web Browser Viewport"
               className="w-full h-full border-0 bg-white"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
@@ -355,7 +398,10 @@ export const BrowserApp: React.FC = () => {
       {/* Bottom Status Bar */}
       <div className="h-6 px-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-500 shrink-0">
         <span className="truncate max-w-xs">{currentUrl}</span>
-        <span>Sandboxed HTML5 Navigator</span>
+        <span className="flex items-center space-x-2">
+          {useProxy && <span className="text-emerald-400">Proxy Shield Active</span>}
+          <span>Sandboxed HTML5 Navigator</span>
+        </span>
       </div>
     </div>
   );
