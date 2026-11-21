@@ -12,6 +12,7 @@ import { CalculatorApp } from '@/components/applications/CalculatorApp';
 import { MessagesApp } from '@/components/applications/MessagesApp';
 import { FileExplorerApp } from '@/components/applications/FileExplorerApp';
 import { ControlPanelApp } from '@/components/applications/ControlPanelApp';
+import { TerminalApp } from '@/components/applications/TerminalApp';
 import { createRoot } from 'react-dom/client';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -260,5 +261,95 @@ describe('Retro Desktop Redesign Components', () => {
 
     // Verify the desktop background element updated in real-time!
     expect(bgElement.style.backgroundImage).toContain('makima.jpg');
+  });
+
+  it('renders TerminalApp without top info bar or clear delete button', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <TerminalApp />
+        </WindowProvider>
+      );
+    });
+
+    // Verify top bar text and trash button are completely removed
+    expect(container.textContent).not.toContain('tc@box: ~ (ash shell)');
+    expect(container.querySelector('button[title="Clear terminal buffer"]')).toBeNull();
+
+    // Verify prompt starts at tc@box:~$
+    expect(container.textContent).toContain('tc@box:~$');
+
+    act(() => {
+      root.unmount();
+    });
+  });
+
+  it('executes common Linux commands like pwd, uname, ps, whoami, and handles directory navigation', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <TerminalApp />
+        </WindowProvider>
+      );
+    });
+
+    const input = container.querySelector('input') as HTMLInputElement;
+    const form = container.querySelector('form') as HTMLFormElement;
+
+    const runCmd = (cmd: string) => {
+      act(() => {
+        input.value = cmd;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        form.dispatchEvent(new Event('submit', { bubbles: true }));
+      });
+    };
+
+    // Run pwd
+    runCmd('pwd');
+    expect(container.textContent).toContain('/home/tc');
+
+    // Run uname -a
+    runCmd('uname -a');
+    expect(container.textContent).toContain('6.18.35-tinycore');
+
+    // Run ps
+    runCmd('ps');
+    expect(container.textContent).toContain('PID   USER     TIME  COMMAND');
+    expect(container.textContent).toContain('init');
+
+    // Run whoami
+    runCmd('whoami');
+    expect(container.textContent).toContain('tc');
+
+    // Run cd /
+    runCmd('cd /');
+    // Prompt should now be tc@box:/$
+    expect(container.textContent).toContain('tc@box:/$');
+
+    // Run pwd from /
+    runCmd('pwd');
+    expect(container.textContent).toContain('tc@box:/$ pwd');
+
+    // Run cd .. from / (stays at /)
+    runCmd('cd ..');
+    expect(container.textContent).toContain('tc@box:/$');
+
+    // Run cd ~
+    runCmd('cd ~');
+    expect(container.textContent).toContain('tc@box:~$');
+
+    // Run cd .. from ~ (goes to /home)
+    runCmd('cd ..');
+    expect(container.textContent).toContain('tc@box:/home$');
+
+    act(() => {
+      root.unmount();
+    });
   });
 });
