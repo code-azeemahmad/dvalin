@@ -83,4 +83,6 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] UI-05 Floating Bottom Dock — Verified (`RetroDock.tsx` with File Explorer, Browser, Text Editor, Messages with badge '6', Terminal, Trash)
 - [x] UI-06 Desktop Windowed Apps — Verified (`TextEditorApp`, `CalculatorApp`, `MessagesApp`, `FileExplorerApp`, `ControlPanelApp`, `BrowserApp`, `TrashApp`)
 - [x] UI-07 Removal of Legacy Host Chrome — Verified (Removed old left sidebar panel and old bottom taskbar with "Start" button)
-- [x] UI-08 Unit & Component Test Suite — Verified (10 tests in `retroDesktop.test.tsx`, all 81 project tests passing)
+- [x] UI-08 Unit & Component Test Suite — Verified (14 tests in `retroDesktop.test.tsx`, all 85 project tests passing)
+- [x] UI-09 Wallpaper Gallery & Double-Click Setting — Verified (Dynamic wallpaper picker in File Explorer with real-time reactive desktop wallpaper switching)
+- [x] UI-10 Linux Terminal Overhaul — Verified (Removed redundant top info bar and clear delete button; implemented dynamic prompt `tc@box:{cwd}$`, directory navigation `cd`, `cd /`, `cd ..`, and common command execution `pwd`, `ps`, `uname`, `whoami`, `ls`, `cat`, etc.)
