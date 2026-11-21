@@ -52,11 +52,14 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P5-06 Automated guest verification harness — Verified (12/12 stages passed in real VM via `tests/boot/test-phase5-verification.mjs`)
 
 ## Phase 6 — Persistence
-- [x] P6-01 Prototype v86 snapshot save — Verified Prototype (Verified in Node; `emulator.save_state()` exports ~3.31 MB ArrayBuffer)
-- [x] P6-02 Prototype snapshot restore — Verified Prototype (Verified in Node; `initial_state: { buffer }` restores with hardware parity)
-- [x] P6-03 Measure snapshot size and storage limits — Verified Prototype (Measured 3.24MB-3.31MB; documented in `docs/architecture/v86-snapshot-persistence-design.md`)
-- [ ] P6-04 Evaluate persistent disk/9p/Tiny Core backup — Ready
-- [ ] P6-05 Test files across guest reboot — Backlog
+- [x] P6-01 Prototype v86 snapshot save — Verified (Empirically verified in Node and browser; `save_state()` captures VM memory)
+- [x] P6-02 Prototype snapshot restore — Verified (Verified in Node; `initial_state: { buffer }` restores with hardware parity)
+- [x] P6-03 Measure snapshot size and storage limits — Verified (Measured 86.76MB active VM state; verified in `docs/persistence/PERSISTENCE_ARCHITECTURE_AUDIT.md`)
+- [x] P6-04 Evaluate persistent disk/9p/Tiny Core backup — Verified (Empirically analyzed in `docs/persistence/GUEST_FILESYSTEM_PERSISTENCE.md`)
+- [x] P6-05 Test files across guest reboot and reload — Verified (Empirical proof file test in `tests/boot/test-phase6-reload-recovery.mjs` and `docs/persistence/BROWSER_RELOAD_RECOVERY_TEST.md`)
+- [x] P6-06 Implement IndexedDB snapshot storage service — Verified (Full service in `src/services/persistence/` with 9 Vitest tests passing)
+- [x] P6-07 Implement lifecycle state machine & operation locks — Verified (State transitions, ACPI shutdown, safe reboot, operation locks in `EmulatorManager.ts`)
+- [x] P6-08 Implement host UI session controls — Verified (Session tab in `SettingsApp.tsx`, quota meter, StartMenu power options, SystemToolbar badges)
 
 ## Phase 7 — OS labs and advanced features
 - [ ] P7-01 Implement process lab — Backlog

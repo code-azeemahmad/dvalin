@@ -12,6 +12,14 @@ import {
   ScreenSizeListener,
 } from './types';
 import { DEFAULT_EMULATOR_CONFIG } from './config';
+import {
+  SnapshotStorage,
+  computeHardwareConfigHash,
+  validateHardwareCompatibility,
+  HardwareMismatchError,
+  OperationLockedError,
+  SnapshotMetadata,
+} from '@/services/persistence';
 
 declare global {
   interface Window {
@@ -39,6 +47,10 @@ export class EmulatorManager {
   private isShellReady: boolean = false;
   private sentEnterToIsolinux: boolean = false;
   private autoBootTimer: any = null;
+
+  // Operation concurrency locking
+  private isOperationLocked: boolean = false;
+  private activeOperation: string | null = null;
 
   // Listeners
   private stateListeners = new Set<StateChangeListener>();
@@ -80,6 +92,14 @@ export class EmulatorManager {
     return this.isShellReady;
   }
 
+  public getIsOperationLocked(): boolean {
+    return this.isOperationLocked;
+  }
+
+  public getActiveOperation(): string | null {
+    return this.activeOperation;
+  }
+
   public getInstructionCount(): number {
     if (this.v86Instance && typeof this.v86Instance.get_instruction_counter === 'function') {
       try {
@@ -105,8 +125,9 @@ export class EmulatorManager {
 
   /**
    * Initializes and starts the v86 virtual machine.
+   * Optionally accepts an initialStateBuffer to instantly restore from a saved memory snapshot.
    */
-  public async boot(screenElement?: HTMLElement | null): Promise<void> {
+  public async boot(screenElement?: HTMLElement | null, initialStateBuffer?: ArrayBuffer): Promise<void> {
     if (this.status === 'initializing' || this.status === 'booting' || this.status === 'running') {
       this.addLog('warn', `Boot requested while emulator is already in state: ${this.status}`);
       return;
@@ -118,9 +139,14 @@ export class EmulatorManager {
 
     this.setStatus('initializing');
     this.lastError = null;
-    this.isShellReady = false;
-    this.sentEnterToIsolinux = false;
-    this.addLog('info', 'Starting WebOS virtual machine initialization...');
+    this.isShellReady = Boolean(initialStateBuffer);
+    this.sentEnterToIsolinux = Boolean(initialStateBuffer);
+    this.addLog(
+      'info',
+      initialStateBuffer
+        ? 'Restoring WebOS virtual machine directly from memory snapshot...'
+        : 'Starting WebOS virtual machine initialization...'
+    );
 
     try {
       // Dynamically import v86
@@ -163,6 +189,10 @@ export class EmulatorManager {
         autostart: true,
         screen_container: container,
       };
+
+      if (initialStateBuffer) {
+        v86Options.initial_state = { buffer: initialStateBuffer };
+      }
 
       if (cdromUrl) {
         v86Options.cdrom = { url: cdromUrl };
@@ -314,6 +344,9 @@ export class EmulatorManager {
     this.lastError = null;
     this.isShellReady = false;
     this.sentEnterToIsolinux = false;
+    this.isOperationLocked = false;
+    this.activeOperation = null;
+
     if (!this.v86Instance) {
       this.setStatus('idle');
       return;
@@ -431,6 +464,214 @@ export class EmulatorManager {
     } catch (e: any) {
       this.addLog('error', `Failed to restore virtual machine state: ${e?.message || e}`);
       return false;
+    }
+  }
+
+  /**
+   * Captures the running VM state and persists it to IndexedDB with metadata and SHA-256 integrity hash.
+   */
+  public async captureAndSaveSnapshot(
+    name: string,
+    description?: string,
+    tags?: string[]
+  ): Promise<SnapshotMetadata> {
+    if (this.isOperationLocked) {
+      throw new OperationLockedError('captureSnapshot', this.activeOperation || 'unknown');
+    }
+    if (this.status !== 'running' || !this.v86Instance) {
+      throw new Error(`Cannot capture snapshot: emulator is not running (current state: ${this.status})`);
+    }
+
+    this.isOperationLocked = true;
+    this.activeOperation = 'capturing';
+    this.setStatus('capturing');
+    this.addLog('info', `Capturing VM snapshot: "${name}"...`);
+
+    try {
+      const stateBuffer = await this.v86Instance.save_state();
+      const hwHash = computeHardwareConfigHash(this.config);
+      const storage = SnapshotStorage.getInstance();
+      const meta = await storage.saveSnapshot({
+        name,
+        description,
+        data: stateBuffer,
+        hardwareConfigHash: hwHash,
+        displayResolution: this.screenDimensions,
+        tags,
+      });
+
+      this.addLog(
+        'info',
+        `Snapshot "${meta.name}" saved to IndexedDB (${(meta.byteLength / 1024 / 1024).toFixed(2)} MB, SHA-256: ${meta.sha256Checksum.slice(0, 12)}...)`
+      );
+      return meta;
+    } catch (err: any) {
+      this.addLog('error', `Failed to capture and save snapshot: ${err?.message || err}`);
+      throw err;
+    } finally {
+      this.isOperationLocked = false;
+      this.activeOperation = null;
+      this.setStatus('running');
+    }
+  }
+
+  /**
+   * Restores a previously saved snapshot from IndexedDB by ID.
+   * Enforces strict hardware configuration parity check and SHA-256 checksum verification.
+   */
+  public async restoreSnapshotById(id: string): Promise<boolean> {
+    if (this.isOperationLocked) {
+      throw new OperationLockedError('restoreSnapshot', this.activeOperation || 'unknown');
+    }
+
+    this.isOperationLocked = true;
+    this.activeOperation = 'restoring';
+    this.setStatus('restoring');
+    this.addLog('info', `Restoring snapshot ID: ${id}...`);
+
+    try {
+      const storage = SnapshotStorage.getInstance();
+      const record = await storage.getSnapshot(id, { verifyChecksum: true });
+      const currentHash = computeHardwareConfigHash(this.config);
+
+      if (!validateHardwareCompatibility(record.metadata.hardwareConfigHash, currentHash)) {
+        throw new HardwareMismatchError(id, record.metadata.hardwareConfigHash, currentHash);
+      }
+
+      if (this.v86Instance && (this.status === 'running' || this.status === 'restoring')) {
+        await this.v86Instance.restore_state(record.data);
+        this.screenDimensions = record.metadata.displayResolution;
+        this.isShellReady = true;
+        this.addLog('info', `Snapshot "${record.metadata.name}" restored in-place into active VM.`);
+      } else {
+        // VM is not running; boot fresh instance directly from snapshot
+        await this.boot(this.screenContainer, record.data);
+      }
+
+      this.setStatus('running');
+      return true;
+    } catch (err: any) {
+      this.addLog('error', `Failed to restore snapshot: ${err?.message || err}`);
+      this.setStatus(this.v86Instance ? 'running' : 'error');
+      throw err;
+    } finally {
+      this.isOperationLocked = false;
+      this.activeOperation = null;
+    }
+  }
+
+  /**
+   * Restores virtual machine state directly from an in-memory buffer.
+   */
+  public async restoreFromBuffer(buffer: ArrayBuffer): Promise<boolean> {
+    if (this.v86Instance && (this.status === 'running' || this.status === 'restoring')) {
+      return this.restoreState(buffer);
+    }
+    await this.boot(this.screenContainer, buffer);
+    return true;
+  }
+
+  /**
+   * Initiates graceful guest operating system shutdown via guest command (sudo poweroff),
+   * awaiting VM halt or safely falling back to forced teardown.
+   */
+  public async gracefulShutdown(timeoutMs: number = 8000): Promise<boolean> {
+    if (this.isOperationLocked) {
+      throw new OperationLockedError('gracefulShutdown', this.activeOperation || 'unknown');
+    }
+    if (this.status === 'idle' || this.status === 'stopped') {
+      return true;
+    }
+
+    this.isOperationLocked = true;
+    this.activeOperation = 'shutting-down';
+    this.setStatus('shutting-down');
+    this.addLog('info', 'Initiating graceful guest Linux shutdown (sudo poweroff)...');
+
+    try {
+      if (this.v86Instance) {
+        try {
+          this.v86Instance.keyboard_send_text('sudo poweroff\n');
+        } catch {
+          try {
+            this.v86Instance.serial0_send('sudo poweroff\n');
+          } catch {
+            // Ignore
+          }
+        }
+      }
+
+      const stoppedPromise = new Promise<boolean>((resolve) => {
+        const cleanupListener = this.onStateChange((state) => {
+          if (state === 'stopped') {
+            cleanupListener();
+            resolve(true);
+          }
+        });
+        setTimeout(() => {
+          cleanupListener();
+          resolve(false);
+        }, timeoutMs);
+      });
+
+      const didStopCleanly = await stoppedPromise;
+      if (!didStopCleanly) {
+        this.addLog('warn', 'Graceful shutdown timed out; forcing emulator stop.');
+        await this.stop();
+      }
+
+      await this.destroy();
+      this.addLog('info', 'Guest system shut down and resources freed.');
+      return true;
+    } catch (err: any) {
+      this.addLog('error', `Error during graceful shutdown: ${err?.message || err}`);
+      await this.destroy();
+      return false;
+    } finally {
+      this.isOperationLocked = false;
+      this.activeOperation = null;
+      this.setStatus('stopped');
+    }
+  }
+
+  /**
+   * Safely restarts the guest environment. Supports both guest OS reboot ('sudo reboot')
+   * and clean emulator reset.
+   */
+  public async safeRestart(mode: 'guest-reboot' | 'emulator-reset' = 'guest-reboot'): Promise<boolean> {
+    if (this.isOperationLocked) {
+      throw new OperationLockedError('safeRestart', this.activeOperation || 'unknown');
+    }
+
+    this.isOperationLocked = true;
+    this.activeOperation = 'restarting';
+    this.setStatus('restarting');
+    this.addLog('info', `Triggering safe restart (mode: ${mode})...`);
+    this.isShellReady = false;
+    this.sentEnterToIsolinux = false;
+
+    try {
+      if (mode === 'guest-reboot' && this.v86Instance && this.status === 'running') {
+        this.v86Instance.keyboard_send_text('sudo reboot\n');
+        this.setStatus('booting');
+        return true;
+      }
+
+      if (this.v86Instance) {
+        this.v86Instance.restart();
+        this.setStatus('booting');
+        return true;
+      }
+
+      await this.boot();
+      return true;
+    } catch (err: any) {
+      this.addLog('error', `Failed to restart: ${err?.message || err}`);
+      this.setStatus('error');
+      return false;
+    } finally {
+      this.isOperationLocked = false;
+      this.activeOperation = null;
     }
   }
 

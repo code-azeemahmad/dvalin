@@ -50,16 +50,18 @@ The project is divided into eight phases. Each phase must produce a testable del
 
 **Deliverable:** verified guest CLI capabilities (documented in `docs/cli/`).
 
-## Phase 6 — Persistence and system management [READY]
-- Implement snapshots.
-- Implement restore.
-- Evaluate persistent disk or 9p.
-- Add safe shutdown/restart.
-- Test browser refresh and guest reboot behaviour.
+## Phase 6 — Persistence and system management [COMPLETE & VERIFIED]
+- Implement snapshots (v86 `save_state()` serialized memory capture).
+- Implement restore (`initial_state: { buffer }` and in-place `restore_state()`).
+- Evaluate persistent disk, tmpfs, and Tiny Core `filetool.sh` backup (`docs/persistence/GUEST_FILESYSTEM_PERSISTENCE.md`).
+- Add safe shutdown/restart (graceful ACPI shutdown via `sudo poweroff`, guest reboot via `sudo reboot`, and hardware reset).
+- Test browser refresh and guest reload recovery (`tests/boot/test-phase6-reload-recovery.mjs` passed 100%).
+- Dedicated IndexedDB snapshot storage service with SHA-256 integrity verification (`src/services/persistence/`).
+- Host UI session management dialog, quota meter, and Start Menu power options (`SettingsApp.tsx`, `StartMenu.tsx`, `SystemToolbar.tsx`).
 
-**Deliverable:** recoverable session and separately verified file persistence if achieved.
+**Deliverable:** recoverable session and empirically verified guest file persistence across browser reload (documented in `docs/persistence/`).
 
-## Phase 7 — OS experiments and advanced features
+## Phase 7 — OS experiments and advanced features [READY]
 - Build guided experiments.
 - Add OS documentation.
 - Add process/memory demonstrations.

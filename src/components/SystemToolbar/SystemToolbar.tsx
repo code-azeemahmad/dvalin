@@ -54,6 +54,35 @@ export const SystemToolbar: React.FC<SystemToolbarProps> = ({
             Guest Running
           </span>
         );
+      case 'capturing':
+      case 'saving':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/30">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Capturing Snapshot...
+          </span>
+        );
+      case 'restoring':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/30">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Restoring Session...
+          </span>
+        );
+      case 'shutting-down':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/30">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Shutting Down...
+          </span>
+        );
+      case 'restarting':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/30">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Restarting...
+          </span>
+        );
       case 'stopping':
       case 'stopped':
         return (
@@ -67,6 +96,12 @@ export const SystemToolbar: React.FC<SystemToolbarProps> = ({
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/30">
             <AlertCircle className="w-3 h-3" />
             Error
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+            {status}
           </span>
         );
     }

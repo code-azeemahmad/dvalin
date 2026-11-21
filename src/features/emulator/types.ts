@@ -3,9 +3,12 @@ export type EmulatorStatus =
   | 'initializing'
   | 'booting'
   | 'running'
+  | 'capturing'
   | 'saving'
   | 'restoring'
+  | 'shutting-down'
   | 'stopping'
+  | 'restarting'
   | 'stopped'
   | 'error';
 

@@ -2,7 +2,45 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
-## [0.5.0] — 2026-11-21 — Phase 5: CLI & Operating System Capabilities
+## [0.6.0] — 2026-11-21 — Phase 6: Persistence & System Management
+
+### Added
+- **Dedicated IndexedDB Snapshot Storage Subsystem:**
+  - `src/services/persistence/SnapshotTypes.ts`: Full interfaces for `SnapshotMetadata`, `StoredSnapshot`, `SaveSnapshotInput`, and `StorageUsage`.
+  - `src/services/persistence/SnapshotErrors.ts`: Typed domain errors (`SnapshotNotFoundError`, `QuotaExceededError`, `ChecksumMismatchError`, `HardwareMismatchError`, `StorageCorruptedError`, `OperationLockedError`).
+  - `src/services/persistence/SnapshotValidation.ts`: Web Crypto SHA-256 calculation, deterministic `hardwareConfigHash` generator, and compatibility validator.
+  - `src/services/persistence/SnapshotDatabase.ts`: IndexedDB database adapter (`webos_persistence_db`, store `snapshots`).
+  - `src/services/persistence/SnapshotStorage.ts`: High-level persistence API (save, restore, list, delete, export, import, quota estimation).
+  - `tests/persistence/SnapshotStorage.test.ts`: 9 automated Vitest tests.
+- **Extended Emulator Lifecycle & Concurrency Locking:**
+  - `src/features/emulator/types.ts`: Added lifecycle states: `capturing`, `restoring`, `shutting-down`, `restarting`.
+  - `src/features/emulator/EmulatorManager.ts`:
+    - Operation concurrency locking (`isOperationLocked`) to prevent conflicting async operations.
+    - `captureAndSaveSnapshot(name, desc)`: Serializes VM state, computes SHA-256 and config hash, and stores in IndexedDB.
+    - `restoreSnapshotById(id)`: Verifies hardware parity and SHA-256 checksum before restoring in-place or cold-booting.
+    - `boot(screenContainer, initialStateBuffer)`: Instant cold boot from snapshot buffer.
+    - `gracefulShutdown(timeoutMs)`: Dispatches `sudo poweroff` with automatic safety timeout.
+    - `safeRestart(mode)`: Dispatches `sudo reboot` or hardware reset.
+  - `src/features/emulator/useEmulator.ts`: Exposed new lifecycle and snapshot actions to React components.
+- **Live VM Reload Recovery Verification:**
+  - `tests/boot/test-phase6-reload-recovery.mjs`: Live test runner verifying guest file writing, snapshot serialization (90.97 MB in 274 ms), total VM destruction, and instant recovery (< 3s) with 100% token preservation.
+  - `docs/persistence/BROWSER_RELOAD_RECOVERY_TEST.md`: Full verification report with recorded evidence.
+- **Persistence Documentation Suite:**
+  - `docs/persistence/PERSISTENCE_ARCHITECTURE_AUDIT.md`: 5-layer storage hierarchy and volatility boundaries.
+  - `docs/persistence/GUEST_FILESYSTEM_PERSISTENCE.md`: Detailed analysis of Tiny Core RAM tmpfs, snapshot preservation, and `filetool.sh`.
+  - `docs/persistence/SNAPSHOT_LIFECYCLE.md`: State machine diagrams and transition specifications.
+  - `docs/persistence/SHUTDOWN_AND_RESTART.md`: ACPI poweroff, reboot, and teardown specifications.
+  - `docs/persistence/STORAGE_FAILURE_HANDLING.md`: Storage quota defense, eviction prevention, and corruption handling.
+  - `docs/persistence/PHASE6_VERIFICATION_RESULTS.md` & `PHASE6_IMPLEMENTATION_REPORT.md`.
+- **Host UI Session & Power Controls:**
+  - `src/components/applications/SettingsApp.tsx`: Added "Sessions & Storage" tab with IndexedDB quota meter, save session form, saved sessions list with hardware compatibility badges, restore, export, and delete actions, and power controls.
+  - `src/components/desktop/StartMenu.tsx`: Integrated quick Save Session, Shutdown (`sudo poweroff`), and Reboot (`sudo reboot`) actions.
+  - `src/components/SystemToolbar/SystemToolbar.tsx`: Added status badges for `capturing`, `restoring`, `shutting-down`, and `restarting`.
+
+### Verified
+- **43/43 Vitest Tests Passed** across 7 test suites.
+- **Live VM Reload Recovery Verified (100% Pass):** Guest proof token survived VM destroy and cold restoration.
+- **TypeScript & Build:** 0 errors; production bundle built cleanly in 3.75s.
 
 ### Added
 - **Command & Utility Inventory:**

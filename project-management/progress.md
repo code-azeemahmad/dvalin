@@ -1,22 +1,57 @@
 # WebOS Progress Log
 
 ## Current Status
-**Phases 1, 2, 3, 4 & 5 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, and complete 12-stage verified CLI & OS capability suite in the real Linux guest.
+**Phases 1, 2, 3, 4, 5 & 6 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, 12-stage verified CLI & OS capability suite in the real Linux guest, complete IndexedDB session persistence service with SHA-256 integrity checks, sub-3-second browser reload recovery, guest filesystem state durability proof, graceful ACPI shutdown, and host session management UI in Settings and Start Menu.
 
 ## Current Milestone
-**Phase 5 Complete / Phase 6 Persistence & System Management Ready**
+**Phase 6 Complete / Phase 7 OS Experiments & Advanced Features Ready**
 
-### Exit Criteria Status for Phase 5:
-- [x] Initial Phase 5 audit (`docs/implementation/phase-5-audit.md` and `project-management/phase-5-initial-audit.md`).
-- [x] Full BusyBox command inventory: 221 compiled applets, 234 symlinks, 65 rootfs binaries documented in `docs/cli/command-inventory.md`.
-- [x] Candidate missing utilities evaluated with dependencies and alternatives in `docs/cli/utility-availability.md`.
-- [x] Filesystem operations verified in guest (directories, files, copy, move, append, text pipelines) in `docs/cli/file-operations.md`.
-- [x] Process management and signals verified in guest (background jobs, ps, SIGTERM, wait, reaping) in `docs/cli/process-management.md`.
-- [x] Permissions and security verified in guest (chmod, umask, execute bit enforcement, sudo) in `docs/cli/permissions.md`.
-- [x] Shell scripting standards and modular script suite in `guest/scripts/` documented in `docs/cli/shell-scripting.md`.
-- [x] Automated guest verification harness (`tests/boot/test-phase5-verification.mjs`) passing 12/12 stages in real Linux VM with captured evidence in `docs/cli/verification-results.md`.
-- [x] 32 automated tests passing across 6 test suites in Vitest.
-- [x] 0 TypeScript compilation errors and clean production build.
+### Exit Criteria Status for Phase 6:
+- [x] Baseline Persistence Architecture Audit in `docs/persistence/PERSISTENCE_ARCHITECTURE_AUDIT.md`.
+- [x] Dedicated IndexedDB Snapshot Storage Service in `src/services/persistence/` (`SnapshotStorage.ts`, `SnapshotDatabase.ts`, `SnapshotTypes.ts`, `SnapshotValidation.ts`, `SnapshotErrors.ts`).
+- [x] Lifecycle state machine and concurrency locks in `EmulatorManager.ts` (`capturing`, `restoring`, `shutting-down`, `restarting`).
+- [x] Graceful guest ACPI shutdown (`sudo poweroff`) and safe restart (`sudo reboot` / reset) in `EmulatorManager.ts`.
+- [x] Empirical browser reload recovery verification harness (`tests/boot/test-phase6-reload-recovery.mjs`) passing 100% with recorded proof in `docs/persistence/BROWSER_RELOAD_RECOVERY_TEST.md`.
+- [x] Guest filesystem persistence investigation and comparison matrix in `docs/persistence/GUEST_FILESYSTEM_PERSISTENCE.md`.
+- [x] Operational specifications: `SNAPSHOT_LIFECYCLE.md`, `SHUTDOWN_AND_RESTART.md`, `STORAGE_FAILURE_HANDLING.md`.
+- [x] Host UI session management controls in `SettingsApp.tsx`, `StartMenu.tsx`, and `SystemToolbar.tsx`.
+- [x] 43 Vitest unit tests passing across 7 test suites (including 9 in `SnapshotStorage.test.ts`).
+- [x] 0 TypeScript errors and clean production build.
+- [x] Final reports: `PHASE6_VERIFICATION_RESULTS.md` and `PHASE6_IMPLEMENTATION_REPORT.md`.
+
+---
+
+## Progress Entries
+
+### 2026-11-21 — Phase 6 Execution: Persistence & System Management
+- **Phase/task:** Phase 6 (Persistence Architecture Audit, IndexedDB Snapshot Storage Service, Lifecycle State Machine, Reload Recovery Verification, Guest Filesystem Durability Proof, Host Session UI).
+- **Status:** Verified (All Phase 6 acceptance criteria met with empirical proof from genuine Linux VM).
+- **Work completed:**
+  1. Authored `docs/persistence/PERSISTENCE_ARCHITECTURE_AUDIT.md` mapping 5 storage layers, volatility boundaries, and v86 hardware parity requirements.
+  2. Implemented modular IndexedDB snapshot persistence subsystem under `src/services/persistence/`:
+     - `SnapshotTypes.ts`: interfaces for metadata, stored snapshots, inputs, and storage quota.
+     - `SnapshotErrors.ts`: typed domain error classes.
+     - `SnapshotValidation.ts`: Web Crypto SHA-256 calculation and canonical `hardwareConfigHash` generation.
+     - `SnapshotDatabase.ts`: IndexedDB transaction and cursor wrapper.
+     - `SnapshotStorage.ts`: public service with quota inspection, export/import, and CRUD.
+  3. Extended `EmulatorManager.ts` with lifecycle states (`capturing`, `restoring`, `shutting-down`, `restarting`), operation locks (`isOperationLocked`), `captureAndSaveSnapshot()`, `restoreSnapshotById()`, `boot(container, initialStateBuffer)`, `gracefulShutdown()`, and `safeRestart()`.
+  4. Created automated live VM verification harness `tests/boot/test-phase6-reload-recovery.mjs` verifying that an in-guest file (`/home/tc/session_proof.txt`) with a cryptographic token survived complete VM destruction and restored with 100% byte fidelity in under 3 seconds.
+  5. Authored `docs/persistence/BROWSER_RELOAD_RECOVERY_TEST.md`, `GUEST_FILESYSTEM_PERSISTENCE.md`, `SNAPSHOT_LIFECYCLE.md`, `SHUTDOWN_AND_RESTART.md`, `STORAGE_FAILURE_HANDLING.md`, `PHASE6_VERIFICATION_RESULTS.md`, and `PHASE6_IMPLEMENTATION_REPORT.md`.
+  6. Implemented "Sessions & Storage" tab in `SettingsApp.tsx` with quota meter, save snapshot form, saved sessions list with hardware compatibility badges, restore/export/delete actions, and power controls.
+  7. Integrated power options and quick session saving into `StartMenu.tsx` and status badges into `SystemToolbar.tsx`.
+  8. Created automated Vitest suite `tests/persistence/SnapshotStorage.test.ts` (9 tests) and updated `tests/emulator/EmulatorManager.test.ts`. Total test count: 43 passed.
+- **Files changed / created:**
+  - `src/services/persistence/` (`SnapshotTypes.ts`, `SnapshotErrors.ts`, `SnapshotValidation.ts`, `SnapshotDatabase.ts`, `SnapshotStorage.ts`, `index.ts`)
+  - `src/features/emulator/EmulatorManager.ts`
+  - `src/features/emulator/types.ts`
+  - `src/features/emulator/useEmulator.ts`
+  - `src/components/applications/SettingsApp.tsx`
+  - `src/components/desktop/StartMenu.tsx`
+  - `src/components/SystemToolbar/SystemToolbar.tsx`
+  - `tests/persistence/SnapshotStorage.test.ts`
+  - `tests/emulator/EmulatorManager.test.ts`
+  - `tests/boot/test-phase6-reload-recovery.mjs`
+  - `docs/persistence/` (8 documentation files)
 
 ---
 

@@ -9,13 +9,14 @@ import {
   Settings,
   Info,
   Play,
-  Square,
   RotateCcw,
   Maximize2,
   Cpu,
   Layers,
   FileText,
   Sliders,
+  Power,
+  Save,
 } from 'lucide-react';
 
 interface StartMenuProps {
@@ -25,8 +26,16 @@ interface StartMenuProps {
 
 export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
   const { openWindow, focusWindow, windows } = useWindowManager();
-  const { status, boot, stop, restart, goFullscreen } = useEmulator();
+  const {
+    status,
+    boot,
+    goFullscreen,
+    captureAndSaveSnapshot,
+    gracefulShutdown,
+    safeRestart,
+  } = useEmulator();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSavingSession, setIsSavingSession] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -174,32 +183,52 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
               <span>Start VM</span>
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={() => {
-                stop();
-                onClose();
-              }}
-              title="Stop Linux VM"
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-950 hover:text-rose-400 text-slate-300 text-[11px] font-medium flex items-center space-x-1.5 cursor-pointer"
-            >
-              <Square className="w-3 h-3 fill-current" />
-              <span>Stop</span>
-            </button>
-          )}
+            <>
+              <button
+                type="button"
+                onClick={async () => {
+                  setIsSavingSession(true);
+                  try {
+                    await captureAndSaveSnapshot(`Session ${new Date().toLocaleTimeString()}`);
+                  } catch {
+                    // Handled in service
+                  } finally {
+                    setIsSavingSession(false);
+                    onClose();
+                  }
+                }}
+                disabled={isSavingSession}
+                title="Save current session to IndexedDB"
+                className="px-2.5 py-1.5 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white text-[11px] font-medium flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Save className="w-3 h-3" />
+                <span>Save</span>
+              </button>
 
-          {status === 'running' && (
-            <button
-              type="button"
-              onClick={() => {
-                restart();
-                onClose();
-              }}
-              title="Reset Virtual Hardware"
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-amber-400 cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  safeRestart('guest-reboot');
+                  onClose();
+                }}
+                title="Reboot guest Linux OS (sudo reboot)"
+                className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-amber-400 cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  gracefulShutdown();
+                  onClose();
+                }}
+                title="Graceful ACPI Shutdown (sudo poweroff)"
+                className="p-1.5 rounded-lg hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 cursor-pointer"
+              >
+                <Power className="w-3.5 h-3.5" />
+              </button>
+            </>
           )}
         </div>
 

@@ -64,6 +64,24 @@ export function useEmulator() {
   const lockMouse = useCallback(() => manager.lockMouse(), [manager]);
   const goFullscreen = useCallback(() => manager.goFullscreen(), [manager]);
 
+  const captureAndSaveSnapshot = useCallback(
+    (name: string, description?: string, tags?: string[]) =>
+      manager.captureAndSaveSnapshot(name, description, tags),
+    [manager]
+  );
+  const restoreSnapshotById = useCallback(
+    (id: string) => manager.restoreSnapshotById(id),
+    [manager]
+  );
+  const gracefulShutdown = useCallback(
+    (timeoutMs?: number) => manager.gracefulShutdown(timeoutMs),
+    [manager]
+  );
+  const safeRestart = useCallback(
+    (mode?: 'guest-reboot' | 'emulator-reset') => manager.safeRestart(mode),
+    [manager]
+  );
+
   return {
     status,
     logs,
@@ -71,6 +89,8 @@ export function useEmulator() {
     serialOutput,
     screenDimensions,
     error,
+    isOperationLocked: manager.getIsOperationLocked(),
+    activeOperation: manager.getActiveOperation(),
     boot,
     stop,
     restart,
@@ -79,5 +99,9 @@ export function useEmulator() {
     sendText,
     lockMouse,
     goFullscreen,
+    captureAndSaveSnapshot,
+    restoreSnapshotById,
+    gracefulShutdown,
+    safeRestart,
   };
 }

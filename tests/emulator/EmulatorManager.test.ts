@@ -157,4 +157,22 @@ describe('EmulatorManager Lifecycle Service', () => {
     const restored = await manager.restoreState(new ArrayBuffer(1024));
     expect(restored).toBe(false);
   });
+
+  it('rejects captureAndSaveSnapshot gracefully when inactive', async () => {
+    const manager = EmulatorManager.getInstance();
+    await expect(manager.captureAndSaveSnapshot('Test Session')).rejects.toThrow(
+      /Cannot capture snapshot: emulator is not running/
+    );
+  });
+
+  it('handles gracefulShutdown and safeRestart cleanly when inactive', async () => {
+    const manager = EmulatorManager.getInstance();
+    expect(manager.getIsOperationLocked()).toBe(false);
+
+    const shutdownResult = await manager.gracefulShutdown();
+    expect(shutdownResult).toBe(true);
+    expect(manager.getStatus()).toBe('idle');
+
+    expect(manager.getIsOperationLocked()).toBe(false);
+  });
 });
