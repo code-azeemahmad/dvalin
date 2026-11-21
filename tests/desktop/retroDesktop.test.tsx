@@ -155,10 +155,50 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     expect(container.textContent).toContain('Home');
+    expect(container.textContent).toContain('Wallpapers');
     expect(container.textContent).toContain('Documents');
     expect(container.textContent).toContain('Journal');
     expect(container.textContent).toContain('/etc');
     expect(container.textContent).toContain('/tmp');
+  });
+
+  it('navigates to Wallpapers folder and double-clicking wallpaper updates settings', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <FileExplorerApp />
+        </WindowProvider>
+      );
+    });
+
+    // Find Wallpapers sidebar button and click it
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const wallpapersBtn = buttons.find((b) => b.textContent?.includes('Wallpapers'));
+    expect(wallpapersBtn).toBeDefined();
+
+    act(() => {
+      wallpapersBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain('kame-house-dragon.jpg');
+    expect(container.textContent).toContain('makima.jpg');
+    expect(container.textContent).toContain('winter-mountain.jpg');
+
+    // Find kame-house-dragon file item and double-click it
+    const items = Array.from(container.querySelectorAll('.group'));
+    const kameItem = items.find((el) => el.textContent?.includes('kame-house-dragon.jpg'));
+    expect(kameItem).toBeDefined();
+
+    act(() => {
+      kameItem?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    });
+
+    // Check localStorage persistence
+    const stored = JSON.parse(localStorage.getItem('webos_settings_v1') || '{}');
+    expect(stored.wallpaper).toContain('kame-house-dragon.jpg');
   });
 
   it('renders ControlPanelApp with tabs', () => {

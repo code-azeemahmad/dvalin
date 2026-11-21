@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { WindowProvider, useWindowManager } from '@/features/desktop/WindowContext';
 import { useSettings } from '@/features/settings/useSettings';
+import { WALLPAPER_OPTIONS } from '@/features/desktop/appRegistry';
 import { useEmulator } from '@/features/emulator/useEmulator';
 import { DesktopWindow } from './DesktopWindow';
 import { BootingScreen } from '@/components/retro/BootingScreen';
@@ -99,8 +100,27 @@ const DesktopContent: React.FC = () => {
       {/* 3. GUI Desktop Screen */}
       {screenState === 'desktop' && (
         <div
-          className="relative flex-1 flex flex-col h-full w-full bg-cover bg-center overflow-hidden"
-          style={{ backgroundImage: `url('/assets/images/desktop_screen.png')` }}
+          className={`relative flex-1 flex flex-col h-full w-full bg-cover bg-center overflow-hidden transition-all duration-300 ${
+            WALLPAPER_OPTIONS.find((w) => w.id === settings.wallpaper)?.className || ''
+          }`}
+          style={
+            settings.wallpaper &&
+            (settings.wallpaper.startsWith('/') ||
+              settings.wallpaper.startsWith('http') ||
+              settings.wallpaper.includes('.'))
+              ? {
+                  backgroundImage: `url('${encodeURI(settings.wallpaper)}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : settings.wallpaper === 'slate-mesh' || !settings.wallpaper
+              ? {
+                  backgroundImage: `url('/assets/images/desktop_screen.png')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : undefined
+          }
         >
           {/* Top Menu Bar */}
           <TopMenuBar />

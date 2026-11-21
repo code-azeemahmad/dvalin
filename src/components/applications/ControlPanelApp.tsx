@@ -245,6 +245,43 @@ export const ControlPanelApp: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            <div className="pt-4 border-t border-slate-800">
+              <h2 className="text-sm font-bold text-slate-100 mb-1">Wallpapers Folder</h2>
+              <p className="text-slate-400 text-xs mb-3">Custom wallpapers from your Wallpapers folder.</p>
+              <div className="grid grid-cols-3 gap-2.5">
+                {[
+                  { name: 'Kame House', file: 'kame-house-dragon.jpg' },
+                  { name: 'Winter Mountain', file: 'winter-mountain.jpg' },
+                  { name: 'Bomb Girl', file: 'Bomb Girl (1)(1).jpg' },
+                  { name: 'Makima', file: 'makima.jpg' },
+                  { name: 'Anime Sky', file: '04005cd9595918388985a8bf1cba433a.jpg' },
+                  { name: 'Retro Sunset', file: 'd0eb505bfddcb621426c26200c269d59.jpg' },
+                ].map((item) => {
+                  const url = `/wallpapers/${encodeURIComponent(item.file)}`;
+                  const isSelected =
+                    settings.wallpaper === url ||
+                    settings.wallpaper.includes(encodeURIComponent(item.file)) ||
+                    settings.wallpaper.includes(item.file);
+                  return (
+                    <div
+                      key={item.file}
+                      onClick={() => setWallpaper(url)}
+                      className={`relative rounded-lg overflow-hidden border cursor-pointer h-20 transition-all ${
+                        isSelected
+                          ? 'border-sky-400 ring-2 ring-sky-400/50 scale-102'
+                          : 'border-slate-800 hover:border-slate-600'
+                      }`}
+                    >
+                      <img src={url} alt={item.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs p-1 text-[10px] text-white font-medium text-center truncate">
+                        {item.name}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         )}
 

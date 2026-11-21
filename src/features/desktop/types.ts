@@ -42,7 +42,7 @@ export interface AppDefinition {
   requiresGuestRunning?: boolean;
 }
 
-export type WallpaperId = 'slate-mesh' | 'deep-cosmos' | 'cyber-terminal' | 'aurora-borealis';
+export type WallpaperId = 'slate-mesh' | 'deep-cosmos' | 'cyber-terminal' | 'aurora-borealis' | (string & {});
 
 export interface WallpaperOption {
   id: WallpaperId;
