@@ -1,6 +1,7 @@
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { WindowProvider } from '@/features/desktop/WindowContext';
+import { useSettings } from '@/features/settings/useSettings';
 import { BootingScreen } from '@/components/retro/BootingScreen';
 import { UserSignInScreen } from '@/components/retro/UserSignInScreen';
 import { TopMenuBar } from '@/components/retro/TopMenuBar';
@@ -215,5 +216,49 @@ describe('Retro Desktop Redesign Components', () => {
     expect(container.textContent).toContain('System Specs');
     expect(container.textContent).toContain('Snapshots');
     expect(container.textContent).toContain('Power & Reset');
+  });
+
+  it('updates desktop screen background style immediately when wallpaper is double-clicked in FileExplorer', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    function TestHost() {
+      const { settings } = useSettings();
+      return (
+        <div data-testid="desktop-bg" style={{ backgroundImage: `url("${settings.wallpaper}")` }}>
+          <FileExplorerApp />
+        </div>
+      );
+    }
+
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <TestHost />
+        </WindowProvider>
+      );
+    });
+
+    const bgElement = container.querySelector('[data-testid="desktop-bg"]') as HTMLElement;
+    expect(bgElement.style.backgroundImage).toBeDefined();
+
+    // Go to Wallpapers folder
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const wallpapersBtn = buttons.find((b) => b.textContent?.includes('Wallpapers'));
+    act(() => {
+      wallpapersBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // Double click makima.jpg
+    const items = Array.from(container.querySelectorAll('.group'));
+    const makimaItem = items.find((el) => el.textContent?.includes('makima.jpg'));
+    expect(makimaItem).toBeDefined();
+
+    act(() => {
+      makimaItem?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    });
+
+    // Verify the desktop background element updated in real-time!
+    expect(bgElement.style.backgroundImage).toContain('makima.jpg');
   });
 });

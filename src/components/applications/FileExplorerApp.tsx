@@ -369,15 +369,16 @@ export const FileExplorerApp: React.FC = () => {
                   : 'hover:bg-slate-800/60 text-slate-200'
               }`}
             >
-              <div className="w-14 h-14 flex items-center justify-center mb-1 relative">
+              <div className="w-14 h-14 flex items-center justify-center mb-1 relative pointer-events-none select-none">
                 {item.type === 'folder' ? (
                   <Folder className="w-12 h-12 text-amber-400 drop-shadow" />
                 ) : item.ext === 'jpg' || item.ext === 'png' || item.ext === 'jpeg' ? (
-                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-slate-700 bg-slate-950 flex items-center justify-center shadow-md relative group-hover:border-sky-400 transition-all">
+                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-slate-700 bg-slate-950 flex items-center justify-center shadow-md relative group-hover:border-sky-400 transition-all pointer-events-none select-none">
                     <img
                       src={item.url || `/wallpapers/${encodeURIComponent(item.name)}`}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      draggable={false}
+                      className="w-full h-full object-cover pointer-events-none select-none"
                       loading="lazy"
                     />
                   </div>
@@ -387,10 +388,10 @@ export const FileExplorerApp: React.FC = () => {
                   <FileText className="w-10 h-10 text-sky-300 drop-shadow" />
                 )}
               </div>
-              <span className="text-xs font-mono font-medium truncate max-w-full">
+              <span className="text-xs font-mono font-medium truncate max-w-full pointer-events-none select-none">
                 {item.name}
               </span>
-              <span className="text-[10px] text-slate-500 font-mono mt-0.5">
+              <span className="text-[10px] text-slate-500 font-mono mt-0.5 pointer-events-none select-none">
                 {item.size}
               </span>
             </div>

@@ -24,6 +24,34 @@ import { AboutApp } from '@/components/applications/AboutApp';
 import { ExperimentsApp } from '@/features/experiments/components/ExperimentsApp';
 import { LinuxDesktopApp } from '@/components/applications/LinuxDesktopApp';
 
+const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefined => {
+  if (!wallpaper || wallpaper === 'slate-mesh') {
+    return {
+      backgroundImage: `url('/assets/images/desktop_screen.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    };
+  }
+
+  if (wallpaper.startsWith('/') || wallpaper.startsWith('http') || wallpaper.includes('.')) {
+    let cleanUrl = wallpaper;
+    try {
+      cleanUrl = encodeURI(decodeURI(wallpaper));
+    } catch {
+      cleanUrl = wallpaper;
+    }
+    return {
+      backgroundImage: `url("${cleanUrl}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    };
+  }
+
+  return undefined;
+};
+
 const DesktopContent: React.FC = () => {
   const { windows } = useWindowManager();
   const { settings } = useSettings();
@@ -100,33 +128,24 @@ const DesktopContent: React.FC = () => {
       {/* 3. GUI Desktop Screen */}
       {screenState === 'desktop' && (
         <div
-          className={`relative flex-1 flex flex-col h-full w-full bg-cover bg-center overflow-hidden transition-all duration-300 ${
-            WALLPAPER_OPTIONS.find((w) => w.id === settings.wallpaper)?.className || ''
+          className={`relative flex-1 flex flex-col h-full w-full overflow-hidden transition-all duration-300 ${
+            WALLPAPER_OPTIONS.find((w) => w.id === settings.wallpaper)?.className || 'bg-cover bg-center'
           }`}
-          style={
-            settings.wallpaper &&
-            (settings.wallpaper.startsWith('/') ||
-              settings.wallpaper.startsWith('http') ||
-              settings.wallpaper.includes('.'))
-              ? {
-                  backgroundImage: `url('${encodeURI(settings.wallpaper)}')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }
-              : settings.wallpaper === 'slate-mesh' || !settings.wallpaper
-              ? {
-                  backgroundImage: `url('/assets/images/desktop_screen.png')`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }
-              : undefined
-          }
+          style={resolveWallpaperStyle(settings.wallpaper)}
         >
+          {/* Dedicated Wallpaper Background Layer */}
+          <div
+            className={`absolute inset-0 pointer-events-none transition-all duration-300 z-0 ${
+              WALLPAPER_OPTIONS.find((w) => w.id === settings.wallpaper)?.className || 'bg-cover bg-center'
+            }`}
+            style={resolveWallpaperStyle(settings.wallpaper)}
+          />
+
           {/* Top Menu Bar */}
           <TopMenuBar />
 
           {/* Desktop Area */}
-          <main className="flex-1 relative overflow-hidden">
+          <main className="flex-1 relative overflow-hidden z-10">
             {/* Desktop Icons (Left & Right) */}
             <RetroDesktopIcons />
 
