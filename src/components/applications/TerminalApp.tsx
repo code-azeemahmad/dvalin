@@ -67,18 +67,7 @@ const getPrompt = (currentCwd: string): string => {
 export const TerminalApp: React.FC = () => {
   const { serialOutput } = useEmulator();
   const [cwd, setCwd] = useState<string>('~');
-  const [lines, setLines] = useState<TerminalLine[]>([
-    {
-      id: 'init-1',
-      type: 'system',
-      text: 'WebOS Linux Terminal v0.3.0 — Genuine Guest Command Bridge',
-    },
-    {
-      id: 'init-2',
-      type: 'system',
-      text: 'Commands are executed by the real Linux kernel (6.18) & BusyBox ash shell.',
-    },
-  ]);
+  const [lines, setLines] = useState<TerminalLine[]>([]);
   const [input, setInput] = useState<string>('');
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);

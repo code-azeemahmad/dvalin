@@ -279,6 +279,10 @@ describe('Retro Desktop Redesign Components', () => {
     expect(container.textContent).not.toContain('tc@box: ~ (ash shell)');
     expect(container.querySelector('button[title="Clear terminal buffer"]')).toBeNull();
 
+    // Verify initial banner notice is removed
+    expect(container.textContent).not.toContain('WebOS Linux Terminal');
+    expect(container.textContent).not.toContain('Commands are executed by the real Linux kernel');
+
     // Verify prompt starts at tc@box:~$
     expect(container.textContent).toContain('tc@box:~$');
 
