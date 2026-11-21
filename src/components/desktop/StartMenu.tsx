@@ -17,6 +17,7 @@ import {
   Sliders,
   Power,
   Save,
+  Sparkles,
 } from 'lucide-react';
 
 interface StartMenuProps {
@@ -87,6 +88,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
         return <Settings className="w-4 h-4 text-indigo-400" />;
       case 'Info':
         return <Info className="w-4 h-4 text-cyan-400" />;
+      case 'Sparkles':
+        return <Sparkles className="w-4 h-4 text-sky-400" />;
       default:
         return <Layers className="w-4 h-4 text-slate-400" />;
     }

@@ -10,6 +10,7 @@ import { LinuxDesktopApp } from '@/components/applications/LinuxDesktopApp';
 import { TerminalApp } from '@/components/applications/TerminalApp';
 import { SettingsApp } from '@/components/applications/SettingsApp';
 import { AboutApp } from '@/components/applications/AboutApp';
+import { ExperimentsApp } from '@/features/experiments/components/ExperimentsApp';
 import { Terminal, X } from 'lucide-react';
 
 const DesktopContent: React.FC = () => {
@@ -28,6 +29,8 @@ const DesktopContent: React.FC = () => {
         return <SettingsApp />;
       case 'about':
         return <AboutApp />;
+      case 'os-lab':
+        return <ExperimentsApp />;
       default:
         return (
           <div className="p-4 text-xs text-slate-400">

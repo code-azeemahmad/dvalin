@@ -78,6 +78,17 @@ export const APP_REGISTRY: Record<string, AppDefinition> = {
     defaultPosition: { x: 240, y: 160 },
     isSingleton: true,
   },
+  'os-lab': {
+    id: 'os-lab',
+    title: 'OS Lab & Experiments',
+    iconName: 'Sparkles',
+    category: 'system',
+    target: 'host',
+    description: 'Interactive operating systems laboratory with 20 hands-on Linux kernel experiments.',
+    defaultSize: { width: 980, height: 680 },
+    defaultPosition: { x: 80, y: 40 },
+    isSingleton: true,
+  },
 };
 
 export const WALLPAPER_OPTIONS = [

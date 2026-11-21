@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
 import { APP_REGISTRY } from '@/features/desktop/appRegistry';
-import { Monitor, Terminal, Settings, Info, FileText, Sliders } from 'lucide-react';
+import { Monitor, Terminal, Settings, Info, FileText, Sliders, Sparkles } from 'lucide-react';
 
 export const DesktopIcons: React.FC = () => {
   const { openWindow, focusWindow, windows } = useWindowManager();
@@ -35,6 +35,8 @@ export const DesktopIcons: React.FC = () => {
         return <Settings className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />;
       case 'Info':
         return <Info className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />;
+      case 'Sparkles':
+        return <Sparkles className="w-6 h-6 text-sky-400 group-hover:scale-110 transition-transform" />;
       default:
         return <Monitor className="w-6 h-6 text-slate-400" />;
     }

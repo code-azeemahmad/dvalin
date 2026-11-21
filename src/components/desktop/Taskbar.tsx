@@ -9,6 +9,7 @@ import {
   Settings,
   Info,
   Layers,
+  Sparkles,
 } from 'lucide-react';
 
 interface TaskbarProps {
@@ -34,6 +35,8 @@ export const Taskbar: React.FC<TaskbarProps> = ({
         return <Settings className="w-3.5 h-3.5 text-indigo-400" />;
       case 'Info':
         return <Info className="w-3.5 h-3.5 text-amber-400" />;
+      case 'Sparkles':
+        return <Sparkles className="w-3.5 h-3.5 text-sky-400" />;
       default:
         return <Layers className="w-3.5 h-3.5 text-slate-400" />;
     }

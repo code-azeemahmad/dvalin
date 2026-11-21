@@ -2,6 +2,52 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
+## [0.7.0] — 2026-11-21 — Phase 7: OS Experiments & Advanced Features
+
+### Added
+- **OS Experiments Subsystem & Operating Systems Laboratory:**
+  - `src/features/experiments/types/ExperimentTypes.ts`: Full domain contracts for `ExperimentDefinition`, `ExperimentStep`, `ExperimentValidationRule`, `ExperimentQuestion`, `StepExecutionResult`, `ExperimentProgressState`, `GuestResourceMetrics`, and `HostResourceMetrics`.
+  - `src/features/experiments/services/ExperimentSafety.ts`:
+    - Command safety validation blocking destructive operations (`rm -rf /`, `mkfs`, fork bombs, raw device writes, shutdown).
+    - Workspace isolation (`/tmp/webos-experiments/<expId>/`) with sanitized path formatting.
+    - Delimited marker execution wrapper protocol capturing stdout, stderr, and exit codes (`___START___` / `___END___:<codeNum>`).
+    - Scoped cleanup service.
+  - `src/features/experiments/data/experiments.ts`: Catalog of 20 fully specified experiments across 7 categories (Processes, Memory, Filesystem, Permissions, Shell, Kernel, Devices).
+  - `src/features/experiments/services/ExperimentRegistry.ts`: Singleton indexing experiments by category, difficulty, and keywords with definition validation.
+  - `src/features/experiments/services/ExperimentProgressService.ts`: LocalStorage persistence for user completions, active steps, quiz responses, and metrics.
+  - `src/features/experiments/services/ExperimentRunner.ts`: Execution engine dispatching commands to `EmulatorManager`, evaluating output validation rules, and handling simulations.
+  - `src/features/experiments/services/ResourceMonitoringService.ts`: Bounded 3000ms telemetry service strictly separating in-guest Linux kernel metrics from host browser metrics, with pause/resume support.
+  - `src/features/experiments/hooks/useExperiments.ts`: React integration hook.
+  - `src/features/experiments/components/`:
+    - `ExperimentsApp.tsx`: Tabbed OS Lab desktop application window.
+    - `ExperimentCatalog.tsx`: Category filtering, difficulty selector, search input, global lab progress bar, and lab cards.
+    - `ExperimentDetail.tsx`: Step runner, validation badges, live output terminal, interactive knowledge check quiz, and lab reset.
+    - `ExperimentVisualization.tsx`: High-clarity educational diagrams for 2-level paging, CPU scheduling queues, and the boot pipeline.
+    - `ResourceMonitorView.tsx`: Live telemetry dashboard with guest vs host panels and pause/resume button.
+- **Host Desktop Integration:**
+  - `src/features/desktop/appRegistry.ts`: Registered `os-lab` application.
+  - `src/components/desktop/DesktopShell.tsx`: Added window mount for `os-lab`.
+  - `Taskbar.tsx`, `StartMenu.tsx`, `DesktopIcons.tsx`: Added `Sparkles` icon launch triggers.
+- **Automated Verification Harness:**
+  - `tests/boot/test-phase7-experiments.mjs`: Live guest verification runner testing 12 representative experiment stages on real booting Linux VM in 68 seconds.
+- **Unit Test Suites (26 new tests):**
+  - `tests/experiments/ExperimentRegistry.test.ts` (7 tests).
+  - `tests/experiments/ExperimentSafety.test.ts` (8 tests).
+  - `tests/experiments/ExperimentProgress.test.ts` (6 tests).
+  - `tests/experiments/ExperimentRunner.test.ts` (5 tests).
+- **Technical Documentation Suite:**
+  - `docs/experiments/EXPERIMENT_ARCHITECTURE.md`: Subsystem architecture, execution modes, security boundaries.
+  - `docs/experiments/EXPERIMENT_CATALOG.md`: Complete catalog of 20 experiments with objectives, commands, steps, and quizzes.
+  - `docs/experiments/EXPERIMENT_SAFETY.md`: Safety rules, command allowlists, regex validation, workspace isolation.
+  - `docs/experiments/RESOURCE_MONITORING.md`: Guest vs host metrics architecture, sampling rates, separation, limitations.
+  - `docs/experiments/EXPERIMENT_VERIFICATION_RESULTS.md`: Detailed test harness output and verified live guest behavior.
+  - `docs/experiments/PHASE7_IMPLEMENTATION_REPORT.md`: Comprehensive completion report.
+
+### Verified
+- **69/69 Vitest Tests Passed** across 11 test suites.
+- **Live VM Verification Harness (100% Pass):** 12/12 stages passed in genuine Linux guest.
+- **TypeScript & Build:** 0 type errors; production bundle built cleanly in 4.51s.
+
 ## [0.6.0] — 2026-11-21 — Phase 6: Persistence & System Management
 
 ### Added

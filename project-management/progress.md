@@ -1,23 +1,69 @@
 # WebOS Progress Log
 
 ## Current Status
-**Phases 1, 2, 3, 4, 5 & 6 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, 12-stage verified CLI & OS capability suite in the real Linux guest, complete IndexedDB session persistence service with SHA-256 integrity checks, sub-3-second browser reload recovery, guest filesystem state durability proof, graceful ACPI shutdown, and host session management UI in Settings and Start Menu.
+**Phases 1, 2, 3, 4, 5, 6 & 7 Verified:** Full browser-hosted desktop operating system environment and interactive educational operating systems laboratory (OS Lab) implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, 12-stage verified CLI & OS capability suite in the real Linux guest, complete IndexedDB session persistence service with SHA-256 integrity checks, sub-3-second browser reload recovery, guest filesystem state durability proof, graceful ACPI shutdown, host session management UI in Settings and Start Menu, 20 structured real-guest & hybrid OS experiments across 7 categories, workspace isolation with safety validation and delimited marker execution protocol, interactive step runner with live output terminal and knowledge-check quizzes, persistent lab progress in localStorage, bounded real-time telemetry separating in-guest Linux kernel metrics from host browser metrics, 69 unit tests passing across 11 test suites, and 12/12 live guest experiment verification stages passing in real VM.
 
 ## Current Milestone
-**Phase 6 Complete / Phase 7 OS Experiments & Advanced Features Ready**
+**Phase 7 Complete / Phase 8 Testing and Deployment Ready**
 
-### Exit Criteria Status for Phase 6:
-- [x] Baseline Persistence Architecture Audit in `docs/persistence/PERSISTENCE_ARCHITECTURE_AUDIT.md`.
-- [x] Dedicated IndexedDB Snapshot Storage Service in `src/services/persistence/` (`SnapshotStorage.ts`, `SnapshotDatabase.ts`, `SnapshotTypes.ts`, `SnapshotValidation.ts`, `SnapshotErrors.ts`).
-- [x] Lifecycle state machine and concurrency locks in `EmulatorManager.ts` (`capturing`, `restoring`, `shutting-down`, `restarting`).
-- [x] Graceful guest ACPI shutdown (`sudo poweroff`) and safe restart (`sudo reboot` / reset) in `EmulatorManager.ts`.
-- [x] Empirical browser reload recovery verification harness (`tests/boot/test-phase6-reload-recovery.mjs`) passing 100% with recorded proof in `docs/persistence/BROWSER_RELOAD_RECOVERY_TEST.md`.
-- [x] Guest filesystem persistence investigation and comparison matrix in `docs/persistence/GUEST_FILESYSTEM_PERSISTENCE.md`.
-- [x] Operational specifications: `SNAPSHOT_LIFECYCLE.md`, `SHUTDOWN_AND_RESTART.md`, `STORAGE_FAILURE_HANDLING.md`.
-- [x] Host UI session management controls in `SettingsApp.tsx`, `StartMenu.tsx`, and `SystemToolbar.tsx`.
-- [x] 43 Vitest unit tests passing across 7 test suites (including 9 in `SnapshotStorage.test.ts`).
-- [x] 0 TypeScript errors and clean production build.
-- [x] Final reports: `PHASE6_VERIFICATION_RESULTS.md` and `PHASE6_IMPLEMENTATION_REPORT.md`.
+### Exit Criteria Status for Phase 7:
+- [x] OS Experiments Architecture in `docs/experiments/EXPERIMENT_ARCHITECTURE.md`.
+- [x] Complete 20-Experiment Catalog across 7 categories in `docs/experiments/EXPERIMENT_CATALOG.md`.
+- [x] Safety, Isolation & Validation Rules in `docs/experiments/EXPERIMENT_SAFETY.md`.
+- [x] Real-Time Resource Monitoring Architecture in `docs/experiments/RESOURCE_MONITORING.md`.
+- [x] Domain types and contracts in `src/features/experiments/types/ExperimentTypes.ts`.
+- [x] Safety engine with blocked command patterns and delimited marker protocol in `src/features/experiments/services/ExperimentSafety.ts`.
+- [x] 20 fully specified experiment definitions in `src/features/experiments/data/experiments.ts`.
+- [x] Singleton registry and catalog indexer in `src/features/experiments/services/ExperimentRegistry.ts`.
+- [x] LocalStorage progress persistence in `src/features/experiments/services/ExperimentProgressService.ts`.
+- [x] Step runner with real guest command dispatch and marker parsing in `src/features/experiments/services/ExperimentRunner.ts`.
+- [x] Bounded 3000ms resource monitoring separating guest Linux metrics from host browser metrics in `src/features/experiments/services/ResourceMonitoringService.ts`.
+- [x] React hook `useExperiments` in `src/features/experiments/hooks/useExperiments.ts`.
+- [x] OS Lab UI components (`ExperimentsApp.tsx`, `ExperimentCatalog.tsx`, `ExperimentDetail.tsx`, `ExperimentVisualization.tsx`, `ResourceMonitorView.tsx`).
+- [x] Host desktop integration: registered in `appRegistry.ts`, mounted in `DesktopShell.tsx`, icons in Taskbar, DesktopIcons, and StartMenu.
+- [x] 26 unit tests passing across 4 test suites in `tests/experiments/` (69 total unit tests passing in Vitest).
+- [x] 0 TypeScript compiler errors and clean production build.
+- [x] Automated live guest verification harness `tests/boot/test-phase7-experiments.mjs` passing 12/12 stages in 68 seconds on live v86 VM.
+- [x] Recorded empirical results in `docs/experiments/EXPERIMENT_VERIFICATION_RESULTS.md` and `docs/experiments/PHASE7_IMPLEMENTATION_REPORT.md`.
+
+---
+
+## Progress Entries
+
+### 2026-11-21 — Phase 7 Execution: OS Experiments & Advanced Features
+- **Phase/task:** Phase 7 (Interactive Operating Systems Laboratory, 20 Structured Labs across 7 Categories, Safety & Isolation Engine, Step Runner, Knowledge Check Quizzes, Progress Persistence, Real-Time Resource Monitoring, Live Guest Verification Harness).
+- **Status:** Verified (All Phase 7 acceptance criteria met with empirical proof from genuine Linux VM).
+- **Work completed:**
+  1. Authored domain types `ExperimentTypes.ts` covering definitions, steps, validation rules, questions, execution results, progress states, and telemetry metrics.
+  2. Implemented `ExperimentSafety.ts` with blocked command validation (`rm -rf /`, `mkfs`, fork bombs, raw device writes, shutdown), workspace isolation (`/tmp/webos-experiments/<expId>/`), delimited marker execution wrapper (`___START___` / `___END___:<exitCode>`), and scoped cleanup.
+  3. Created 20 comprehensive experiment definitions in `experiments.ts` across 7 categories: Processes (4), Memory (4), Filesystem (3), Permissions (1), Shell (4), Kernel & Devices (4).
+  4. Built `ExperimentRegistry.ts` for catalog indexing, filtering, search, and definition safety verification.
+  5. Implemented `ExperimentProgressService.ts` for localStorage persistence of step completions, quiz answers, and overall lab progress.
+  6. Implemented `ExperimentRunner.ts` integrating with `EmulatorManager` to execute wrapped guest commands and validate output against rules.
+  7. Built `ResourceMonitoringService.ts` providing bounded 3-second sampling strictly separating in-guest Linux kernel metrics (`/proc/uptime`, `/proc/meminfo`, process count) from host browser metrics (`performance.memory`, canvas resolution).
+  8. Created React hook `useExperiments.ts` and rich UI components: `ExperimentsApp`, `ExperimentCatalog`, `ExperimentDetail`, `ExperimentVisualization`, and `ResourceMonitorView`.
+  9. Registered `os-lab` in `appRegistry.ts` and integrated into `DesktopShell.tsx`, `Taskbar.tsx`, `StartMenu.tsx`, and `DesktopIcons.tsx`.
+  10. Wrote 26 automated unit tests across `tests/experiments/*.test.ts` (all passing; 69 repository tests passing total).
+  11. Built and executed live guest verification harness `tests/boot/test-phase7-experiments.mjs` verifying 12/12 stages in real Tiny Core Linux 17.1 VM in 68 seconds.
+  12. Authored full documentation suite: `EXPERIMENT_ARCHITECTURE.md`, `EXPERIMENT_CATALOG.md`, `EXPERIMENT_SAFETY.md`, `RESOURCE_MONITORING.md`, `EXPERIMENT_VERIFICATION_RESULTS.md`, and `PHASE7_IMPLEMENTATION_REPORT.md`.
+- **Files changed / created:**
+  - `src/features/experiments/types/ExperimentTypes.ts`
+  - `src/features/experiments/services/ExperimentSafety.ts`
+  - `src/features/experiments/data/experiments.ts`
+  - `src/features/experiments/services/ExperimentRegistry.ts`
+  - `src/features/experiments/services/ExperimentProgressService.ts`
+  - `src/features/experiments/services/ExperimentRunner.ts`
+  - `src/features/experiments/services/ResourceMonitoringService.ts`
+  - `src/features/experiments/hooks/useExperiments.ts`
+  - `src/features/experiments/components/` (`ExperimentsApp.tsx`, `ExperimentCatalog.tsx`, `ExperimentDetail.tsx`, `ExperimentVisualization.tsx`, `ResourceMonitorView.tsx`)
+  - `src/features/desktop/appRegistry.ts`
+  - `src/components/desktop/DesktopShell.tsx`
+  - `src/components/desktop/Taskbar.tsx`
+  - `src/components/desktop/StartMenu.tsx`
+  - `src/components/desktop/DesktopIcons.tsx`
+  - `tests/experiments/` (4 test suites)
+  - `tests/boot/test-phase7-experiments.mjs`
+  - `docs/experiments/` (6 documentation files)
 
 ---
 

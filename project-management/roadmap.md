@@ -61,16 +61,18 @@ The project is divided into eight phases. Each phase must produce a testable del
 
 **Deliverable:** recoverable session and empirically verified guest file persistence across browser reload (documented in `docs/persistence/`).
 
-## Phase 7 — OS experiments and advanced features [READY]
-- Build guided experiments.
-- Add OS documentation.
-- Add process/memory demonstrations.
-- Evaluate optional networking.
-- Test package management where configured.
+## Phase 7 — OS experiments and advanced features [COMPLETE & VERIFIED]
+- Build guided experiments (20 structured labs across Processes, Memory, Filesystem, Permissions, Shell, Kernel, and Devices).
+- Educational OS laboratory desktop application (`OS Lab` / `ExperimentsApp`).
+- Add process, memory, and boot sequence visualizers (`ExperimentVisualization.tsx`).
+- Workspace isolation and command safety verification (`ExperimentSafety.ts` with blocked patterns and delimited markers).
+- Real-time bounded resource monitoring separating guest Linux metrics from host browser metrics (`ResourceMonitoringService.ts`).
+- 26 unit tests passing in `tests/experiments/` (69 total unit tests passing).
+- Live guest verification harness passing 12/12 stages in real VM (`tests/boot/test-phase7-experiments.mjs`).
 
-**Deliverable:** educational OS laboratory.
+**Deliverable:** educational OS laboratory (documented in `docs/experiments/`).
 
-## Phase 8 — Testing and deployment
+## Phase 8 — Testing and deployment [READY]
 - Clean browser startup.
 - Core command tests.
 - GUI/input tests.

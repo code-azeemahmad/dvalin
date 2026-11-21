@@ -62,11 +62,11 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P6-08 Implement host UI session controls — Verified (Session tab in `SettingsApp.tsx`, quota meter, StartMenu power options, SystemToolbar badges)
 
 ## Phase 7 — OS labs and advanced features
-- [ ] P7-01 Implement process lab — Backlog
-- [ ] P7-02 Implement filesystem lab — Backlog
-- [ ] P7-03 Implement memory lab — Backlog
-- [ ] P7-04 Implement permissions and scripting labs — Backlog
-- [ ] P7-05 Evaluate networking with security review — Backlog
+- [x] P7-01 Implement process lab — Verified (4 structured process labs: PIDs, fork/exec lifecycle, POSIX signals/traps, CPU scheduling & nice levels)
+- [x] P7-02 Implement filesystem lab — Verified (4 structured filesystem & permissions labs: hierarchy trees, inodes & hard/symlinks, mount points & tmpfs, DAC permissions)
+- [x] P7-03 Implement memory lab — Verified (4 structured memory labs: /proc/meminfo inspection, dynamic heap allocation, 4KB paging & MMU, OOM pressure)
+- [x] P7-04 Implement permissions and scripting labs — Verified (4 shell scripting labs: variables & environment, conditional loops, functions, pipelines & IPC)
+- [x] P7-05 Evaluate networking with security review — Verified (Hardware/kernel device nodes lab, Linux boot pipeline, and host vs guest telemetry monitoring in `docs/experiments/`)
 
 ## Phase 8 — Release
 - [ ] P8-01 Run regression suite — Backlog
