@@ -1,28 +1,70 @@
 # WebOS Progress Log
 
 ## Current Status
-**Phases 1, 2, 3 & 4 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), and verified memory snapshot persistence prototype.
+**Phases 1, 2, 3, 4 & 5 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), verified memory snapshot persistence prototype, and complete 12-stage verified CLI & OS capability suite in the real Linux guest.
 
 ## Current Milestone
-**Phase 4 Complete / Phase 5 Guest Capabilities & Educational OS Labs Ready**
+**Phase 5 Complete / Phase 6 Persistence & System Management Ready**
 
-### Exit Criteria Status for Phase 4:
-- [x] Initial Phase 4 audit and guest package inspection (`project-management/phase-4-initial-audit.md`).
-- [x] FLWM window manager architecture and configuration documented (`docs/emulator/flwm-configuration.md`).
-- [x] Genuine Tiny Core application inventory cataloged (`docs/emulator/guest-application-inventory.md`).
-- [x] Host-to-guest command dispatch channel implemented (`EmulatorManager.launchGuestApp`) and documented (`docs/emulator/guest-command-channel.md`).
-- [x] Application registry updated with `target: 'host' | 'guest'` demarcation and guest launch commands (`guest-aterm`, `guest-editor`, `guest-cpanel`).
-- [x] Start Menu and Desktop Icons updated with guest/host category badges and dedicated app icons (`FileText`, `Sliders`).
-- [x] Window Manager routing: launching a guest application surfaces the Linux Desktop window and dispatches the execution command to the guest.
-- [x] Educational lab and diagnostic scripts created in `guest/scripts/diagnostics/` and `guest/scripts/labs/` with machine-parseable delimiters.
-- [x] Lab manifest created in `guest/config/labs.json` and execution architecture documented in `docs/labs/guest-lab-execution-architecture.md`.
-- [x] v86 memory snapshot serialization and restoration verified in prototype, with findings documented in `docs/architecture/v86-snapshot-persistence-design.md`.
-- [x] 28 automated tests passing across 5 test suites (`EmulatorManager`, `WindowContext`, `appRegistry`, `useSettings`, `labScripts`).
+### Exit Criteria Status for Phase 5:
+- [x] Initial Phase 5 audit (`docs/implementation/phase-5-audit.md` and `project-management/phase-5-initial-audit.md`).
+- [x] Full BusyBox command inventory: 221 compiled applets, 234 symlinks, 65 rootfs binaries documented in `docs/cli/command-inventory.md`.
+- [x] Candidate missing utilities evaluated with dependencies and alternatives in `docs/cli/utility-availability.md`.
+- [x] Filesystem operations verified in guest (directories, files, copy, move, append, text pipelines) in `docs/cli/file-operations.md`.
+- [x] Process management and signals verified in guest (background jobs, ps, SIGTERM, wait, reaping) in `docs/cli/process-management.md`.
+- [x] Permissions and security verified in guest (chmod, umask, execute bit enforcement, sudo) in `docs/cli/permissions.md`.
+- [x] Shell scripting standards and modular script suite in `guest/scripts/` documented in `docs/cli/shell-scripting.md`.
+- [x] Automated guest verification harness (`tests/boot/test-phase5-verification.mjs`) passing 12/12 stages in real Linux VM with captured evidence in `docs/cli/verification-results.md`.
+- [x] 32 automated tests passing across 6 test suites in Vitest.
 - [x] 0 TypeScript compilation errors and clean production build.
 
 ---
 
 ## Progress Entries
+
+### 2026-11-21 — Phase 5 Execution: CLI & Operating System Capabilities
+- **Phase/task:** Phase 5 (Command Inventory, Utility Evaluation, File Operations, Process Management, Permissions, Shell Scripting, Guest Verification Harness).
+- **Status:** Verified (All Phase 5 acceptance criteria met with recorded evidence from genuine Linux VM).
+- **Work completed:**
+  1. Authored Phase 5 audit report (`docs/implementation/phase-5-audit.md`).
+  2. Discovered and cataloged all 221 compiled BusyBox applets, 234 applet symlinks, and 65 standalone rootfs binaries in `docs/cli/command-inventory.md`.
+  3. Evaluated candidate missing utilities (`file`, `tree`, `nano`, `bash`, `curl`) and documented BusyBox alternatives in `docs/cli/utility-availability.md`.
+  4. Created modular shell script suite under `guest/scripts/`:
+     - `guest/scripts/filesystem/file-operations.sh` & `tree.sh`
+     - `guest/scripts/process/process-lifecycle.sh`
+     - `guest/scripts/permissions/permission-demo.sh`
+     - `guest/scripts/scripting/` (`variables.sh`, `conditions.sh`, `loops.sh`, `functions.sh`, `arguments.sh`, `traps.sh`)
+  5. Implemented `ALLOWED_GUEST_APPS` allowlist and `launchRegisteredGuestApp()` in `EmulatorManager.ts`.
+  6. Created automated Phase 5 guest verification harness (`tests/boot/test-phase5-verification.mjs`) executing real commands in the guest VM and passing all 12 stages.
+  7. Authored documentation: `docs/cli/file-operations.md`, `docs/cli/process-management.md`, `docs/cli/permissions.md`, `docs/cli/shell-scripting.md`, `docs/cli/verification-results.md`, and `docs/implementation/phase-5-implementation-report.md`.
+  8. Created automated Vitest suite `tests/cli/guestScripts.test.ts` (3 tests) and updated `tests/emulator/EmulatorManager.test.ts`.
+- **Files changed / created:**
+  - `docs/implementation/phase-5-audit.md`
+  - `docs/implementation/phase-5-implementation-report.md`
+  - `docs/cli/command-inventory.md`
+  - `docs/cli/utility-availability.md`
+  - `docs/cli/file-operations.md`
+  - `docs/cli/process-management.md`
+  - `docs/cli/permissions.md`
+  - `docs/cli/shell-scripting.md`
+  - `docs/cli/verification-results.md`
+  - `project-management/phase-5-initial-audit.md`
+  - `guest/scripts/filesystem/file-operations.sh`
+  - `guest/scripts/filesystem/tree.sh`
+  - `guest/scripts/process/process-lifecycle.sh`
+  - `guest/scripts/permissions/permission-demo.sh`
+  - `guest/scripts/scripting/variables.sh`
+  - `guest/scripts/scripting/conditions.sh`
+  - `guest/scripts/scripting/loops.sh`
+  - `guest/scripts/scripting/functions.sh`
+  - `guest/scripts/scripting/arguments.sh`
+  - `guest/scripts/scripting/traps.sh`
+  - `src/features/emulator/EmulatorManager.ts`
+  - `tests/boot/test-phase5-verification.mjs`
+  - `tests/cli/guestScripts.test.ts`
+  - `tests/emulator/EmulatorManager.test.ts`
+  - `project-management/roadmap.md`
+  - `project-management/tasks.md`
 
 ### 2026-11-21 — Phase 4 Execution: Guest Desktop & Application Integration
 - **Phase/task:** Phase 4 (FLWM Configuration, Guest Application Inventory, Host-to-Guest Command Channel, Educational Lab Foundations, Snapshot Persistence Research).

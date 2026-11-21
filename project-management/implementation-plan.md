@@ -30,6 +30,23 @@ Implement one phase and one small vertical slice at a time. Each task must have 
 8. Implement start/stop/reset.
 9. Add tests for repeated start, failure and cleanup.
 
+## Phase 5 implementation sequence [VERIFIED]
+1. Inventory BusyBox commands (221 compiled applets, 234 symlinks).
+2. Evaluate missing utilities and documented built-in alternatives (`tree.sh`, `vi`, `ash`).
+3. Verify real filesystem operations inside the guest (create, write, append, copy, move, rename, delete, text processing).
+4. Verify process management (background execution, ps, signals, wait, reaping).
+5. Verify permissions and ownership (chmod, umask, execute bit, sudo).
+6. Implement modular shell scripting suite in `guest/scripts/`.
+7. Execute automated guest verification harness (`tests/boot/test-phase5-verification.mjs`, 12/12 stages passed).
+8. Document all findings in `docs/cli/` and `docs/implementation/`.
+
+## Phase 6 implementation sequence [READY]
+1. Prototype IndexedDB snapshot persistence service.
+2. Implement golden master pre-boot checkpoint.
+3. Implement user session snapshot save and restore.
+4. Add hardware configuration hash validation.
+5. Verify browser refresh and guest reboot recovery.
+
 ## Later phases
 Use `docs/02-architecture/architecture.md`, `docs/08-emulator/`, `docs/09-labs/` and `docs/10-deployment/` as subsystem specifications.
 

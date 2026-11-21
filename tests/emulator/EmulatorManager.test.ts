@@ -124,13 +124,29 @@ describe('EmulatorManager Lifecycle Service', () => {
     expect(manager.getLastError()).toBeNull();
   });
 
-  it('rejects launchGuestApp gracefully when emulator is not running', () => {
+  it('rejects launchGuestApp gracefully when emulator is not running or command is invalid', () => {
     const manager = EmulatorManager.getInstance();
     expect(manager.getStatus()).toBe('idle');
     const result = manager.launchGuestApp('DISPLAY=:0 aterm &');
     expect(result).toBe(false);
+    expect(manager.launchGuestApp('')).toBe(false);
+    expect(manager.launchGuestApp('   ')).toBe(false);
     const logs = manager.getLogs();
     expect(logs.some((l) => l.level === 'warn' && l.message.includes('Cannot launch guest application'))).toBe(true);
+    expect(logs.some((l) => l.level === 'warn' && l.message.includes('Cannot launch empty guest application command'))).toBe(true);
+  });
+
+  it('validates allowed guest application registry and launchRegisteredGuestApp', () => {
+    const manager = EmulatorManager.getInstance();
+    expect(EmulatorManager.ALLOWED_GUEST_APPS['aterm']).toBe('DISPLAY=:0 aterm &');
+    expect(EmulatorManager.ALLOWED_GUEST_APPS['editor']).toBe('DISPLAY=:0 editor &');
+    expect(EmulatorManager.ALLOWED_GUEST_APPS['cpanel']).toBe('DISPLAY=:0 cpanel &');
+
+    // Reject untrusted app key
+    const badLaunch = manager.launchRegisteredGuestApp('untrusted_binary; rm -rf /');
+    expect(badLaunch).toBe(false);
+    const logs = manager.getLogs();
+    expect(logs.some((l) => l.level === 'warn' && l.message.includes('Untrusted or unlisted guest application key'))).toBe(true);
   });
 
   it('handles saveState and restoreState gracefully when inactive', async () => {

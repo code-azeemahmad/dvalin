@@ -43,12 +43,13 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P4-05 Configure shortcuts and desktop defaults — Verified (Host-to-guest command dispatch via `EmulatorManager.launchGuestApp`, dual-channel architecture in `docs/emulator/guest-command-channel.md`)
 - [x] P4-06 Educational lab & diagnostic foundations — Verified (`guest/scripts/diagnostics/` and `guest/scripts/labs/` implemented, `labs.json` manifest verified)
 
-## Phase 5 — Guest capabilities
-- [x] P5-01 Build verified command inventory — Verified (`uname`, `sh`, BusyBox suite confirmed)
-- [ ] P5-02 Test file operations — Ready
-- [ ] P5-03 Test process operations — Ready
-- [ ] P5-04 Test memory/system inspection — Ready
-- [ ] P5-05 Test permissions and shell scripts — Ready
+## Phase 5 — Guest capabilities & CLI Operations
+- [x] P5-01 Build verified command inventory — Verified (221 applets, 234 symlinks, 65 binaries in `docs/cli/command-inventory.md`)
+- [x] P5-02 Test file operations — Verified (mkdir, write, append, copy, move, delete, text pipelines in `docs/cli/file-operations.md`)
+- [x] P5-03 Test process operations — Verified (background jobs, ps, signals, wait, reaping in `docs/cli/process-management.md`)
+- [x] P5-04 Test memory/system inspection — Verified (uname, uptime, free, df, top in `docs/cli/verification-results.md`)
+- [x] P5-05 Test permissions and shell scripts — Verified (chmod, umask, execute bit, loops, functions in `docs/cli/permissions.md` and `docs/cli/shell-scripting.md`)
+- [x] P5-06 Automated guest verification harness — Verified (12/12 stages passed in real VM via `tests/boot/test-phase5-verification.mjs`)
 
 ## Phase 6 — Persistence
 - [x] P6-01 Prototype v86 snapshot save — Verified Prototype (Verified in Node; `emulator.save_state()` exports ~3.31 MB ArrayBuffer)

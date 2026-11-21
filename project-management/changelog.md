@@ -2,7 +2,37 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
-## [0.4.0] — 2026-11-21 — Phase 4: Guest Desktop & Application Integration
+## [0.5.0] — 2026-11-21 — Phase 5: CLI & Operating System Capabilities
+
+### Added
+- **Command & Utility Inventory:**
+  - `docs/cli/command-inventory.md`: Complete catalog of 221 compiled BusyBox applets, 234 symlinks, and 65 standalone rootfs binaries.
+  - `docs/cli/utility-availability.md`: Candidate evaluation of `file`, `tree`, `nano`, `bash`, and `curl`, with documented built-in alternatives (`vi`, `ash`, `tree.sh`).
+- **Filesystem & Text Operations:**
+  - `docs/cli/file-operations.md`: Directory nesting, file creation, append, copy, move, rename, delete, and text processing with `grep`, `sed`, `awk`, `cut`, `sort`, `uniq`.
+  - `guest/scripts/filesystem/file-operations.sh` & `tree.sh`: Practical demonstration scripts.
+- **Process Management & Signals:**
+  - `docs/cli/process-management.md`: Process states in `/proc`, background execution (`&`), signal delivery (`kill -15`), wait status, and process table reaping.
+  - `guest/scripts/process/process-lifecycle.sh`: Process lifecycle demonstration script.
+- **Permissions & Security:**
+  - `docs/cli/permissions.md`: DAC permission bits, umask `022`, kernel execute bit enforcement, and sudo privilege escalation.
+  - `guest/scripts/permissions/permission-demo.sh`: Executable permission demonstration script.
+- **Shell Scripting Suite:**
+  - `docs/cli/shell-scripting.md`: BusyBox `ash` language specification, POSIX standards, and avoided bashisms.
+  - `guest/scripts/scripting/`: Modular scripts demonstrating variables, conditions, loops, functions, arguments, and signal traps.
+- **Automated Guest Verification Harness:**
+  - `tests/boot/test-phase5-verification.mjs`: Automated 12-stage test runner executing genuine commands in the Linux VM.
+  - `docs/cli/verification-results.md`: Complete captured screen buffer evidence and metrics (12/12 stages passed).
+  - `docs/implementation/phase-5-audit.md` & `phase-5-implementation-report.md`.
+- **Security & Unit Tests:**
+  - `ALLOWED_GUEST_APPS` allowlist and `launchRegisteredGuestApp()` added to `EmulatorManager.ts`.
+  - `tests/cli/guestScripts.test.ts`: 3 unit tests verifying POSIX compliance, no bashisms, and marker delimiters.
+  - `tests/emulator/EmulatorManager.test.ts`: Added tests for allowlist and invalid command rejection.
+  - Total Vitest tests expanded to 32 passed across 6 test suites.
+
+### Verified
+- **12/12 Stages Passed in Real Linux VM:** All CLI, filesystem, process, permission, and scripting capabilities verified inside the guest kernel without simulation.
+- **Production Build:** 0 TypeScript compilation errors; production bundle built cleanly in 4.35s.
 
 ### Added
 - **FLWM Window Manager Configuration:**

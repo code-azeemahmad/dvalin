@@ -344,9 +344,31 @@ export class EmulatorManager {
     this.addLog('serial', `> ${cmd}`);
   }
 
+  public static readonly ALLOWED_GUEST_APPS: Record<string, string> = {
+    'aterm': 'DISPLAY=:0 aterm &',
+    'editor': 'DISPLAY=:0 editor &',
+    'cpanel': 'DISPLAY=:0 cpanel &',
+    'apps': 'DISPLAY=:0 apps &',
+    'mnttool': 'DISPLAY=:0 mnttool &',
+    'services': 'DISPLAY=:0 services &',
+    'flrun': 'DISPLAY=:0 flrun &',
+  };
+
   public sendText(text: string): void {
     if (!this.v86Instance) return;
     this.v86Instance.keyboard_send_text(text);
+  }
+
+  /**
+   * Securely launches a registered guest application by key using the allowlist.
+   */
+  public launchRegisteredGuestApp(appKey: string): boolean {
+    const cmd = EmulatorManager.ALLOWED_GUEST_APPS[appKey];
+    if (!cmd) {
+      this.addLog('warn', `Untrusted or unlisted guest application key: '${appKey}'.`);
+      return false;
+    }
+    return this.launchGuestApp(cmd);
   }
 
   /**
@@ -354,6 +376,10 @@ export class EmulatorManager {
    * If the emulator is running, the command is forwarded to the guest environment.
    */
   public launchGuestApp(command: string): boolean {
+    if (!command || typeof command !== 'string' || !command.trim()) {
+      this.addLog('warn', 'Cannot launch empty guest application command.');
+      return false;
+    }
     if (this.status !== 'running' || !this.v86Instance) {
       this.addLog('warn', `Cannot launch guest application '${command}': emulator is in status '${this.status}'.`);
       return false;

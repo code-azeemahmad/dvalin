@@ -40,16 +40,17 @@ The project is divided into eight phases. Each phase must produce a testable del
 
 **Deliverable:** usable guest desktop.
 
-## Phase 5 — CLI and OS capabilities
-- Verify BusyBox command inventory.
-- Add/test utilities as appropriate.
-- Test file operations.
-- Test process management.
-- Test permissions and shell scripting.
+## Phase 5 — CLI and OS capabilities [COMPLETE & VERIFIED]
+- Verify BusyBox command inventory (221 compiled applets, 234 symlinks).
+- Add/test utilities as appropriate (tree.sh, vi, less, which, unzip).
+- Test file operations (creation, append, copy, move, rename, delete, text pipelines).
+- Test process management (background jobs &, ps, signals, wait, reaping).
+- Test permissions and shell scripting (chmod, umask, execute bit enforcement, ash language constructs).
+- Automated guest verification harness (12/12 stages passed in real VM).
 
-**Deliverable:** verified guest CLI capabilities.
+**Deliverable:** verified guest CLI capabilities (documented in `docs/cli/`).
 
-## Phase 6 — Persistence and system management
+## Phase 6 — Persistence and system management [READY]
 - Implement snapshots.
 - Implement restore.
 - Evaluate persistent disk or 9p.
