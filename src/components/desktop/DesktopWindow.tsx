@@ -11,6 +11,13 @@ import {
   Settings,
   Info,
   Layers,
+  FileText,
+  Folder,
+  Calculator,
+  Sliders,
+  MessageSquare,
+  Globe,
+  Trash2,
 } from 'lucide-react';
 
 interface DesktopWindowProps {
@@ -113,6 +120,20 @@ export const DesktopWindow: React.FC<DesktopWindowProps> = ({
         return <Settings className="w-3.5 h-3.5 text-indigo-400" />;
       case 'Info':
         return <Info className="w-3.5 h-3.5 text-amber-400" />;
+      case 'FileText':
+        return <FileText className="w-3.5 h-3.5 text-amber-400" />;
+      case 'Folder':
+        return <Folder className="w-3.5 h-3.5 text-sky-400" />;
+      case 'Calculator':
+        return <Calculator className="w-3.5 h-3.5 text-amber-500" />;
+      case 'Sliders':
+        return <Sliders className="w-3.5 h-3.5 text-purple-400" />;
+      case 'MessageSquare':
+        return <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />;
+      case 'Globe':
+        return <Globe className="w-3.5 h-3.5 text-sky-400" />;
+      case 'Trash2':
+        return <Trash2 className="w-3.5 h-3.5 text-rose-400" />;
       default:
         return <Layers className="w-3.5 h-3.5 text-slate-400" />;
     }

@@ -69,8 +69,18 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P7-05 Evaluate networking with security review — Verified (Hardware/kernel device nodes lab, Linux boot pipeline, and host vs guest telemetry monitoring in `docs/experiments/`)
 
 ## Phase 8 — Release
-- [x] P8-01 Run regression suite — Verified (71 unit tests passing in Vitest, 0 TypeScript compiler errors, clean production bundle, live guest harnesses passing)
+- [x] P8-01 Run regression suite — Verified (81 unit tests passing in Vitest, 0 TypeScript compiler errors, clean production bundle, live guest harnesses passing)
 - [x] P8-02 Test supported browsers — Verified (Evaluated Chromium, Gecko, WebKit capabilities, COOP/COEP isolation, and storage compatibility in `docs/release/BROWSER_COMPATIBILITY.md`)
 - [x] P8-03 Verify production asset loading and boot — Verified (WASM, ISO, SeaBIOS, VGABIOS verified via `tests/e2e/test-production-server.mjs`)
 - [x] P8-04 Deploy static application — Verified (Deployment configurations created for Cloudflare Pages, Netlify, Docker/Nginx, local preview verified)
 - [x] P8-05 Prepare instructor demonstration — Verified (Authored `USER_GUIDE.md`, `TROUBLESHOOTING.md`, `RELEASE_NOTES.md`, and updated `README.md`)
+
+## Retro Desktop UI Redesign (Reference Images Alignment)
+- [x] UI-01 Initial Booting Screen — Verified (`BootingScreen.tsx` with pixel logo, system notices, progress bar, fullscreen toggle)
+- [x] UI-02 User Sign-in Screen — Verified (`UserSignInScreen.tsx` with blurred sunset wallpaper, Dash doodle avatar, password pill, comic speech bubble)
+- [x] UI-03 Top Menu Bar — Verified (`TopMenuBar.tsx` with Berry logo, File/Edit/View menus, Wi-Fi, battery, live clock)
+- [x] UI-04 Retro Desktop Icons — Verified (`RetroDesktopIcons.tsx` with ReadMe.txt, Calculator, Dash's Journal, archive, My Socials, Community)
+- [x] UI-05 Floating Bottom Dock — Verified (`RetroDock.tsx` with File Explorer, Browser, Text Editor, Messages with badge '6', Terminal, Trash)
+- [x] UI-06 Desktop Windowed Apps — Verified (`TextEditorApp`, `CalculatorApp`, `MessagesApp`, `FileExplorerApp`, `ControlPanelApp`, `BrowserApp`, `TrashApp`)
+- [x] UI-07 Removal of Legacy Host Chrome — Verified (Removed old left sidebar panel and old bottom taskbar with "Start" button)
+- [x] UI-08 Unit & Component Test Suite — Verified (10 tests in `retroDesktop.test.tsx`, all 81 project tests passing)
