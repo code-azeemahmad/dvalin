@@ -14,6 +14,8 @@ import {
   Maximize2,
   Cpu,
   Layers,
+  FileText,
+  Sliders,
 } from 'lucide-react';
 
 interface StartMenuProps {
@@ -42,6 +44,12 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleLaunch = (appId: string) => {
+    const app = APP_REGISTRY[appId];
+    if (app?.target === 'guest') {
+      openWindow(appId);
+      onClose();
+      return;
+    }
     const existing = windows.find((w) => w.appId === appId && w.isOpen);
     if (existing) {
       focusWindow(existing.id);
@@ -62,10 +70,14 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
         return <Monitor className="w-4 h-4 text-sky-400" />;
       case 'Terminal':
         return <Terminal className="w-4 h-4 text-emerald-400" />;
+      case 'FileText':
+        return <FileText className="w-4 h-4 text-amber-400" />;
+      case 'Sliders':
+        return <Sliders className="w-4 h-4 text-purple-400" />;
       case 'Settings':
         return <Settings className="w-4 h-4 text-indigo-400" />;
       case 'Info':
-        return <Info className="w-4 h-4 text-amber-400" />;
+        return <Info className="w-4 h-4 text-cyan-400" />;
       default:
         return <Layers className="w-4 h-4 text-slate-400" />;
     }
@@ -118,7 +130,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
             <div className="w-8 h-8 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0 group-hover:border-slate-600">
               {getIcon(app.iconName)}
             </div>
-            <div className="truncate">
+            <div className="truncate flex-1 min-w-0">
               <div className="text-xs font-medium text-slate-200 group-hover:text-white truncate">
                 {app.title}
               </div>
@@ -126,6 +138,15 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
                 {app.description}
               </div>
             </div>
+            {app.target === 'guest' ? (
+              <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-sky-950/80 border border-sky-850 text-sky-400 font-mono">
+                Guest
+              </span>
+            ) : (
+              <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700/80 text-slate-400 font-mono">
+                Host
+              </span>
+            )}
           </button>
         ))}
 

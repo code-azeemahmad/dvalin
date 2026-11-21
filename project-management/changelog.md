@@ -2,7 +2,42 @@
 
 Record meaningful project changes. Keep newest entries at the top.
 
-## [0.3.0] — 2026-11-21 — Phase 3: Desktop Environment & User Experience
+## [0.4.0] — 2026-11-21 — Phase 4: Guest Desktop & Application Integration
+
+### Added
+- **FLWM Window Manager Configuration:**
+  - `docs/emulator/flwm-configuration.md`: Comprehensive documentation on FLWM vertical left title bars, title bar color configuration (`FLWM_TITLEBAR_COLOR="58:7D:AA"`), `.wmx` root menu hierarchy, and keyboard shortcuts.
+- **Guest Application Catalog & Inventory:**
+  - `docs/emulator/guest-application-inventory.md`: Complete profile of native Tiny Core Linux 17.1 applications unpacked and verified from `TinyCore-17.1.iso` (`aterm`, `editor`, `cpanel`, `apps`, `mnttool`, `services`, `flrun`).
+  - Typed application targets: updated `AppDefinition` in `src/features/desktop/types.ts` with `target: 'host' | 'guest'`, `guestCommand`, and `requiresGuestRunning`.
+  - Registered genuine guest applications in `src/features/desktop/appRegistry.ts`: `guest-aterm`, `guest-editor`, and `guest-cpanel`.
+- **Host-to-Guest Command Channel & Routing:**
+  - `EmulatorManager.launchGuestApp(command)`: Dispatches command strings to the active Linux guest environment without host evaluation or simulation.
+  - `WindowContext.openWindow(appId)`: Enhanced to surface the `linux-desktop` window and dispatch the launch command when a guest application is triggered.
+  - `StartMenu.tsx` & `DesktopIcons.tsx`: Added `Guest` and `Host` badges, plus dedicated `FileText` and `Sliders` application icons.
+  - `docs/emulator/guest-command-channel.md`: Technical documentation of dual-channel architecture (PS/2 keyboard vs COM1 serial) and security boundaries.
+- **Educational OS Lab Execution Foundation:**
+  - `guest/scripts/diagnostics/`: Production-ready shell probes (`sysinfo.sh`, `procs.sh`, `meminfo.sh`, `fsinfo.sh`) with delimited output markers.
+  - `guest/scripts/labs/`: Educational lab scripts (`lab1-process-lifecycle.sh`, `lab2-memory-paging.sh`) for kernel concept demonstrations.
+  - `guest/config/labs.json`: Structured manifest defining lab metadata, prerequisites, and milestone validation tokens.
+  - `docs/labs/guest-lab-execution-architecture.md`: Architecture guide for the Phase 5 automated lab runner.
+- **v86 Snapshot Persistence Research:**
+  - Prototype verified in Node.js against `v86` library (`save_state()` and `restore_state()`).
+  - Captured ~3.31 MB memory snapshot and established hardware parity restoration rules.
+  - Added `saveState()` and `restoreState()` methods to `EmulatorManager.ts`.
+  - `docs/architecture/v86-snapshot-persistence-design.md`: Storage architecture, IndexedDB design, and fast-boot checkpoint blueprint for Phase 6.
+- **Automated Tests:**
+  - `tests/desktop/appRegistry.test.ts`: 3 unit tests verifying app targets, metadata, and wallpaper configurations.
+  - `tests/labs/labScripts.test.ts`: 3 tests validating lab manifest structure, script existence, POSIX shebangs, and validation tokens.
+  - Added test cases to `tests/emulator/EmulatorManager.test.ts` and `tests/desktop/WindowContext.test.tsx`.
+  - Total automated tests expanded to 28 passing tests across 5 test suites.
+
+### Verified
+- **Host-to-Guest Launch Routing:** Verified that launching guest apps focuses the `linux-desktop` window and forwards genuine launch commands.
+- **Guest Extensions & Executables:** Directly verified all 27 SquashFS packages in `TinyCore-17.1.iso` CDE directory.
+- **Snapshot Prototype:** Verified that saving state and restoring with matching hardware parameters succeeds cleanly.
+- **Test Suite:** 28/28 tests passing (100% pass rate) in Vitest.
+- **Production Build:** 0 TypeScript compilation errors; Vite production bundle built in 3.86s.
 
 ### Added
 - **Desktop Shell & Workspace:**

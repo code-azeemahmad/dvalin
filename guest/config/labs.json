@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "labs": [
+    {
+      "id": "lab1-process-lifecycle",
+      "title": "Lab 1: Process Lifecycle, Signals & Process Table",
+      "category": "Processes",
+      "description": "Inspect process hierarchy, background job control, PID tracking in /proc, signal delivery (SIGTERM), and process reaping.",
+      "scriptPath": "guest/scripts/labs/lab1-process-lifecycle.sh",
+      "estimatedDurationMinutes": 10,
+      "expectedTokens": [
+        "LAB1_START: Process Lifecycle",
+        "Child spawned with PID",
+        "Sending SIGTERM",
+        "PASS: Process",
+        "LAB1_COMPLETE"
+      ]
+    },
+    {
+      "id": "lab2-memory-paging",
+      "title": "Lab 2: Virtual Memory, Pages & RAM Disk",
+      "category": "Memory Management",
+      "description": "Explore architecture page sizes, kernel memory accounting in /proc/meminfo, dynamic tmpfs memory allocation, and cleanup.",
+      "scriptPath": "guest/scripts/labs/lab2-memory-paging.sh",
+      "estimatedDurationMinutes": 15,
+      "expectedTokens": [
+        "LAB2_START",
+        "System Page Size:",
+        "Allocated buffer size:",
+        "LAB2_COMPLETE"
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "diag-sysinfo",
+      "title": "Hardware & Kernel Summary",
+      "scriptPath": "guest/scripts/diagnostics/sysinfo.sh"
+    },
+    {
+      "id": "diag-procs",
+      "title": "Process Tree & Top Summary",
+      "scriptPath": "guest/scripts/diagnostics/procs.sh"
+    },
+    {
+      "id": "diag-meminfo",
+      "title": "Memory Breakdown & Free Accounting",
+      "scriptPath": "guest/scripts/diagnostics/meminfo.sh"
+    },
+    {
+      "id": "diag-fsinfo",
+      "title": "Filesystem Hierarchy & Loop Mounts",
+      "scriptPath": "guest/scripts/diagnostics/fsinfo.sh"
+    }
+  ]
+}

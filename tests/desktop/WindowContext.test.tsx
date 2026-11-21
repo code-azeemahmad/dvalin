@@ -137,4 +137,43 @@ describe('WindowContext State Manager', () => {
     expect(updated.size.width).toBe(900);
     expect(updated.size.height).toBe(700);
   });
+
+  it('routes guest application launch to linux-desktop window and dispatches guest command', () => {
+    let result: any;
+    function Consumer() {
+      result = useWindowManager();
+      return null;
+    }
+    const container = document.createElement('div');
+    const { createRoot } = require('react-dom/client');
+    const root = createRoot(container);
+    act(() => {
+      root.render(
+        <WindowProvider>
+          <Consumer />
+        </WindowProvider>
+      );
+    });
+
+    const linuxWin = result.windows.find((w: any) => w.appId === 'linux-desktop');
+
+    // Minimize linux-desktop first
+    act(() => {
+      result.minimizeWindow(linuxWin.id);
+    });
+    let updated = result.windows.find((w: any) => w.id === linuxWin.id);
+    expect(updated.isMinimized).toBe(true);
+
+    // Launch a guest application (guest-aterm)
+    act(() => {
+      const targetId = result.openWindow('guest-aterm');
+      expect(targetId).toBe(linuxWin.id);
+    });
+
+    // linux-desktop should now be restored and focused
+    updated = result.windows.find((w: any) => w.id === linuxWin.id);
+    expect(updated.isOpen).toBe(true);
+    expect(updated.isMinimized).toBe(false);
+    expect(updated.isFocused).toBe(true);
+  });
 });

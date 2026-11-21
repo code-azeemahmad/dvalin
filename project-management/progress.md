@@ -1,26 +1,73 @@
 # WebOS Progress Log
 
 ## Current Status
-**Phase 1, Phase 2 & Phase 3 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, and permanent DOM canvas attachment.
+**Phases 1, 2, 3 & 4 Verified:** Full browser-hosted desktop operating system environment implemented and verified. Features genuine 32-bit x86 Linux guest virtual machine inside v86 (FLWM + Xvesa graphical desktop and BusyBox ash shell), complete host window manager, bottom taskbar, application launcher, real guest terminal bridge, persistent settings, permanent DOM canvas attachment, guest application catalog (`aterm`, `editor`, `cpanel`), host-to-guest command dispatch, educational diagnostic and lab execution suite (`guest/scripts/`), and verified memory snapshot persistence prototype.
 
 ## Current Milestone
-**Phase 3 Complete / Phase 4 Guest Desktop Application Integration Ready**
+**Phase 4 Complete / Phase 5 Guest Capabilities & Educational OS Labs Ready**
 
-### Exit Criteria Status for Phase 3:
-- [x] Complete desktop shell workspace with dynamic wallpapers and responsive layout.
-- [x] Host window manager supporting dragging, resizing, minimizing, maximizing, restoring, and z-index focus.
-- [x] Bottom taskbar with Start button, running window tabs, system tray, real-time clock, and VM status badge.
-- [x] Start Menu application launcher with search filtering and instant VM controls.
-- [x] Permanent DOM attachment pattern preserving live v86 canvas during window minimization and close.
-- [x] Real Linux Terminal app executing actual commands inside Tiny Core Linux with history and zero fake output.
-- [x] Host System Settings app with persistent wallpaper choices and display scaling in `localStorage`.
-- [x] System About app with architecture diagram, specifications, and open-source license attribution.
-- [x] 19 automated tests passing across 3 test suites (`EmulatorManager`, `WindowContext`, `useSettings`).
+### Exit Criteria Status for Phase 4:
+- [x] Initial Phase 4 audit and guest package inspection (`project-management/phase-4-initial-audit.md`).
+- [x] FLWM window manager architecture and configuration documented (`docs/emulator/flwm-configuration.md`).
+- [x] Genuine Tiny Core application inventory cataloged (`docs/emulator/guest-application-inventory.md`).
+- [x] Host-to-guest command dispatch channel implemented (`EmulatorManager.launchGuestApp`) and documented (`docs/emulator/guest-command-channel.md`).
+- [x] Application registry updated with `target: 'host' | 'guest'` demarcation and guest launch commands (`guest-aterm`, `guest-editor`, `guest-cpanel`).
+- [x] Start Menu and Desktop Icons updated with guest/host category badges and dedicated app icons (`FileText`, `Sliders`).
+- [x] Window Manager routing: launching a guest application surfaces the Linux Desktop window and dispatches the execution command to the guest.
+- [x] Educational lab and diagnostic scripts created in `guest/scripts/diagnostics/` and `guest/scripts/labs/` with machine-parseable delimiters.
+- [x] Lab manifest created in `guest/config/labs.json` and execution architecture documented in `docs/labs/guest-lab-execution-architecture.md`.
+- [x] v86 memory snapshot serialization and restoration verified in prototype, with findings documented in `docs/architecture/v86-snapshot-persistence-design.md`.
+- [x] 28 automated tests passing across 5 test suites (`EmulatorManager`, `WindowContext`, `appRegistry`, `useSettings`, `labScripts`).
 - [x] 0 TypeScript compilation errors and clean production build.
 
 ---
 
 ## Progress Entries
+
+### 2026-11-21 — Phase 4 Execution: Guest Desktop & Application Integration
+- **Phase/task:** Phase 4 (FLWM Configuration, Guest Application Inventory, Host-to-Guest Command Channel, Educational Lab Foundations, Snapshot Persistence Research).
+- **Status:** Verified (All Phase 4 acceptance criteria met with recorded evidence).
+- **Work completed:**
+  1. Authored Phase 4 audit report (`project-management/phase-4-initial-audit.md`).
+  2. Directly inspected `TinyCore-17.1.iso` SquashFS extensions and verified exact binaries for `aterm`, `editor`, `cpanel`, `apps`, `mnttool`, `services`, `flrun`, and `wbar`.
+  3. Documented FLWM window manager architecture, left-strip vertical title bars, `.wmx` menu generation, and shortcuts in `docs/emulator/flwm-configuration.md`.
+  4. Documented genuine guest application profiles, desktop entries, and dependencies in `docs/emulator/guest-application-inventory.md`.
+  5. Implemented host-to-guest command dispatch channel via `EmulatorManager.launchGuestApp()`, updating `types.ts`, `appRegistry.ts`, and `WindowContext.tsx` to route guest application clicks to the live guest display.
+  6. Updated `StartMenu.tsx` and `DesktopIcons.tsx` with guest/host indicators and `FileText`/`Sliders` icons.
+  7. Authored `docs/emulator/guest-command-channel.md`.
+  8. Created diagnostic suite in `guest/scripts/diagnostics/` (`sysinfo.sh`, `procs.sh`, `meminfo.sh`, `fsinfo.sh`) with delimited output markers.
+  9. Created educational OS labs in `guest/scripts/labs/` (`lab1-process-lifecycle.sh`, `lab2-memory-paging.sh`) and manifest `guest/config/labs.json`.
+  10. Authored `docs/labs/guest-lab-execution-architecture.md`.
+  11. Prototyped and verified `v86` memory snapshot save and restore against `libv86.mjs`; identified hardware parity constraints and documented findings in `docs/architecture/v86-snapshot-persistence-design.md`.
+  12. Added `saveState()` and `restoreState()` methods to `EmulatorManager.ts`.
+  13. Created unit tests: `tests/desktop/appRegistry.test.ts` (3 tests) and `tests/labs/labScripts.test.ts` (3 tests); added tests to `EmulatorManager.test.ts` (+2 tests) and `WindowContext.test.tsx` (+1 test).
+  14. Authored `docs/testing/phase-4-verification.md` and `project-management/phase-4-implementation-report.md`.
+- **Files changed / created:**
+  - `src/features/desktop/types.ts`
+  - `src/features/desktop/appRegistry.ts`
+  - `src/features/emulator/EmulatorManager.ts`
+  - `src/features/desktop/WindowContext.tsx`
+  - `src/components/desktop/StartMenu.tsx`
+  - `src/components/desktop/DesktopIcons.tsx`
+  - `guest/scripts/diagnostics/sysinfo.sh`
+  - `guest/scripts/diagnostics/procs.sh`
+  - `guest/scripts/diagnostics/meminfo.sh`
+  - `guest/scripts/diagnostics/fsinfo.sh`
+  - `guest/scripts/labs/lab1-process-lifecycle.sh`
+  - `guest/scripts/labs/lab2-memory-paging.sh`
+  - `guest/config/labs.json`
+  - `docs/emulator/flwm-configuration.md`
+  - `docs/emulator/guest-application-inventory.md`
+  - `docs/emulator/guest-command-channel.md`
+  - `docs/labs/guest-lab-execution-architecture.md`
+  - `docs/architecture/v86-snapshot-persistence-design.md`
+  - `docs/testing/phase-4-verification.md`
+  - `project-management/phase-4-initial-audit.md`
+  - `project-management/phase-4-implementation-report.md`
+  - `tests/desktop/appRegistry.test.ts`
+  - `tests/labs/labScripts.test.ts`
+  - `tests/emulator/EmulatorManager.test.ts`
+  - `tests/desktop/WindowContext.test.tsx`
 
 ### 2026-11-21 — Phase 3 Execution: Desktop Environment & User Experience
 - **Phase/task:** Phase 3 (Host Desktop Shell, Window Manager, Terminal, Launcher & Settings).

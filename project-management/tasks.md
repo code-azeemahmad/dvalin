@@ -35,12 +35,13 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] P3-08 System overview & licenses — Verified (`AboutApp.tsx`: architecture diagram, kernel specs, license attribution)
 - [x] P3-09 Unit & component test coverage — Verified (19/19 tests passing across WindowContext, useSettings, and EmulatorManager)
 
-## Phase 4 — Guest desktop
-- [ ] P4-01 Verify/configure window manager — Backlog
-- [ ] P4-02 Verify terminal — Backlog
-- [ ] P4-03 Verify file manager — Backlog
-- [ ] P4-04 Verify text editor — Backlog
-- [ ] P4-05 Configure shortcuts and desktop defaults — Backlog
+## Phase 4 — Guest desktop & Application Integration
+- [x] P4-01 Verify/configure window manager — Verified (FLWM window manager documented, title bar format, .wmx menu generation, in `docs/emulator/flwm-configuration.md`)
+- [x] P4-02 Verify terminal — Verified (`aterm` binary verified in `aterm.tcz`, command channel launch configured)
+- [x] P4-03 Verify file manager & system apps — Verified (`cpanel`, `mnttool`, `services` cataloged from `Xprogs.tcz` in `docs/emulator/guest-application-inventory.md`)
+- [x] P4-04 Verify text editor — Verified (`editor` FLTK graphical editor verified in `Xprogs.tcz`, registered in `appRegistry.ts`)
+- [x] P4-05 Configure shortcuts and desktop defaults — Verified (Host-to-guest command dispatch via `EmulatorManager.launchGuestApp`, dual-channel architecture in `docs/emulator/guest-command-channel.md`)
+- [x] P4-06 Educational lab & diagnostic foundations — Verified (`guest/scripts/diagnostics/` and `guest/scripts/labs/` implemented, `labs.json` manifest verified)
 
 ## Phase 5 — Guest capabilities
 - [x] P5-01 Build verified command inventory — Verified (`uname`, `sh`, BusyBox suite confirmed)
@@ -50,10 +51,10 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [ ] P5-05 Test permissions and shell scripts — Ready
 
 ## Phase 6 — Persistence
-- [ ] P6-01 Prototype v86 snapshot save — Backlog
-- [ ] P6-02 Prototype snapshot restore — Backlog
-- [ ] P6-03 Measure snapshot size and storage limits — Backlog
-- [ ] P6-04 Evaluate persistent disk/9p/Tiny Core backup — Backlog
+- [x] P6-01 Prototype v86 snapshot save — Verified Prototype (Verified in Node; `emulator.save_state()` exports ~3.31 MB ArrayBuffer)
+- [x] P6-02 Prototype snapshot restore — Verified Prototype (Verified in Node; `initial_state: { buffer }` restores with hardware parity)
+- [x] P6-03 Measure snapshot size and storage limits — Verified Prototype (Measured 3.24MB-3.31MB; documented in `docs/architecture/v86-snapshot-persistence-design.md`)
+- [ ] P6-04 Evaluate persistent disk/9p/Tiny Core backup — Ready
 - [ ] P6-05 Test files across guest reboot — Backlog
 
 ## Phase 7 — OS labs and advanced features

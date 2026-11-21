@@ -26,6 +26,7 @@ export interface WindowState {
 }
 
 export type AppCategory = 'system' | 'guest' | 'tools';
+export type AppTarget = 'host' | 'guest';
 
 export interface AppDefinition {
   id: string;
@@ -36,6 +37,9 @@ export interface AppDefinition {
   defaultSize: WindowSize;
   defaultPosition?: WindowPosition;
   isSingleton?: boolean;
+  target?: AppTarget;
+  guestCommand?: string;
+  requiresGuestRunning?: boolean;
 }
 
 export type WallpaperId = 'slate-mesh' | 'deep-cosmos' | 'cyber-terminal' | 'aurora-borealis';

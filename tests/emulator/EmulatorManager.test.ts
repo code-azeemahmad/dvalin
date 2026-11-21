@@ -123,4 +123,22 @@ describe('EmulatorManager Lifecycle Service', () => {
     expect(manager.getStatus()).toBe('idle');
     expect(manager.getLastError()).toBeNull();
   });
+
+  it('rejects launchGuestApp gracefully when emulator is not running', () => {
+    const manager = EmulatorManager.getInstance();
+    expect(manager.getStatus()).toBe('idle');
+    const result = manager.launchGuestApp('DISPLAY=:0 aterm &');
+    expect(result).toBe(false);
+    const logs = manager.getLogs();
+    expect(logs.some((l) => l.level === 'warn' && l.message.includes('Cannot launch guest application'))).toBe(true);
+  });
+
+  it('handles saveState and restoreState gracefully when inactive', async () => {
+    const manager = EmulatorManager.getInstance();
+    const state = await manager.saveState();
+    expect(state).toBeNull();
+
+    const restored = await manager.restoreState(new ArrayBuffer(1024));
+    expect(restored).toBe(false);
+  });
 });

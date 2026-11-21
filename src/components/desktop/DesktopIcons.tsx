@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
 import { APP_REGISTRY } from '@/features/desktop/appRegistry';
-import { Monitor, Terminal, Settings, Info } from 'lucide-react';
+import { Monitor, Terminal, Settings, Info, FileText, Sliders } from 'lucide-react';
 
 export const DesktopIcons: React.FC = () => {
   const { openWindow, focusWindow, windows } = useWindowManager();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const handleLaunch = (appId: string) => {
+    const app = APP_REGISTRY[appId];
+    if (app?.target === 'guest') {
+      openWindow(appId);
+      return;
+    }
     const existing = windows.find((w) => w.appId === appId && w.isOpen);
     if (existing) {
       focusWindow(existing.id);
@@ -22,10 +27,14 @@ export const DesktopIcons: React.FC = () => {
         return <Monitor className="w-6 h-6 text-sky-400 group-hover:scale-110 transition-transform" />;
       case 'Terminal':
         return <Terminal className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform" />;
+      case 'FileText':
+        return <FileText className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />;
+      case 'Sliders':
+        return <Sliders className="w-6 h-6 text-purple-400 group-hover:scale-110 transition-transform" />;
       case 'Settings':
         return <Settings className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />;
       case 'Info':
-        return <Info className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />;
+        return <Info className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />;
       default:
         return <Monitor className="w-6 h-6 text-slate-400" />;
     }

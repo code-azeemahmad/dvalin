@@ -349,6 +349,65 @@ export class EmulatorManager {
     this.v86Instance.keyboard_send_text(text);
   }
 
+  /**
+   * Dispatches an application launch command to the genuine Linux guest.
+   * If the emulator is running, the command is forwarded to the guest environment.
+   */
+  public launchGuestApp(command: string): boolean {
+    if (this.status !== 'running' || !this.v86Instance) {
+      this.addLog('warn', `Cannot launch guest application '${command}': emulator is in status '${this.status}'.`);
+      return false;
+    }
+    const fullCmd = command.endsWith('\n') ? command : command + '\n';
+    try {
+      this.v86Instance.keyboard_send_text(fullCmd);
+      this.addLog('info', `Dispatched guest application launch command: ${command.trim()}`);
+      return true;
+    } catch (e: any) {
+      this.addLog('warn', `Failed to dispatch guest command: ${e?.message || e}`);
+      return false;
+    }
+  }
+
+  /**
+   * Captures an in-memory snapshot of the current virtual machine state.
+   * Returns an ArrayBuffer containing CPU registers, RAM, device states, and instruction counter.
+   */
+  public async saveState(): Promise<ArrayBuffer | null> {
+    if (!this.v86Instance || typeof this.v86Instance.save_state !== 'function') {
+      this.addLog('warn', 'saveState failed: emulator is not active.');
+      return null;
+    }
+    try {
+      this.addLog('info', 'Serializing virtual machine snapshot state...');
+      const state = await this.v86Instance.save_state();
+      this.addLog('info', `Snapshot state saved successfully (${state.byteLength} bytes).`);
+      return state;
+    } catch (e: any) {
+      this.addLog('error', `Failed to save virtual machine state: ${e?.message || e}`);
+      return null;
+    }
+  }
+
+  /**
+   * Restores virtual machine state from an in-memory snapshot ArrayBuffer.
+   */
+  public async restoreState(state: ArrayBuffer): Promise<boolean> {
+    if (!this.v86Instance || typeof this.v86Instance.restore_state !== 'function') {
+      this.addLog('warn', 'restoreState failed: emulator is not active.');
+      return false;
+    }
+    try {
+      this.addLog('info', `Restoring virtual machine state from snapshot (${state.byteLength} bytes)...`);
+      await this.v86Instance.restore_state(state);
+      this.addLog('info', 'Virtual machine snapshot restored successfully.');
+      return true;
+    } catch (e: any) {
+      this.addLog('error', `Failed to restore virtual machine state: ${e?.message || e}`);
+      return false;
+    }
+  }
+
   public lockMouse(): void {
     if (this.v86Instance && typeof this.v86Instance.lock_mouse === 'function') {
       try {

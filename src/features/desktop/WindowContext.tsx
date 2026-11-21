@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { WindowState } from './types';
 import { APP_REGISTRY } from './appRegistry';
+import { EmulatorManager } from '@/features/emulator/EmulatorManager';
 
 interface WindowContextType {
   windows: WindowState[];
@@ -71,6 +72,32 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (!app) {
         console.warn(`App ID "${appId}" not found in APP_REGISTRY`);
         return '';
+      }
+
+      // If this is a guest application, ensure the Linux Desktop window is focused and dispatch the guest command
+      if (app.target === 'guest') {
+        const desktopWindow = windows.find((w) => w.appId === 'linux-desktop');
+        if (desktopWindow) {
+          setWindows((prev) =>
+            prev.map((win) => {
+              if (win.id === desktopWindow.id) {
+                return {
+                  ...win,
+                  isOpen: true,
+                  isMinimized: false,
+                  isFocused: true,
+                  zIndex: ++zIndexCounter.current,
+                };
+              }
+              return win.isFocused ? { ...win, isFocused: false } : win;
+            })
+          );
+          setActiveWindowId(desktopWindow.id);
+        }
+        if (app.guestCommand) {
+          EmulatorManager.getInstance().launchGuestApp(app.guestCommand);
+        }
+        return desktopWindow ? desktopWindow.id : '';
       }
 
       // Check if singleton app already has a window
