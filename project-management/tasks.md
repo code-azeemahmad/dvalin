@@ -86,3 +86,4 @@ Statuses: `Backlog`, `Ready`, `In Progress`, `Blocked`, `Done`, `Verified`.
 - [x] UI-08 Unit & Component Test Suite — Verified (14 tests in `retroDesktop.test.tsx`, all 85 project tests passing)
 - [x] UI-09 Wallpaper Gallery & Double-Click Setting — Verified (Dynamic wallpaper picker in File Explorer with real-time reactive desktop wallpaper switching)
 - [x] UI-10 Linux Terminal Overhaul — Verified (Removed redundant top info bar and clear delete button; implemented dynamic prompt `tc@box:{cwd}$`, directory navigation `cd`, `cd /`, `cd ..`, and common command execution `pwd`, `ps`, `uname`, `whoami`, `ls`, `cat`, etc.)
+- [x] UI-11 Live Web Browser Surfing — Verified (`BrowserApp.tsx` live interactive web surfing inside HTML5 iframe with FrogFind search engine, Wikipedia, Hacker News, Tiny Core web portal, weather, history navigation, and direct URL entry)
