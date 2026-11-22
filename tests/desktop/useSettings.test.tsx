@@ -22,7 +22,7 @@ describe('useSettings Hook and Persistence', () => {
       root.render(<Consumer />);
     });
 
-    expect(hookValue.settings.wallpaper).toBe('slate-mesh');
+    expect(hookValue.settings.wallpaper).toBe('/wallpapers/blue_dragon_wallpaper_1920x1080_v3.png');
     expect(hookValue.settings.displayScale).toBe(1);
     expect(hookValue.settings.theme).toBe('dark');
   });
@@ -69,7 +69,7 @@ describe('useSettings Hook and Persistence', () => {
     act(() => {
       hookValue.resetSettings();
     });
-    expect(hookValue.settings.wallpaper).toBe('slate-mesh');
+    expect(hookValue.settings.wallpaper).toBe('/wallpapers/blue_dragon_wallpaper_1920x1080_v3.png');
     expect(hookValue.settings.displayScale).toBe(1);
   });
 });

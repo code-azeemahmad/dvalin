@@ -4,7 +4,7 @@ import { HostSettings, WallpaperId } from '../desktop/types';
 const STORAGE_KEY = 'webos_settings_v1';
 
 const DEFAULT_SETTINGS: HostSettings = {
-  wallpaper: 'slate-mesh',
+  wallpaper: '/wallpapers/blue_dragon_wallpaper_1920x1080_v3.png',
   displayScale: 1,
   theme: 'dark',
   autoCaptureMouse: true,

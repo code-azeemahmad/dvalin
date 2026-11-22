@@ -26,7 +26,16 @@ import { LinuxDesktopApp } from '@/components/applications/LinuxDesktopApp';
 import { resolveAssetPath } from '@/utils/assetPath';
 
 const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefined => {
-  if (!wallpaper || wallpaper === 'slate-mesh') {
+  if (!wallpaper) {
+    return {
+      backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.png')}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    };
+  }
+
+  if (wallpaper === 'slate-mesh') {
     return {
       backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.png')}')`,
       backgroundSize: 'cover',

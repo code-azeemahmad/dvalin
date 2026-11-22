@@ -47,14 +47,42 @@ export const TopMenuBar: React.FC = () => {
     <header className="top-menu-bar h-7 px-3 bg-sky-900/65 backdrop-blur-md border-b border-sky-700/30 text-slate-100 flex items-center justify-between text-xs font-mono select-none z-40 relative shadow-sm">
       {/* Left Menu Items */}
       <div className="flex items-center space-x-3">
-        {/* Berry Logo Icon */}
-        <button
-          type="button"
-          onClick={() => toggleMenu('apple')}
-          className="p-0.5 hover:bg-white/10 rounded cursor-pointer transition-colors"
-        >
-          <BerryLogo size={16} />
-        </button>
+        {/* Dvalin Logo Icon */}
+        <div className="relative">
+          <button
+            type="button"
+            aria-label="Dvalin Menu"
+            onClick={() => toggleMenu('dvalin')}
+            className="p-0.5 hover:bg-white/10 rounded cursor-pointer transition-colors flex items-center justify-center"
+          >
+            <BerryLogo size={18} />
+          </button>
+          {activeMenu === 'dvalin' && (
+            <div className="absolute left-0 top-full mt-1 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
+              <button
+                type="button"
+                onClick={() => {
+                  openWindow('about');
+                  setActiveMenu(null);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+              >
+                About Dvalin OS
+              </button>
+              <div className="my-1 border-t border-slate-700/60" />
+              <button
+                type="button"
+                onClick={() => {
+                  openWindow('control-panel');
+                  setActiveMenu(null);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+              >
+                System Settings
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* File Menu */}
         <div className="relative">

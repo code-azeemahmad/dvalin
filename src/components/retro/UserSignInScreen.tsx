@@ -15,10 +15,10 @@ export const UserSignInScreen: React.FC<UserSignInScreenProps> = ({ onSignIn }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center select-none overflow-hidden">
-      {/* Background with blurred sunset pixel wallpaper */}
+      {/* Background with blurred dragon wallpaper */}
       <div
         className="absolute inset-0 bg-cover bg-center filter blur-md scale-105"
-        style={{ backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.png')}')` }}
+        style={{ backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.png')}')` }}
       />
       {/* Dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/35 backdrop-blur-sm" />

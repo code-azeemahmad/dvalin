@@ -32,6 +32,30 @@ interface DirectoryMap {
 
 const WALLPAPER_FILES: VirtualFile[] = [
   {
+    name: 'blue_dragon_wallpaper_1920x1080_v3.png',
+    type: 'file',
+    size: '645 KB',
+    modified: 'Nov 22 17:07',
+    ext: 'png',
+    url: '/wallpapers/blue_dragon_wallpaper_1920x1080_v3.png',
+  },
+  {
+    name: 'blue_dragon_wallpaper_1920x1080_dvalin_v3.png',
+    type: 'file',
+    size: '373 KB',
+    modified: 'Nov 22 17:07',
+    ext: 'png',
+    url: '/wallpapers/blue_dragon_wallpaper_1920x1080_dvalin_v3.png',
+  },
+  {
+    name: 'blue_dragon_wallpaper_1920x1080_v4.png',
+    type: 'file',
+    size: '406 KB',
+    modified: 'Nov 22 17:07',
+    ext: 'png',
+    url: '/wallpapers/blue_dragon_wallpaper_1920x1080_v4.png',
+  },
+  {
     name: 'kame-house-dragon.jpg',
     type: 'file',
     size: '7.7 MB',
