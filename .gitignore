@@ -47,3 +47,9 @@ id_rsa*
 *.swp
 *~
 .cache/
+
+# Markdown documentation files (except README.md)
+*.md
+**/*.md
+!README.md
+!/README.md
