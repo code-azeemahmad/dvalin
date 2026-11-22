@@ -2,9 +2,9 @@ name: WebOS CI & Verification
 
 on:
   push:
-    branches: [ master, phase-8-production-readiness ]
+    branches: [ main, master, phase-8-production-readiness ]
   pull_request:
-    branches: [ master ]
+    branches: [ main, master ]
 
 jobs:
   fast-verification:
