@@ -7,7 +7,7 @@ interface BootingScreenProps {
 
 export const BootingScreen: React.FC<BootingScreenProps> = ({ onComplete }) => {
   const [progress, setProgress] = useState<number>(0);
-  const [statusText, setStatusText] = useState<string>('Starting Retrium OS...');
+  const [statusText, setStatusText] = useState<string>('Starting Dvalin OS...');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const BootingScreen: React.FC<BootingScreenProps> = ({ onComplete }) => {
             SYSTEM NOTICE
           </div>
           <p className="text-sm font-medium text-slate-200">
-            Retrium OS has sound. Headphones recommended.
+            Dvalin OS has sound. Headphones recommended.
           </p>
           <p className="text-xs text-slate-400">
             Fullscreen puts the browser away<br />

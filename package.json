@@ -1,7 +1,9 @@
 {
-  "name": "webos",
+  "name": "dvalin",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Dvalin OS — Browser-Hosted x86 Linux Operating System by Azeem Ahmad",
+  "author": "Azeem Ahmad",
   "type": "module",
   "scripts": {
     "dev": "vite",

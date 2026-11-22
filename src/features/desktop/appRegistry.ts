@@ -69,7 +69,7 @@ export const APP_REGISTRY: Record<string, AppDefinition> = {
   },
   'about': {
     id: 'about',
-    title: 'About WebOS',
+    title: 'About Dvalin OS',
     iconName: 'Info',
     category: 'system',
     target: 'host',

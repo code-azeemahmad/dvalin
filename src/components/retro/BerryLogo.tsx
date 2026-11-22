@@ -6,7 +6,7 @@ interface BerryLogoProps {
 }
 
 /**
- * Pixel-art Berry / Blue Apple logo matching Retrium OS reference images.
+ * Pixel-art Berry / Blue Apple logo matching Dvalin OS reference images.
  */
 export const BerryLogo: React.FC<BerryLogoProps> = ({ className = '', size = 32 }) => {
   return (

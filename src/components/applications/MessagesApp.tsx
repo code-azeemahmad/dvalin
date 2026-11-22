@@ -12,7 +12,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: 'm1',
     sender: 'Dash',
-    text: 'Hey Dash! Welcome to Retrium OS.',
+    text: 'Hey Dash! Welcome to Dvalin OS, created by Azeem Ahmad.',
     time: '20:00',
   },
   {
@@ -95,7 +95,7 @@ export const MessagesApp: React.FC = () => {
             </div>
             <div className="flex-1 truncate">
               <div className="font-semibold text-xs text-white">Dash</div>
-              <div className="text-[10px] text-slate-400 truncate">Online · Retrium OS</div>
+              <div className="text-[10px] text-slate-400 truncate">Online · Dvalin OS</div>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ export const MessagesApp: React.FC = () => {
               Active Now
             </span>
           </div>
-          <span className="text-[11px] text-slate-400">Retrium Core v1.0</span>
+          <span className="text-[11px] text-slate-400">Dvalin Core v1.0</span>
         </div>
 
         {/* Message Thread */}

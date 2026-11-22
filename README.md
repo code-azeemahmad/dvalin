@@ -1,5 +1,7 @@
-# WebOS — Browser-Hosted x86 Linux Operating System & Retro Desktop
+# Dvalin OS — Browser-Hosted x86 Linux Operating System & Retro Desktop
 
+[![Author](https://img.shields.io/badge/Author-Azeem%20Ahmad-indigo.svg)](https://azeemahmad.me/)
+[![Live Domain](https://img.shields.io/badge/Live%20Site-dvalin.azeemahmad.me-success.svg)](https://dvalin.azeemahmad.me/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg)](https://vitejs.dev/)
@@ -9,10 +11,10 @@
 [![Tests](https://img.shields.io/badge/Vitest-86%2F86%20Passed-brightgreen.svg)](https://vitest.dev/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](file:///home/ubuntu/projects/webos/README.md)
 
-**WebOS** is a browser-hosted operating system that runs a **genuine 32-bit x86 Linux guest** inside the [v86](https://github.com/copy/v86) PC emulator (WebAssembly), presented through an authentic, retro-futuristic React desktop environment.
+**Dvalin OS** (designed and built by **Azeem Ahmad**) is a browser-hosted operating system that runs a **genuine 32-bit x86 Linux guest** inside the [v86](https://github.com/copy/v86) PC emulator (WebAssembly), presented through an authentic, retro-futuristic React desktop environment.
 
 > [!IMPORTANT]
-> **Not a Mock or Simulated Shell:** This is **not** a JavaScript terminal simulator or fake operating system. WebOS boots an actual x86 CPU emulator, loads SeaBIOS and VGABIOS, executes the real **Linux kernel 6.18.35-tinycore**, and runs the **BusyBox v1.36.1 ash shell**. All terminal commands (`uname`, `ps`, `free`, `uptime`, `ls`, `mkdir`, `cat`, `grep`) execute inside the virtualized Linux kernel.
+> **Not a Mock or Simulated Shell:** This is **not** a JavaScript terminal simulator or fake operating system. Dvalin OS boots an actual x86 CPU emulator, loads SeaBIOS and VGABIOS, executes the real **Linux kernel 6.18.35-tinycore**, and runs the **BusyBox v1.36.1 ash shell**. All terminal commands (`uname`, `ps`, `free`, `uptime`, `ls`, `mkdir`, `cat`, `grep`) execute inside the virtualized Linux kernel.
 
 ---
 

@@ -67,9 +67,9 @@ const QUICK_TILES: QuickTile[] = [
 ];
 
 export const BrowserApp: React.FC = () => {
-  const [currentUrl, setCurrentUrl] = useState<string>('retrium://welcome');
-  const [inputUrl, setInputUrl] = useState<string>('retrium://welcome');
-  const [history, setHistory] = useState<string[]>(['retrium://welcome']);
+  const [currentUrl, setCurrentUrl] = useState<string>('dvalin://welcome');
+  const [inputUrl, setInputUrl] = useState<string>('dvalin://welcome');
+  const [history, setHistory] = useState<string[]>(['dvalin://welcome']);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const [reloadKey, setReloadKey] = useState<number>(0);
   const [useProxy, setUseProxy] = useState<boolean>(true);
@@ -92,8 +92,8 @@ export const BrowserApp: React.FC = () => {
 
   const formatUrl = (raw: string): string => {
     const trimmed = raw.trim();
-    if (!trimmed) return 'retrium://welcome';
-    if (trimmed.startsWith('retrium://') || trimmed.startsWith('about:')) {
+    if (!trimmed) return 'dvalin://welcome';
+    if (trimmed.startsWith('dvalin://') || trimmed.startsWith('about:')) {
       return trimmed;
     }
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
@@ -144,7 +144,7 @@ export const BrowserApp: React.FC = () => {
     navigateTo(inputUrl);
   };
 
-  const isInternal = currentUrl.startsWith('retrium://') || currentUrl === 'about:blank';
+  const isInternal = currentUrl.startsWith('dvalin://') || currentUrl === 'about:blank';
   const iframeSrc = useProxy ? `/api/proxy?url=${encodeURIComponent(currentUrl)}` : currentUrl;
 
   return (
@@ -180,7 +180,7 @@ export const BrowserApp: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigateTo('retrium://welcome')}
+            onClick={() => navigateTo('dvalin://welcome')}
             title="Browser Home"
             className="p-1.5 rounded hover:bg-slate-800 text-slate-300 cursor-pointer transition-colors"
           >
@@ -237,7 +237,7 @@ export const BrowserApp: React.FC = () => {
       <div className="h-7 px-3 bg-slate-950/70 border-b border-slate-800 flex items-center space-x-3 text-[11px] font-mono text-slate-400 shrink-0 overflow-x-auto">
         <button
           type="button"
-          onClick={() => navigateTo('retrium://welcome')}
+          onClick={() => navigateTo('dvalin://welcome')}
           className="hover:text-white cursor-pointer hover:underline shrink-0"
         >
           Home Portal
@@ -319,7 +319,7 @@ export const BrowserApp: React.FC = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (inputUrl && inputUrl !== 'retrium://welcome') {
+                  if (inputUrl && inputUrl !== 'dvalin://welcome') {
                     navigateTo(inputUrl);
                   }
                 }}
@@ -329,7 +329,7 @@ export const BrowserApp: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search the web (e.g. linux commands, tech news)..."
-                  value={inputUrl === 'retrium://welcome' ? '' : inputUrl}
+                  value={inputUrl === 'dvalin://welcome' ? '' : inputUrl}
                   onChange={(e) => setInputUrl(e.target.value)}
                   className="w-full bg-transparent outline-none text-slate-100 text-xs font-mono"
                 />

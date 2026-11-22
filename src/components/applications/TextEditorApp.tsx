@@ -13,10 +13,11 @@ const DEFAULT_DOCS: FileDoc[] = [
     id: 'readme',
     title: 'ReadMe.txt',
     content: `===================================================================
-                       WELCOME TO RETRIUM OS
+                       WELCOME TO DVALIN OS
+                  Created & Designed by Azeem Ahmad
 ===================================================================
 
-Retrium OS is a modern web-based desktop environment hosting a 
+Dvalin OS is a modern web-based desktop environment hosting a 
 GENUINE 32-bit x86 Linux operating system running right in your
 browser via WebAssembly and v86 emulation!
 
@@ -50,7 +51,7 @@ KEY CAPABILITIES & ARCHITECTURE:
 6. CONTROL PANEL:
    - Customize wallpaper, sound, display scale, and system snapshots.
 
-Enjoy exploring Retrium OS!
+Enjoy exploring Dvalin OS!
 `,
   },
   {
@@ -61,7 +62,7 @@ Enjoy exploring Retrium OS!
 ===================================================================
 
 [Day 1 - The Spark]
-Today I set out to build Retrium OS. Most web desktops are just fake
+Today I set out to build Dvalin OS. Most web desktops are just fake
 React mockups that echo static strings. I wanted something real—a true
 x86 machine booting genuine Linux in the browser. 
 

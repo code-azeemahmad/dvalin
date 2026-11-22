@@ -29,7 +29,7 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     expect(container.textContent).toContain('SYSTEM NOTICE');
-    expect(container.textContent).toContain('Retrium OS has sound. Headphones recommended.');
+    expect(container.textContent).toContain('Dvalin OS has sound. Headphones recommended.');
     expect(container.textContent).toContain('Enter Fullscreen');
     expect(container.querySelector('[role="progressbar"]')).toBeDefined();
   });
@@ -115,7 +115,7 @@ describe('Retro Desktop Redesign Components', () => {
 
     expect(container.textContent).toContain('ReadMe.txt');
     expect(container.textContent).toContain("Dash's Journal.txt");
-    expect(container.textContent).toContain('WELCOME TO RETRIUM OS');
+    expect(container.textContent).toContain('WELCOME TO DVALIN OS');
     expect(container.querySelector('textarea')).toBeDefined();
   });
 
@@ -141,7 +141,7 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     expect(container.textContent).toContain('Dash');
-    expect(container.textContent).toContain('Welcome to Retrium OS');
+    expect(container.textContent).toContain('Welcome to Dvalin OS');
     expect(container.textContent).toContain('uname -a');
   });
 
