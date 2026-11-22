@@ -55,7 +55,7 @@ export const TopMenuBar: React.FC = () => {
             onClick={() => toggleMenu('dvalin')}
             className="p-0.5 hover:bg-white/10 rounded cursor-pointer transition-colors flex items-center justify-center"
           >
-            <BerryLogo size={18} />
+            <BerryLogo size={20} />
           </button>
           {activeMenu === 'dvalin' && (
             <div className="absolute left-0 top-full mt-1 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
