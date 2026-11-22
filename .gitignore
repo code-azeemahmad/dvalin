@@ -48,8 +48,10 @@ id_rsa*
 *~
 .cache/
 
-# Markdown documentation files (except README.md)
+# Markdown documentation files (except README.md and CODE_OF_CONDUCT.md)
 *.md
 **/*.md
 !README.md
 !/README.md
+!CODE_OF_CONDUCT.md
+!/CODE_OF_CONDUCT.md
