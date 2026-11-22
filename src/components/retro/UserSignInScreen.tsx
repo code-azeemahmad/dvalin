@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { resolveAssetPath } from '@/utils/assetPath';
 
 interface UserSignInScreenProps {
   onSignIn: () => void;
@@ -17,7 +18,7 @@ export const UserSignInScreen: React.FC<UserSignInScreenProps> = ({ onSignIn }) 
       {/* Background with blurred sunset pixel wallpaper */}
       <div
         className="absolute inset-0 bg-cover bg-center filter blur-md scale-105"
-        style={{ backgroundImage: `url('/assets/images/desktop_screen.png')` }}
+        style={{ backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.png')}')` }}
       />
       {/* Dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/35 backdrop-blur-sm" />

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
 import { useSettings } from '@/features/settings/useSettings';
+import { resolveAssetPath } from '@/utils/assetPath';
 
 interface VirtualFile {
   name: string;
@@ -359,7 +360,7 @@ export const FileExplorerApp: React.FC = () => {
                 ) : item.ext === 'jpg' || item.ext === 'png' || item.ext === 'jpeg' ? (
                   <div className="w-14 h-14 rounded-lg overflow-hidden border border-slate-700 bg-slate-950 flex items-center justify-center shadow-md relative group-hover:border-sky-400 transition-all pointer-events-none select-none">
                     <img
-                      src={item.url || `/wallpapers/${encodeURIComponent(item.name)}`}
+                      src={resolveAssetPath(item.url || `/wallpapers/${encodeURIComponent(item.name)}`)}
                       alt={item.name}
                       draggable={false}
                       className="w-full h-full object-cover pointer-events-none select-none"

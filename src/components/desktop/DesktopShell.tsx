@@ -23,11 +23,12 @@ import { TrashApp } from '@/components/applications/TrashApp';
 import { AboutApp } from '@/components/applications/AboutApp';
 import { ExperimentsApp } from '@/features/experiments/components/ExperimentsApp';
 import { LinuxDesktopApp } from '@/components/applications/LinuxDesktopApp';
+import { resolveAssetPath } from '@/utils/assetPath';
 
 const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefined => {
   if (!wallpaper || wallpaper === 'slate-mesh') {
     return {
-      backgroundImage: `url('/assets/images/desktop_screen.png')`,
+      backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.png')}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -41,8 +42,9 @@ const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefin
     } catch {
       cleanUrl = wallpaper;
     }
+    const resolvedUrl = resolveAssetPath(cleanUrl);
     return {
-      backgroundImage: `url("${cleanUrl}")`,
+      backgroundImage: `url("${resolvedUrl}")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

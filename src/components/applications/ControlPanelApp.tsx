@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSettings } from '@/features/settings/useSettings';
 import { WALLPAPER_OPTIONS } from '@/features/desktop/appRegistry';
 import { useEmulator } from '@/features/emulator/useEmulator';
+import { resolveAssetPath } from '@/utils/assetPath';
 import {
   SnapshotStorage,
   SnapshotMetadata,
@@ -273,7 +274,7 @@ export const ControlPanelApp: React.FC = () => {
                           : 'border-slate-800 hover:border-slate-600'
                       }`}
                     >
-                      <img src={url} alt={item.name} className="w-full h-full object-cover" />
+                      <img src={resolveAssetPath(url)} alt={item.name} className="w-full h-full object-cover" />
                       <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs p-1 text-[10px] text-white font-medium text-center truncate">
                         {item.name}
                       </div>
