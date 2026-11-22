@@ -29,6 +29,29 @@ function webProxyPlugin(): Plugin {
         return;
       }
 
+      // Security: SSRF Protection — block loopback, link-local, cloud metadata, and RFC1918 private subnets
+      const hostname = parsedTarget.hostname.toLowerCase();
+      const isBlockedHost =
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname === '::1' ||
+        hostname === '0.0.0.0' ||
+        hostname === '169.254.169.254' ||
+        hostname === 'metadata.google.internal' ||
+        hostname.endsWith('.local') ||
+        hostname.endsWith('.internal') ||
+        hostname.endsWith('.localhost') ||
+        /^10\./.test(hostname) ||
+        /^192\.168\./.test(hostname) ||
+        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
+
+      if (isBlockedHost) {
+        res.statusCode = 403;
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.end('Access to private or local network resources is forbidden');
+        return;
+      }
+
       const response = await fetch(target, {
         headers: {
           'User-Agent':

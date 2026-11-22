@@ -28,3 +28,22 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Environment, Secrets & Private Keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa*
+*.pfx
+*.p12
+
+# Temporary & backup files
+*.tmp
+*.bak
+*.swp
+*~
+.cache/
