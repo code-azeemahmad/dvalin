@@ -160,9 +160,7 @@ export const DesktopWindow: React.FC<DesktopWindowProps> = ({
         zIndex: windowState.zIndex,
       }}
       className={`flex flex-col rounded-xl shadow-2xl overflow-hidden border transition-shadow duration-150 select-none ${
-        isMusicApp
-          ? 'bg-[#f4eee2] border-black/80 shadow-[4px_4px_0px_rgba(0,0,0,0.4)]'
-          : windowState.isFocused
+        windowState.isFocused
           ? 'bg-slate-900 border-slate-700/80 ring-1 ring-sky-500/20 shadow-sky-950/40'
           : 'bg-slate-900 border-slate-800 shadow-black/60 opacity-95'
       }`}
@@ -171,9 +169,7 @@ export const DesktopWindow: React.FC<DesktopWindowProps> = ({
       {/* Title Bar */}
       <div
         className={`h-9 px-3 flex items-center justify-between border-b cursor-move shrink-0 ${
-          isMusicApp
-            ? 'bg-[#272f3d] border-black text-white font-mono'
-            : windowState.isFocused
+          windowState.isFocused
             ? 'bg-gradient-to-r from-slate-800/90 via-slate-800 to-slate-850 border-slate-700 text-slate-100'
             : 'bg-slate-900 border-slate-800 text-slate-400'
         }`}
@@ -187,101 +183,60 @@ export const DesktopWindow: React.FC<DesktopWindowProps> = ({
         }}
       >
         <div className="flex items-center space-x-2 truncate pointer-events-none">
-          {!isMusicApp && renderIcon(windowState.iconName)}
-          <span className={`text-xs font-semibold tracking-wide truncate ${isMusicApp ? 'font-mono font-bold tracking-wider text-sm' : ''}`}>
+          {renderIcon(windowState.iconName)}
+          <span className="text-xs font-semibold tracking-wide truncate">
             {windowState.title}
           </span>
         </div>
 
-        {/* Window Controls */}
-        <div className="flex items-center space-x-1.5">
-          {isMusicApp ? (
-            <>
-              <button
-                type="button"
-                title="Minimize"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  minimizeWindow(windowState.id);
-                }}
-                className="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-black/80 hover:brightness-110 flex items-center justify-center text-[7px] font-bold text-black cursor-pointer leading-none"
-              >
-                -
-              </button>
-              <button
-                type="button"
-                title={windowState.isMaximized ? 'Restore' : 'Maximize'}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (windowState.isMaximized) {
-                    restoreWindow(windowState.id);
-                  } else {
-                    maximizeWindow(windowState.id);
-                  }
-                }}
-                className="w-3.5 h-3.5 rounded-full bg-amber-400 border border-black/80 hover:brightness-110 flex items-center justify-center text-[7px] font-bold text-black cursor-pointer leading-none"
-              >
-                o
-              </button>
-              <button
-                type="button"
-                title="Close"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeWindow(windowState.id);
-                }}
-                className="w-3.5 h-3.5 rounded-full bg-rose-500 border border-black/80 hover:brightness-110 flex items-center justify-center text-[7px] font-bold text-black cursor-pointer leading-none"
-              >
-                ×
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                title="Minimize"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  minimizeWindow(windowState.id);
-                }}
-                className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
+        {/* Window Controls (Minimize, Maximize/Restore, Close) */}
+        <div className="flex items-center space-x-1">
+          <button
+            type="button"
+            title="Minimize"
+            aria-label="Minimize"
+            onClick={(e) => {
+              e.stopPropagation();
+              minimizeWindow(windowState.id);
+            }}
+            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <Minus className="w-3.5 h-3.5" />
+          </button>
 
-              <button
-                type="button"
-                title={windowState.isMaximized ? 'Restore' : 'Maximize'}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (windowState.isMaximized) {
-                    restoreWindow(windowState.id);
-                  } else {
-                    maximizeWindow(windowState.id);
-                  }
-                }}
-                className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                {windowState.isMaximized ? (
-                  <Copy className="w-3 h-3" />
-                ) : (
-                  <Square className="w-3 h-3" />
-                )}
-              </button>
+          <button
+            type="button"
+            title={windowState.isMaximized ? 'Restore' : 'Maximize'}
+            aria-label={windowState.isMaximized ? 'Restore' : 'Maximize'}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (windowState.isMaximized) {
+                restoreWindow(windowState.id);
+              } else {
+                maximizeWindow(windowState.id);
+              }
+            }}
+            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-slate-700/70 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            {windowState.isMaximized ? (
+              <Copy className="w-3 h-3" />
+            ) : (
+              <Square className="w-3 h-3" />
+            )}
+          </button>
 
-              <button
-                type="button"
-                title="Close"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeWindow(windowState.id);
-                }}
-                className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-rose-600/80 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            title="Close"
+            aria-label="Close"
+            onClick={(e) => {
+              e.stopPropagation();
+              closeWindow(windowState.id);
+            }}
+            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-rose-600/80 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 

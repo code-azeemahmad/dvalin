@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
+export type MusicGenre = 'chiptune' | 'synthwave' | 'ambient' | 'funk' | 'arcade' | 'jazz';
+
 export interface MusicTrack {
   id: string;
   name: string;
   subtitle: string;
   color: string;
-  notes: number[];
-  bassNotes: number[];
+  genre: MusicGenre;
   bpm: number;
+  melodyNotes: number[];
+  bassNotes: number[];
 }
 
 export const MUSIC_TRACKS: MusicTrack[] = [
@@ -16,54 +19,60 @@ export const MUSIC_TRACKS: MusicTrack[] = [
     name: 'GREEN',
     subtitle: 'Pixel Records. Stereo audio.',
     color: '#15803d',
-    notes: [261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 440.0, 349.23],
-    bassNotes: [130.81, 130.81, 164.81, 174.61],
-    bpm: 120,
+    genre: 'chiptune',
+    bpm: 128,
+    melodyNotes: [261.63, 329.63, 392.0, 523.25, 392.0, 329.63, 440.0, 392.0, 349.23, 392.0, 440.0, 523.25, 587.33, 523.25, 392.0, 329.63],
+    bassNotes: [130.81, 130.81, 164.81, 174.61, 196.0, 174.61, 164.81, 130.81],
   },
   {
     id: 'purple',
     name: 'PURPLE',
-    subtitle: 'Synthwave Dreams. 8-Bit Lo-Fi.',
+    subtitle: 'Dreamy Lo-Fi Synthwave. Mellow Pads.',
     color: '#7e22ce',
-    notes: [293.66, 349.23, 440.0, 523.25, 440.0, 349.23, 329.63, 392.0],
-    bassNotes: [146.83, 146.83, 174.61, 164.81],
-    bpm: 110,
+    genre: 'synthwave',
+    bpm: 84,
+    melodyNotes: [293.66, 349.23, 440.0, 523.25, 440.0, 349.23, 392.0, 329.63, 293.66, 349.23, 440.0, 392.0, 349.23, 329.63, 293.66, 261.63],
+    bassNotes: [73.42, 73.42, 87.31, 87.31, 98.0, 98.0, 82.41, 73.42],
   },
   {
     id: 'silver',
     name: 'SILVER',
-    subtitle: 'Ambient Stars. Celestial Chiptune.',
+    subtitle: 'Celestial Space Ambient. Crystal Bells.',
     color: '#64748b',
-    notes: [349.23, 440.0, 523.25, 659.25, 523.25, 440.0, 392.0, 493.88],
-    bassNotes: [174.61, 174.61, 196.0, 164.81],
-    bpm: 105,
+    genre: 'ambient',
+    bpm: 96,
+    melodyNotes: [349.23, 440.0, 523.25, 659.25, 698.46, 659.25, 523.25, 440.0, 392.0, 493.88, 587.33, 659.25, 587.33, 493.88, 440.0, 349.23],
+    bassNotes: [87.31, 87.31, 110.0, 110.0, 98.0, 98.0, 87.31, 87.31],
   },
   {
     id: 'blue',
     name: 'BLUE',
-    subtitle: 'Deep Blue Wave. Retro Electro.',
+    subtitle: 'Funky Electro Disco Groove. Slap Bass.',
     color: '#1d4ed8',
-    notes: [196.0, 246.94, 293.66, 392.0, 329.63, 293.66, 246.94, 220.0],
-    bassNotes: [98.0, 98.0, 130.81, 110.0],
-    bpm: 125,
+    genre: 'funk',
+    bpm: 118,
+    melodyNotes: [196.0, 246.94, 293.66, 392.0, 329.63, 293.66, 392.0, 440.0, 392.0, 329.63, 293.66, 246.94, 220.0, 246.94, 293.66, 196.0],
+    bassNotes: [98.0, 196.0, 98.0, 146.83, 110.0, 220.0, 110.0, 98.0],
   },
   {
     id: 'red',
     name: 'RED',
-    subtitle: 'Arcade Rush. Fast 8-Bit Beats.',
+    subtitle: 'Arcade Rush & Beats. Fast 8-Bit Action.',
     color: '#b91c1c',
-    notes: [329.63, 392.0, 493.88, 659.25, 493.88, 392.0, 440.0, 523.25],
-    bassNotes: [164.81, 164.81, 196.0, 220.0],
-    bpm: 135,
+    genre: 'arcade',
+    bpm: 148,
+    melodyNotes: [329.63, 392.0, 493.88, 659.25, 622.25, 587.33, 523.25, 493.88, 440.0, 493.88, 523.25, 587.33, 659.25, 587.33, 493.88, 392.0],
+    bassNotes: [82.41, 164.81, 82.41, 196.0, 110.0, 220.0, 98.0, 82.41],
   },
   {
     id: 'gold',
     name: 'GOLD',
-    subtitle: 'Golden Sunset. Mellow Melodies.',
+    subtitle: 'Golden Sunset Jazz. Smooth Chords.',
     color: '#b45309',
-    notes: [233.08, 293.66, 349.23, 466.16, 349.23, 293.66, 261.63, 329.63],
-    bassNotes: [116.54, 116.54, 146.83, 130.81],
-    bpm: 115,
+    genre: 'jazz',
+    bpm: 90,
+    melodyNotes: [233.08, 293.66, 349.23, 466.16, 440.0, 349.23, 293.66, 261.63, 293.66, 349.23, 440.0, 466.16, 523.25, 466.16, 349.23, 293.66],
+    bassNotes: [116.54, 116.54, 146.83, 130.81, 110.0, 146.83, 116.54, 116.54],
   },
 ];
 
@@ -77,7 +86,9 @@ export const MusicPlayerApp: React.FC = () => {
   // Initialize or get Web Audio context safely
   const getAudioContext = useCallback(() => {
     if (!audioCtxRef.current) {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         audioCtxRef.current = new AudioCtx();
       }
@@ -88,53 +99,209 @@ export const MusicPlayerApp: React.FC = () => {
     return audioCtxRef.current;
   }, []);
 
-  // Play a single 8-bit synthesizer tone
-  const playNote = useCallback((freq: number, bassFreq: number) => {
-    const ctx = getAudioContext();
-    if (!ctx) return;
+  // Synthesize sound based on genre
+  const playGenreNote = useCallback(
+    (freq: number, bassFreq: number, genre: MusicGenre) => {
+      const ctx = getAudioContext();
+      if (!ctx) return;
 
-    const now = ctx.currentTime;
-    const duration = 0.22;
+      const now = ctx.currentTime;
 
-    // Melody lead (square/chiptune wave)
-    const leadOsc = ctx.createOscillator();
-    const leadGain = ctx.createGain();
-    leadOsc.type = 'square';
-    leadOsc.frequency.setValueAtTime(freq, now);
+      switch (genre) {
+        case 'chiptune': {
+          // Classic 8-bit square wave with staccato attack
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.18);
 
-    leadGain.gain.setValueAtTime(0.06, now);
-    leadGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          // Punchy square sub-bass
+          const bass = ctx.createOscillator();
+          const bassGain = ctx.createGain();
+          bass.type = 'triangle';
+          bass.frequency.setValueAtTime(bassFreq, now);
+          bassGain.gain.setValueAtTime(0.08, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+          bass.connect(bassGain);
+          bassGain.connect(ctx.destination);
+          bass.start(now);
+          bass.stop(now + 0.24);
+          break;
+        }
 
-    // Warm bass tone (triangle wave)
-    const bassOsc = ctx.createOscillator();
-    const bassGain = ctx.createGain();
-    bassOsc.type = 'triangle';
-    bassOsc.frequency.setValueAtTime(bassFreq, now);
+        case 'synthwave': {
+          // Warm filtered sawtooth wave with slow decay
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
 
-    bassGain.gain.setValueAtTime(0.08, now);
-    bassGain.gain.exponentialRampToValueAtTime(0.001, now + duration * 1.5);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now);
 
-    // Connect to speakers
-    leadOsc.connect(leadGain);
-    leadGain.connect(ctx.destination);
-    bassOsc.connect(bassGain);
-    bassGain.connect(ctx.destination);
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(800, now);
+          filter.frequency.exponentialRampToValueAtTime(300, now + 0.4);
 
-    leadOsc.start(now);
-    leadOsc.stop(now + duration);
-    bassOsc.start(now);
-    bassOsc.stop(now + duration * 1.5);
-  }, [getAudioContext]);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
 
-  // Handle timer step for music playback
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.45);
+
+          // Deep sub-bass drone
+          const sub = ctx.createOscillator();
+          const subGain = ctx.createGain();
+          sub.type = 'sine';
+          sub.frequency.setValueAtTime(bassFreq, now);
+          subGain.gain.setValueAtTime(0.1, now);
+          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          sub.connect(subGain);
+          subGain.connect(ctx.destination);
+          sub.start(now);
+          sub.stop(now + 0.5);
+          break;
+        }
+
+        case 'ambient': {
+          // Pure sine wave with celestial bell decay
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.6);
+
+          // Harmonic shimmer (+1 octave)
+          const harm = ctx.createOscillator();
+          const harmGain = ctx.createGain();
+          harm.type = 'sine';
+          harm.frequency.setValueAtTime(freq * 2, now);
+          harmGain.gain.setValueAtTime(0.02, now);
+          harmGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          harm.connect(harmGain);
+          harmGain.connect(ctx.destination);
+          harm.start(now);
+          harm.stop(now + 0.4);
+          break;
+        }
+
+        case 'funk': {
+          // Syncopated slap bass and punchy lead
+          const lead = ctx.createOscillator();
+          const leadGain = ctx.createGain();
+          lead.type = 'triangle';
+          lead.frequency.setValueAtTime(freq, now);
+          leadGain.gain.setValueAtTime(0.09, now);
+          leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          lead.connect(leadGain);
+          leadGain.connect(ctx.destination);
+          lead.start(now);
+          lead.stop(now + 0.16);
+
+          // Funky square bass
+          const bass = ctx.createOscillator();
+          const bassGain = ctx.createGain();
+          bass.type = 'square';
+          bass.frequency.setValueAtTime(bassFreq, now);
+          bassGain.gain.setValueAtTime(0.07, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          bass.connect(bassGain);
+          bassGain.connect(ctx.destination);
+          bass.start(now);
+          bass.stop(now + 0.2);
+          break;
+        }
+
+        case 'arcade': {
+          // Fast aggressive saw lead
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.12);
+
+          // Punchy arcade kick/pulse
+          const kick = ctx.createOscillator();
+          const kickGain = ctx.createGain();
+          kick.type = 'triangle';
+          kick.frequency.setValueAtTime(140, now);
+          kick.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+          kickGain.gain.setValueAtTime(0.12, now);
+          kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          kick.connect(kickGain);
+          kickGain.connect(ctx.destination);
+          kick.start(now);
+          kick.stop(now + 0.1);
+          break;
+        }
+
+        case 'jazz': {
+          // Warm jazz guitar / electric piano tone
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1200, now);
+
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+
+          // Soft upright bass
+          const bass = ctx.createOscillator();
+          const bassGain = ctx.createGain();
+          bass.type = 'sine';
+          bass.frequency.setValueAtTime(bassFreq, now);
+          bassGain.gain.setValueAtTime(0.09, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+          bass.connect(bassGain);
+          bassGain.connect(ctx.destination);
+          bass.start(now);
+          bass.stop(now + 0.38);
+          break;
+        }
+      }
+    },
+    [getAudioContext]
+  );
+
+  // Playback timer loop
   useEffect(() => {
     if (isPlaying) {
       const stepDuration = Math.round((60 / selectedTrack.bpm / 2) * 1000);
       intervalRef.current = window.setInterval(() => {
         const step = stepRef.current;
-        const note = selectedTrack.notes[step % selectedTrack.notes.length];
-        const bassNote = selectedTrack.bassNotes[Math.floor(step / 2) % selectedTrack.bassNotes.length];
-        playNote(note, bassNote);
+        const note = selectedTrack.melodyNotes[step % selectedTrack.melodyNotes.length];
+        const bassNote =
+          selectedTrack.bassNotes[Math.floor(step / 2) % selectedTrack.bassNotes.length];
+        playGenreNote(note, bassNote, selectedTrack.genre);
         stepRef.current = (step + 1) % 64;
       }, stepDuration);
     } else {
@@ -150,9 +317,9 @@ export const MusicPlayerApp: React.FC = () => {
         intervalRef.current = null;
       }
     };
-  }, [isPlaying, selectedTrack, playNote]);
+  }, [isPlaying, selectedTrack, playGenreNote]);
 
-  // Cleanup audio context on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (audioCtxRef.current) {
@@ -165,25 +332,25 @@ export const MusicPlayerApp: React.FC = () => {
     setIsPlaying((prev) => !prev);
   };
 
+  // Switching disc resets play/pause state to 'Play' as requested
   const handleSelectDisc = (track: MusicTrack) => {
     setSelectedTrack(track);
     stepRef.current = 0;
-    if (!isPlaying) {
-      setIsPlaying(true);
-    }
+    // Reset play/pause state so button changes to Play and waits for user interaction
+    setIsPlaying(false);
   };
 
   return (
     <div
       data-testid="music-player-app"
-      className="flex flex-col items-center justify-between w-full h-full bg-[#f4eee2] text-slate-900 select-none p-4 sm:p-6 overflow-hidden"
+      className="flex flex-col items-center justify-between w-full h-full bg-[#f4eee2] text-slate-900 select-none p-4 sm:p-5 overflow-hidden"
     >
       {/* 1. Large Spinning Vinyl / CD Record */}
-      <div className="relative my-2 sm:my-3 flex items-center justify-center">
+      <div className="relative my-1 sm:my-2 flex items-center justify-center">
         {/* Vinyl Base with groove rings */}
         <div
           data-testid="vinyl-cd-record"
-          className={`w-44 h-44 sm:w-48 sm:h-48 rounded-full bg-[#111317] border-[3px] border-[#22262e] relative flex items-center justify-center shadow-2xl shadow-black/60 transition-transform duration-300 ${
+          className={`w-40 h-40 sm:w-46 sm:h-46 rounded-full bg-[#111317] border-[3px] border-[#22262e] relative flex items-center justify-center shadow-2xl shadow-black/60 transition-transform duration-300 ${
             isPlaying ? 'animate-[spin_3.5s_linear_infinite]' : ''
           }`}
         >
@@ -199,12 +366,12 @@ export const MusicPlayerApp: React.FC = () => {
 
           {/* Center Label */}
           <div
-            className="w-16 h-16 sm:w-18 sm:h-18 rounded-full border border-black/60 flex flex-col items-center justify-center relative shadow-inner text-center"
+            className="w-15 h-15 sm:w-17 sm:h-17 rounded-full border border-black/60 flex flex-col items-center justify-center relative shadow-inner text-center"
             style={{ backgroundColor: selectedTrack.color }}
           >
             {/* Center Spindle Hole */}
             <div className="w-3.5 h-3.5 rounded-full bg-[#f4eee2] border-2 border-black/80 shadow-inner z-10" />
-            <span className="text-[7px] font-mono font-bold text-white tracking-widest mt-1 opacity-90 drop-shadow-xs">
+            <span className="text-[7px] font-mono font-bold text-white tracking-widest mt-0.5 opacity-90 drop-shadow-xs">
               PIXEL
             </span>
           </div>
@@ -212,11 +379,11 @@ export const MusicPlayerApp: React.FC = () => {
       </div>
 
       {/* 2. Track Title & Details */}
-      <div className="flex flex-col items-center text-center my-1.5 sm:my-2">
+      <div className="flex flex-col items-center text-center my-1">
         <h2 className="font-mono font-black text-xl sm:text-2xl tracking-widest text-black drop-shadow-xs">
           {selectedTrack.name}
         </h2>
-        <p className="font-mono text-xs sm:text-[13px] text-slate-700 mt-0.5 tracking-wide">
+        <p className="font-mono text-xs sm:text-[13px] text-slate-700 mt-0.5 tracking-wide max-w-[280px]">
           {selectedTrack.subtitle}
         </p>
       </div>
@@ -232,7 +399,7 @@ export const MusicPlayerApp: React.FC = () => {
       </button>
 
       {/* 4. DISCS Selection Section */}
-      <div className="flex flex-col items-center w-full mt-3 sm:mt-4">
+      <div className="flex flex-col items-center w-full mt-2 sm:mt-3">
         <span className="font-mono text-[11px] font-bold text-slate-600 tracking-widest uppercase mb-1.5">
           DISCS
         </span>

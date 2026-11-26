@@ -503,7 +503,21 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     expect(container.textContent).toContain('PURPLE');
-    expect(container.textContent).toContain('Synthwave Dreams');
+    expect(container.textContent).toContain('Dreamy Lo-Fi Synthwave');
+    // Button state resets to Play on track switch
+    expect(container.textContent).toContain('Play');
+    expect(vinyl?.className).not.toContain('animate-[spin_3.5s_linear_infinite]');
+
+    // Click Play on the new track
+    const playPurpleBtn = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent?.trim() === 'Play'
+    );
+    act(() => {
+      playPurpleBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain('Pause');
+    expect(vinyl?.className).toContain('animate-[spin_3.5s_linear_infinite]');
 
     // Click Pause
     const pauseBtn = Array.from(container.querySelectorAll('button')).find(
