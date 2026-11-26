@@ -112,6 +112,14 @@ describe('Retro Desktop Redesign Components', () => {
     expect(links.find((a) => a.href.includes('linkedin.com/in/azeem-ahmad327'))).toBeDefined();
     expect(links.find((a) => a.href.includes('github.com/code-azeemahmad'))).toBeDefined();
     expect(links.find((a) => a.href.includes('azeemahmad.me'))).toBeDefined();
+
+    // Click close button
+    const closeBtn = modal?.querySelector('button[aria-label="Close Socials Menu"]');
+    expect(closeBtn).toBeDefined();
+    act(() => {
+      closeBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(container.querySelector('[data-testid="my-socials-modal"]')).toBeNull();
   });
 
   it('renders RetroDock with all 6 floating dock items', () => {

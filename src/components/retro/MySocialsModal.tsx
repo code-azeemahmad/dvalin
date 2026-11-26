@@ -71,46 +71,53 @@ export const MySocialsModal: React.FC<MySocialsModalProps> = ({ isOpen, onClose 
   return (
     <div
       data-testid="my-socials-modal"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs select-none animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs select-none pointer-events-auto animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
-        className="relative bg-slate-900/65 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-2xl w-full"
+        className="relative bg-slate-900/80 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-2xl px-5 py-4 sm:px-6 sm:py-5 max-w-lg w-auto pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           type="button"
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
           aria-label="Close Socials Menu"
-          className="absolute top-4 right-4 text-slate-300 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+          className="absolute top-2.5 right-2.5 text-slate-300 hover:text-white p-1 rounded-full hover:bg-white/15 transition-colors cursor-pointer pointer-events-auto"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Title */}
-        <h2 className="text-center font-mono font-bold text-white text-lg tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] mb-6">
+        <h2 className="text-center font-mono font-bold text-white text-sm sm:text-base tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] mb-3.5">
           My Socials
         </h2>
 
         {/* 6 Social Media Apps in a row */}
-        <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
+        <div className="flex items-center justify-center gap-3 sm:gap-4 flex-nowrap">
           {SOCIAL_LINKS.map((item) => (
             <a
               key={item.id}
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col items-center cursor-pointer transition-transform duration-150 hover:-translate-y-2 hover:scale-105 active:scale-95 focus:outline-none"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(item.url, '_blank', 'noopener,noreferrer');
+              }}
+              className="group flex flex-col items-center cursor-pointer transition-transform duration-150 hover:-translate-y-1.5 hover:scale-105 active:scale-95 focus:outline-none pointer-events-auto"
             >
-              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden shadow-xl border border-black/40 bg-black/20 flex items-center justify-center transition-shadow group-hover:shadow-sky-500/30">
+              <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl overflow-hidden shadow-lg border border-black/40 bg-black/20 flex items-center justify-center transition-shadow group-hover:shadow-sky-500/30">
                 <img
                   src={item.iconSrc}
                   alt={item.name}
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-xl"
                 />
               </div>
-              <span className="mt-2 text-xs sm:text-[13px] font-mono font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)] text-center tracking-wide group-hover:text-sky-300 transition-colors">
+              <span className="mt-1.5 text-[11px] sm:text-xs font-mono font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)] text-center tracking-wide group-hover:text-sky-300 transition-colors">
                 {item.name}
               </span>
             </a>

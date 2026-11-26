@@ -7,9 +7,10 @@ export const RetroDesktopIcons: React.FC = () => {
   const [isSocialsOpen, setIsSocialsOpen] = useState<boolean>(false);
 
   return (
-    <div className="absolute inset-0 pointer-events-none p-4 select-none z-10 flex justify-between">
-      {/* Left Column Icons */}
-      <div className="flex flex-col space-y-5 pointer-events-auto">
+    <>
+      <div className="absolute inset-0 pointer-events-none p-4 select-none z-10 flex justify-between">
+        {/* Left Column Icons */}
+        <div className="flex flex-col space-y-5 pointer-events-auto">
         {/* ReadMe.txt */}
         <button
           type="button"
@@ -192,12 +193,13 @@ export const RetroDesktopIcons: React.FC = () => {
           </span>
         </button>
       </div>
-
-      {/* Floating My Socials Modal Menu */}
-      <MySocialsModal
-        isOpen={isSocialsOpen}
-        onClose={() => setIsSocialsOpen(false)}
-      />
     </div>
-  );
+
+    {/* Floating My Socials Modal Menu */}
+    <MySocialsModal
+      isOpen={isSocialsOpen}
+      onClose={() => setIsSocialsOpen(false)}
+    />
+  </>
+);
 };
