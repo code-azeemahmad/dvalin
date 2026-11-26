@@ -185,18 +185,18 @@ export const ControlPanelApp: React.FC = () => {
               <h2 className="text-sm font-bold text-slate-100 mb-1">Display Scaling</h2>
               <p className="text-slate-400 text-xs mb-3">Adjust host desktop UI zoom ratio.</p>
               <div className="flex items-center space-x-2">
-                {[1, 1.1, 1.25].map((scale) => (
+                {[1, 1.1, 1.2, 1.25].map((scale) => (
                   <button
                     key={scale}
                     type="button"
                     onClick={() => setDisplayScale(scale)}
                     className={`px-3 py-1.5 rounded-lg border text-xs font-mono cursor-pointer transition-colors ${
                       settings.displayScale === scale
-                        ? 'bg-sky-600 border-sky-500 text-white'
+                        ? 'bg-sky-600 border-sky-500 text-white font-bold'
                         : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750'
                     }`}
                   >
-                    {Math.round(scale * 100)}%
+                    {Math.round(scale * 100)}%{scale === 1.2 ? ' (Default)' : ''}
                   </button>
                 ))}
               </div>

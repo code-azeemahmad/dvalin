@@ -5,7 +5,7 @@ const STORAGE_KEY = 'webos_settings_v1';
 
 const DEFAULT_SETTINGS: HostSettings = {
   wallpaper: '/wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp',
-  displayScale: 1,
+  displayScale: 1.2,
   theme: 'dark',
   autoCaptureMouse: true,
 };
@@ -26,7 +26,12 @@ function readStorage(): HostSettings {
   try {
     const stored = storage.getItem(STORAGE_KEY);
     if (stored) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+      const parsed = JSON.parse(stored);
+      // Migrate legacy 1.0 scale to 120% (1.2) default
+      if (parsed.displayScale === 1 && !parsed._customScaleSet) {
+        parsed.displayScale = 1.2;
+      }
+      return { ...DEFAULT_SETTINGS, ...parsed };
     }
   } catch {
     // Fallback if corrupted
@@ -93,7 +98,7 @@ export function useSettings() {
   }, []);
 
   const setDisplayScale = useCallback((scale: number) => {
-    notify({ ...activeSettings, displayScale: scale });
+    notify({ ...activeSettings, displayScale: scale, _customScaleSet: true } as any);
   }, []);
 
   const setTheme = useCallback((theme: 'dark' | 'midnight') => {

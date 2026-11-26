@@ -23,7 +23,7 @@ describe('useSettings Hook and Persistence', () => {
     });
 
     expect(hookValue.settings.wallpaper).toBe('/wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp');
-    expect(hookValue.settings.displayScale).toBe(1);
+    expect(hookValue.settings.displayScale).toBe(1.2);
     expect(hookValue.settings.theme).toBe('dark');
   });
 
@@ -70,6 +70,6 @@ describe('useSettings Hook and Persistence', () => {
       hookValue.resetSettings();
     });
     expect(hookValue.settings.wallpaper).toBe('/wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp');
-    expect(hookValue.settings.displayScale).toBe(1);
+    expect(hookValue.settings.displayScale).toBe(1.2);
   });
 });
