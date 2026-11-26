@@ -1,4 +1,4 @@
-# Dvalin OS — Browser-Hosted x86 Linux Operating System & Retro Desktop
+# Dvalin OS — Browser-Hosted x86 Linux Operating System
 
 [![Author](https://img.shields.io/badge/Author-Azeem%20Ahmad-indigo.svg)](https://azeemahmad.me/)
 [![Live Domain](https://img.shields.io/badge/Live%20Site-dvalin.azeemahmad.me-success.svg)](https://dvalin.azeemahmad.me/)
