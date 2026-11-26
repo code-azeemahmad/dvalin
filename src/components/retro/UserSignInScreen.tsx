@@ -77,7 +77,7 @@ export const UserSignInScreen: React.FC<UserSignInScreenProps> = ({ onSignIn }) 
         </h2>
 
         {/* Password input & Speech bubble */}
-        <form onSubmit={handleSubmit} className="flex items-center space-x-3">
+        <form onSubmit={handleSubmit} className="relative flex flex-col items-center">
           <div className="relative">
             <input
               type="password"
@@ -87,22 +87,22 @@ export const UserSignInScreen: React.FC<UserSignInScreenProps> = ({ onSignIn }) 
               placeholder="Enter Password"
               className="w-56 px-5 py-2.5 rounded-full bg-white/20 border border-white/30 text-white placeholder-white/60 text-center text-xs tracking-wider focus:outline-none focus:ring-2 focus:ring-white/60 focus:bg-white/25 backdrop-blur-md shadow-lg transition-all"
             />
-          </div>
 
-          {/* Comic speech bubble: "It's open. Just press Enter." */}
-          <div
-            onClick={onSignIn}
-            className="relative bg-white text-slate-900 border-2 border-black rounded-sm px-3 py-1.5 font-mono text-[11px] font-bold shadow-[3px_3px_0px_rgba(0,0,0,0.8)] cursor-pointer hover:bg-slate-100 transition-transform active:translate-x-0.5 active:translate-y-0.5 whitespace-nowrap"
-          >
-            {/* Pointer arrow pointing left */}
+            {/* Comic speech bubble: "It's open. Just press Enter." */}
             <div
-              className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-black"
-            />
-            <div
-              className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[5px] border-y-transparent border-r-[6px] border-r-white"
-            />
-            <div>It's open.</div>
-            <div>Just press Enter.</div>
+              onClick={onSignIn}
+              className="absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-white text-slate-900 border-2 border-black rounded-sm px-3 py-1.5 font-mono text-[11px] font-bold shadow-[3px_3px_0px_rgba(0,0,0,0.8)] cursor-pointer hover:bg-slate-100 transition-transform active:translate-x-0.5 active:translate-y-0.5 whitespace-nowrap"
+            >
+              {/* Pointer arrow pointing left */}
+              <div
+                className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-black"
+              />
+              <div
+                className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[5px] border-y-transparent border-r-[6px] border-r-white"
+              />
+              <div>It's open.</div>
+              <div>Just press Enter.</div>
+            </div>
           </div>
         </form>
       </div>
