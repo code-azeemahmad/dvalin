@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BerryLogo } from './BerryLogo';
-import { Wifi, BatteryMedium } from 'lucide-react';
+import { Wifi } from 'lucide-react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
 
 export const TopMenuBar: React.FC = () => {
@@ -44,28 +44,28 @@ export const TopMenuBar: React.FC = () => {
   };
 
   return (
-    <header className="top-menu-bar h-7 px-3 bg-sky-900/65 backdrop-blur-md border-b border-sky-700/30 text-slate-100 flex items-center justify-between text-xs font-mono select-none z-40 relative shadow-sm">
+    <header className="top-menu-bar h-10 px-4 bg-sky-900/70 backdrop-blur-md border-b border-sky-600/30 text-slate-100 flex items-center justify-between select-none z-40 relative shadow-sm">
       {/* Left Menu Items */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-5">
         {/* Dvalin Logo Icon */}
         <div className="relative">
           <button
             type="button"
             aria-label="Dvalin Menu"
             onClick={() => toggleMenu('dvalin')}
-            className="p-0.5 hover:bg-white/10 rounded cursor-pointer transition-colors flex items-center justify-center"
+            className="p-1 hover:bg-white/15 rounded-md cursor-pointer transition-colors flex items-center justify-center"
           >
-            <BerryLogo size={20} />
+            <BerryLogo size={26} />
           </button>
           {activeMenu === 'dvalin' && (
-            <div className="absolute left-0 top-full mt-1 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
+            <div className="absolute left-0 top-full mt-1.5 w-52 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-lg shadow-2xl py-1.5 text-slate-200 z-50">
               <button
                 type="button"
                 onClick={() => {
                   openWindow('about');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 About Dvalin OS
               </button>
@@ -76,7 +76,7 @@ export const TopMenuBar: React.FC = () => {
                   openWindow('control-panel');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 System Settings
               </button>
@@ -89,21 +89,21 @@ export const TopMenuBar: React.FC = () => {
           <button
             type="button"
             onClick={() => toggleMenu('file')}
-            className={`px-1.5 py-0.5 rounded text-[11px] font-semibold cursor-pointer hover:bg-white/15 transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-[13px] font-mono font-bold tracking-wide cursor-pointer hover:bg-white/15 transition-colors ${
               activeMenu === 'file' ? 'bg-white/20' : ''
             }`}
           >
             File
           </button>
           {activeMenu === 'file' && (
-            <div className="absolute left-0 top-full mt-1 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
+            <div className="absolute left-0 top-full mt-1.5 w-52 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-lg shadow-2xl py-1.5 text-slate-200 z-50">
               <button
                 type="button"
                 onClick={() => {
                   openWindow('text-editor');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 New Text File
               </button>
@@ -113,7 +113,7 @@ export const TopMenuBar: React.FC = () => {
                   openWindow('terminal');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 New Terminal Window
               </button>
@@ -123,7 +123,7 @@ export const TopMenuBar: React.FC = () => {
                   openWindow('file-explorer');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 Open File Explorer
               </button>
@@ -136,17 +136,17 @@ export const TopMenuBar: React.FC = () => {
           <button
             type="button"
             onClick={() => toggleMenu('edit')}
-            className={`px-1.5 py-0.5 rounded text-[11px] font-semibold cursor-pointer hover:bg-white/15 transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-[13px] font-mono font-bold tracking-wide cursor-pointer hover:bg-white/15 transition-colors ${
               activeMenu === 'edit' ? 'bg-white/20' : ''
             }`}
           >
             Edit
           </button>
           {activeMenu === 'edit' && (
-            <div className="absolute left-0 top-full mt-1 w-44 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
-              <div className="px-3 py-1 text-[11px] text-slate-400">Cut</div>
-              <div className="px-3 py-1 text-[11px] text-slate-400">Copy</div>
-              <div className="px-3 py-1 text-[11px] text-slate-400">Paste</div>
+            <div className="absolute left-0 top-full mt-1.5 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-lg shadow-2xl py-1.5 text-slate-200 z-50">
+              <div className="px-3.5 py-1.5 text-xs text-slate-400 font-mono">Cut</div>
+              <div className="px-3.5 py-1.5 text-xs text-slate-400 font-mono">Copy</div>
+              <div className="px-3.5 py-1.5 text-xs text-slate-400 font-mono">Paste</div>
             </div>
           )}
         </div>
@@ -156,21 +156,21 @@ export const TopMenuBar: React.FC = () => {
           <button
             type="button"
             onClick={() => toggleMenu('view')}
-            className={`px-1.5 py-0.5 rounded text-[11px] font-semibold cursor-pointer hover:bg-white/15 transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-[13px] font-mono font-bold tracking-wide cursor-pointer hover:bg-white/15 transition-colors ${
               activeMenu === 'view' ? 'bg-white/20' : ''
             }`}
           >
             View
           </button>
           {activeMenu === 'view' && (
-            <div className="absolute left-0 top-full mt-1 w-48 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-md shadow-2xl py-1 text-slate-200 z-50">
+            <div className="absolute left-0 top-full mt-1.5 w-52 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-lg shadow-2xl py-1.5 text-slate-200 z-50">
               <button
                 type="button"
                 onClick={() => {
                   toggleFullscreen();
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 Toggle Fullscreen
               </button>
@@ -180,7 +180,7 @@ export const TopMenuBar: React.FC = () => {
                   openWindow('control-panel');
                   setActiveMenu(null);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-sky-600 hover:text-white text-xs cursor-pointer"
+                className="w-full text-left px-3.5 py-2 hover:bg-sky-600 hover:text-white text-[13px] font-mono cursor-pointer"
               >
                 System Settings
               </button>
@@ -190,19 +190,22 @@ export const TopMenuBar: React.FC = () => {
       </div>
 
       {/* Right Status Tray: Wi-Fi, Battery, Clock */}
-      <div className="flex items-center space-x-3 text-slate-200 font-mono text-[11px]">
+      <div className="flex items-center space-x-4 text-slate-100 font-mono">
         {/* Wi-Fi Icon */}
         <div title="Network Connected: Virtual Ethernet" className="flex items-center">
-          <Wifi className="w-3.5 h-3.5" />
+          <Wifi className="w-[18px] h-[18px] text-slate-100" strokeWidth={2.2} />
         </div>
 
-        {/* Battery Icon */}
+        {/* Battery Icon with Green Fill */}
         <div title="Battery: 100% Charged" className="flex items-center">
-          <BatteryMedium className="w-4 h-4 text-emerald-400" />
+          <div className="relative w-6 h-3.5 border-1.5 border-slate-100 rounded-[3px] p-[1.5px] flex items-center">
+            <div className="h-full w-full bg-emerald-400 rounded-[1px]" />
+            <div className="absolute -right-[3.5px] top-1/2 -translate-y-1/2 w-[2px] h-[6px] bg-slate-100 rounded-r-[1px]" />
+          </div>
         </div>
 
         {/* Live Clock */}
-        <div className="font-semibold text-slate-100 tracking-wider">
+        <div className="font-mono font-bold text-[13px] text-slate-100 tracking-wider">
           {timeStr}
         </div>
       </div>

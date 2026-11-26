@@ -222,7 +222,18 @@ export class EmulatorManager {
       }
 
       if (cdromUrl) {
-        v86Options.cdrom = { url: cdromUrl };
+        let canAttachCdrom = true;
+        if (isNodeEnvironment) {
+          try {
+            const nodeFs = await import('node:fs');
+            canAttachCdrom = nodeFs.existsSync(cdromUrl);
+          } catch {
+            canAttachCdrom = false;
+          }
+        }
+        if (canAttachCdrom) {
+          v86Options.cdrom = { url: cdromUrl };
+        }
       }
       if (this.config.hdaUrl) {
         v86Options.hda = { url: this.config.hdaUrl };
