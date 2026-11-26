@@ -166,6 +166,17 @@ export const APP_REGISTRY: Record<string, AppDefinition> = {
     defaultPosition: { x: 240, y: 130 },
     isSingleton: false,
   },
+  'music': {
+    id: 'music',
+    title: 'Music Player',
+    iconName: 'Music',
+    category: 'tools',
+    target: 'host',
+    description: 'Retro stereo vinyl & CD music player with chiptune synth tracks.',
+    defaultSize: { width: 330, height: 470 },
+    defaultPosition: { x: 260, y: 70 },
+    isSingleton: true,
+  },
 };
 
 export const WALLPAPER_OPTIONS = [

@@ -61,6 +61,29 @@ export const RetroDock: React.FC = () => {
     },
     {
       id: 'text-editor',
+      name: 'Text Editor',
+      renderIcon: () => (
+        <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl bg-[#e8eee4] border border-black/40 shadow-md flex items-center justify-center transition-shadow group-hover:shadow-2xl">
+          <svg viewBox="0 0 36 36" className="w-8.5 h-8.5" fill="none">
+            {/* Notepad sheet with corner fold */}
+            <path
+              d="M9 5 C9 4, 23 4, 23 4 L28 9 L28 31 C28 32, 9 32, 9 31 Z"
+              fill="#fef08a"
+              stroke="#854d0e"
+              strokeWidth="1.5"
+            />
+            <path d="M23 4 L23 9 L28 9" fill="#fde047" stroke="#854d0e" strokeWidth="1.3" />
+            {/* Ruled lines */}
+            <line x1="13" y1="13" x2="21" y2="13" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="13" y1="17" x2="24" y2="17" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="13" y1="21" x2="24" y2="21" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="13" y1="25" x2="19" y2="25" stroke="#ca8a04" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </div>
+      ),
+    },
+    {
+      id: 'music',
       name: 'Music',
       renderIcon: () => (
         <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl bg-[#22262d] border border-black/50 shadow-md flex items-center justify-center transition-shadow group-hover:shadow-2xl">

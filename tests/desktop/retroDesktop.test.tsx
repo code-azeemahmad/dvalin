@@ -14,6 +14,7 @@ import { FileExplorerApp } from '@/components/applications/FileExplorerApp';
 import { ControlPanelApp } from '@/components/applications/ControlPanelApp';
 import { TerminalApp } from '@/components/applications/TerminalApp';
 import { BrowserApp } from '@/components/applications/BrowserApp';
+import { MusicPlayerApp } from '@/components/applications/MusicPlayerApp';
 import { createRoot } from 'react-dom/client';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -122,7 +123,7 @@ describe('Retro Desktop Redesign Components', () => {
     expect(container.querySelector('[data-testid="my-socials-modal"]')).toBeNull();
   });
 
-  it('renders RetroDock with all 6 floating dock items and shows tooltip on hover', () => {
+  it('renders RetroDock with floating dock items including Music and Text Editor and shows tooltip on hover', () => {
     const container = document.createElement('div');
     const root = createRoot(container);
 
@@ -135,9 +136,17 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     const buttons = container.querySelectorAll('button');
-    expect(buttons.length).toBe(6);
+    expect(buttons.length).toBe(7);
     // Messages badge '6'
     expect(container.textContent).toContain('6');
+
+    // Text Editor button exists
+    const textEditorBtn = Array.from(buttons).find((b) => b.getAttribute('aria-label') === 'Text Editor');
+    expect(textEditorBtn).toBeDefined();
+
+    // Music button exists
+    const musicBtn = Array.from(buttons).find((b) => b.getAttribute('aria-label') === 'Music');
+    expect(musicBtn).toBeDefined();
 
     // Terminal button hover test
     const terminalBtn = Array.from(buttons).find((b) => b.getAttribute('aria-label') === 'Terminal');
@@ -447,6 +456,65 @@ describe('Retro Desktop Redesign Components', () => {
     expect(iframe?.getAttribute('src')).toContain('/api/proxy?url=');
     expect(iframe?.getAttribute('src')).toContain('wikipedia.org');
     expect(iframe?.getAttribute('sandbox')).toContain('allow-scripts');
+
+    act(() => {
+      root.unmount();
+    });
+  });
+
+  it('renders MusicPlayerApp with vinyl CD, track title, and interactive disc playback', () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<MusicPlayerApp />);
+    });
+
+    // Initial default track GREEN
+    expect(container.textContent).toContain('GREEN');
+    expect(container.textContent).toContain('Pixel Records. Stereo audio.');
+    expect(container.textContent).toContain('DISCS');
+
+    const vinyl = container.querySelector('[data-testid="vinyl-cd-record"]');
+    expect(vinyl).toBeDefined();
+    // Initially not playing, so no spin class
+    expect(vinyl?.className).not.toContain('animate-[spin_3.5s_linear_infinite]');
+
+    // Find and click Play button
+    const playBtn = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent?.trim() === 'Play'
+    );
+    expect(playBtn).toBeDefined();
+
+    act(() => {
+      playBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // Now playing
+    expect(container.textContent).toContain('Pause');
+    expect(vinyl?.className).toContain('animate-[spin_3.5s_linear_infinite]');
+
+    // Switch to PURPLE disc
+    const purpleDiscBtn = container.querySelector('button[title="PURPLE"]');
+    expect(purpleDiscBtn).toBeDefined();
+
+    act(() => {
+      purpleDiscBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain('PURPLE');
+    expect(container.textContent).toContain('Synthwave Dreams');
+
+    // Click Pause
+    const pauseBtn = Array.from(container.querySelectorAll('button')).find(
+      (b) => b.textContent?.trim() === 'Pause'
+    );
+    act(() => {
+      pauseBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain('Play');
+    expect(vinyl?.className).not.toContain('animate-[spin_3.5s_linear_infinite]');
 
     act(() => {
       root.unmount();

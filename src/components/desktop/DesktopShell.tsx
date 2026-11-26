@@ -21,6 +21,7 @@ import { MessagesApp } from '@/components/applications/MessagesApp';
 import { BrowserApp } from '@/components/applications/BrowserApp';
 import { TrashApp } from '@/components/applications/TrashApp';
 import { AboutApp } from '@/components/applications/AboutApp';
+import { MusicPlayerApp } from '@/components/applications/MusicPlayerApp';
 import { ExperimentsApp } from '@/features/experiments/components/ExperimentsApp';
 import { LinuxDesktopApp } from '@/components/applications/LinuxDesktopApp';
 import { resolveAssetPath } from '@/utils/assetPath';
@@ -103,6 +104,9 @@ const DesktopContent: React.FC = () => {
         return <TrashApp />;
       case 'about':
         return <AboutApp />;
+      case 'music':
+      case 'music-player':
+        return <MusicPlayerApp />;
       case 'os-lab':
         return <ExperimentsApp />;
       case 'linux-desktop':
