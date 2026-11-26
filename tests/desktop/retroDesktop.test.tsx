@@ -83,8 +83,35 @@ describe('Retro Desktop Redesign Components', () => {
     expect(container.textContent).toContain('Calculator');
     expect(container.textContent).toContain("Dash's Journal");
     expect(container.textContent).toContain('archive');
+    expect(container.textContent).toContain('Control Panel');
     expect(container.textContent).toContain('My Socials');
     expect(container.textContent).toContain('Community');
+
+    // Click My Socials to open modal
+    const buttons = Array.from(container.querySelectorAll('button'));
+    const socialsBtn = buttons.find((b) => b.textContent?.includes('My Socials'));
+    expect(socialsBtn).toBeDefined();
+
+    act(() => {
+      socialsBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const modal = container.querySelector('[data-testid="my-socials-modal"]');
+    expect(modal).not.toBeNull();
+    expect(modal?.textContent).toContain('Twitter');
+    expect(modal?.textContent).toContain('Instagram');
+    expect(modal?.textContent).toContain('YouTube');
+    expect(modal?.textContent).toContain('LinkedIn');
+    expect(modal?.textContent).toContain('GitHub');
+    expect(modal?.textContent).toContain('Website');
+
+    const links = Array.from(modal?.querySelectorAll('a') || []);
+    expect(links.find((a) => a.href.includes('x.com/azeemnadeemy'))).toBeDefined();
+    expect(links.find((a) => a.href.includes('instagram.com/azeemahmad.me'))).toBeDefined();
+    expect(links.find((a) => a.href.includes('youtube.com/@AzeemAhmad-v7o'))).toBeDefined();
+    expect(links.find((a) => a.href.includes('linkedin.com/in/azeem-ahmad327'))).toBeDefined();
+    expect(links.find((a) => a.href.includes('github.com/code-azeemahmad'))).toBeDefined();
+    expect(links.find((a) => a.href.includes('azeemahmad.me'))).toBeDefined();
   });
 
   it('renders RetroDock with all 6 floating dock items', () => {

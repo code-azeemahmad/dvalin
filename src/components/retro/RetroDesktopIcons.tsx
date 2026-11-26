@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useWindowManager } from '@/features/desktop/WindowContext';
+import { MySocialsModal } from './MySocialsModal';
 
 export const RetroDesktopIcons: React.FC = () => {
   const { openWindow } = useWindowManager();
+  const [isSocialsOpen, setIsSocialsOpen] = useState<boolean>(false);
 
   return (
     <div className="absolute inset-0 pointer-events-none p-4 select-none z-10 flex justify-between">
@@ -121,18 +123,49 @@ export const RetroDesktopIcons: React.FC = () => {
 
       {/* Right Column Icons */}
       <div className="flex flex-col space-y-5 pointer-events-auto items-end">
+        {/* Control Panel */}
+        <button
+          type="button"
+          onDoubleClick={() => openWindow('control-panel')}
+          onClick={() => openWindow('control-panel')}
+          className="group flex flex-col items-center w-20 p-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer focus:outline-none"
+        >
+          <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 48 48" className="w-10 h-10 drop-shadow-md" fill="none">
+              {/* Retro Control Panel with sliders and status LEDs */}
+              <rect x="6" y="8" width="36" height="32" rx="3" fill="#2d3748" stroke="#1a202c" strokeWidth="2" />
+              <rect x="6" y="8" width="36" height="7" rx="2" fill="#4a5568" />
+              <circle cx="11" cy="11.5" r="1.5" fill="#e53e3e" />
+              <circle cx="16" cy="11.5" r="1.5" fill="#ecc94b" />
+              <circle cx="21" cy="11.5" r="1.5" fill="#48bb78" />
+              <line x1="12" y1="21" x2="36" y2="21" stroke="#718096" strokeWidth="2" strokeLinecap="round" />
+              <rect x="18" y="18" width="6" height="6" rx="1" fill="#4299e1" stroke="#2b6cb0" strokeWidth="1.5" />
+              <line x1="12" y1="28" x2="36" y2="28" stroke="#718096" strokeWidth="2" strokeLinecap="round" />
+              <rect x="28" y="25" width="6" height="6" rx="1" fill="#48bb78" stroke="#276749" strokeWidth="1.5" />
+              <rect x="12" y="33" width="10" height="4" rx="2" fill="#cbd5e0" />
+              <circle cx="14" cy="35" r="2" fill="#ed8936" />
+              <rect x="26" y="33" width="10" height="4" rx="2" fill="#cbd5e0" />
+              <circle cx="34" cy="35" r="2" fill="#4299e1" />
+            </svg>
+          </div>
+          <span className="text-[11px] font-mono font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)] tracking-wide mt-1 text-center truncate max-w-full">
+            Control Panel
+          </span>
+        </button>
+
         {/* My Socials */}
         <button
           type="button"
-          onClick={() => openWindow('control-panel')}
+          onDoubleClick={() => setIsSocialsOpen(true)}
+          onClick={() => setIsSocialsOpen(true)}
           className="group flex flex-col items-center w-20 p-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer focus:outline-none"
         >
           <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-105">
             <div className="w-10 h-10 rounded-xl bg-slate-900/80 border-2 border-slate-700 grid grid-cols-2 p-1 gap-1 shadow-lg">
               <div className="bg-black text-[7px] text-white font-bold flex items-center justify-center rounded">X</div>
-              <div className="bg-pink-600 text-[7px] text-white font-bold flex items-center justify-center rounded">IG</div>
+              <div className="bg-gradient-to-tr from-amber-400 via-rose-500 to-purple-600 text-[6px] text-white font-bold flex items-center justify-center rounded">IG</div>
               <div className="bg-red-600 text-[7px] text-white font-bold flex items-center justify-center rounded">YT</div>
-              <div className="bg-blue-600 text-[7px] text-white font-bold flex items-center justify-center rounded">IN</div>
+              <div className="bg-[#0077b5] text-[7px] text-white font-bold flex items-center justify-center rounded">IN</div>
             </div>
           </div>
           <span className="text-[11px] font-mono font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)] tracking-wide mt-1 text-center truncate max-w-full">
@@ -143,6 +176,7 @@ export const RetroDesktopIcons: React.FC = () => {
         {/* Community */}
         <button
           type="button"
+          onDoubleClick={() => openWindow('about')}
           onClick={() => openWindow('about')}
           className="group flex flex-col items-center w-20 p-1.5 rounded-lg hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer focus:outline-none"
         >
@@ -158,6 +192,12 @@ export const RetroDesktopIcons: React.FC = () => {
           </span>
         </button>
       </div>
+
+      {/* Floating My Socials Modal Menu */}
+      <MySocialsModal
+        isOpen={isSocialsOpen}
+        onClose={() => setIsSocialsOpen(false)}
+      />
     </div>
   );
 };
