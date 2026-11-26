@@ -18,7 +18,7 @@ export const UserSignInScreen: React.FC<UserSignInScreenProps> = ({ onSignIn }) 
       {/* Background with blurred dragon wallpaper */}
       <div
         className="absolute inset-0 bg-cover bg-center filter blur-md scale-105"
-        style={{ backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.png')}')` }}
+        style={{ backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp')}')` }}
       />
       {/* Dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/35 backdrop-blur-sm" />

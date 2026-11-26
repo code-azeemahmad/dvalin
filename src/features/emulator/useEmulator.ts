@@ -53,6 +53,11 @@ export function useEmulator() {
     (screenContainer?: HTMLElement | null) => manager.boot(screenContainer),
     [manager]
   );
+  const bootWithSnapshotFastResume = useCallback(
+    (screenContainer?: HTMLElement | null) =>
+      manager.bootWithSnapshotFastResume(screenContainer),
+    [manager]
+  );
   const stop = useCallback(() => manager.stop(), [manager]);
   const restart = useCallback(() => manager.restart(), [manager]);
   const destroy = useCallback(() => manager.destroy(), [manager]);
@@ -92,6 +97,7 @@ export function useEmulator() {
     isOperationLocked: manager.getIsOperationLocked(),
     activeOperation: manager.getActiveOperation(),
     boot,
+    bootWithSnapshotFastResume,
     stop,
     restart,
     destroy,

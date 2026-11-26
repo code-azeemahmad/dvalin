@@ -252,15 +252,15 @@ export const ControlPanelApp: React.FC = () => {
               <p className="text-slate-400 text-xs mb-3">Custom wallpapers from your Wallpapers folder.</p>
               <div className="grid grid-cols-3 gap-2.5">
                 {[
-                  { name: 'Blue Dragon v3 (Default)', file: 'blue_dragon_wallpaper_1920x1080_v3.png' },
-                  { name: 'Dvalin Dragon', file: 'blue_dragon_wallpaper_1920x1080_dvalin_v3.png' },
-                  { name: 'Blue Dragon v4', file: 'blue_dragon_wallpaper_1920x1080_v4.png' },
-                  { name: 'Kame House', file: 'kame-house-dragon.jpg' },
-                  { name: 'Winter Mountain', file: 'winter-mountain.jpg' },
-                  { name: 'Bomb Girl', file: 'Bomb Girl (1)(1).jpg' },
-                  { name: 'Makima', file: 'makima.jpg' },
-                  { name: 'Anime Sky', file: '04005cd9595918388985a8bf1cba433a.jpg' },
-                  { name: 'Retro Sunset', file: 'd0eb505bfddcb621426c26200c269d59.jpg' },
+                  { name: 'Blue Dragon v3 (Default)', file: 'blue_dragon_wallpaper_1920x1080_v3.webp' },
+                  { name: 'Dvalin Dragon', file: 'blue_dragon_wallpaper_1920x1080_dvalin_v3.webp' },
+                  { name: 'Blue Dragon v4', file: 'blue_dragon_wallpaper_1920x1080_v4.webp' },
+                  { name: 'Kame House', file: 'kame-house-dragon.webp' },
+                  { name: 'Winter Mountain', file: 'winter-mountain.webp' },
+                  { name: 'Bomb Girl', file: 'Bomb Girl (1)(1).webp' },
+                  { name: 'Makima', file: 'makima.webp' },
+                  { name: 'Anime Sky', file: '04005cd9595918388985a8bf1cba433a.webp' },
+                  { name: 'Retro Sunset', file: 'd0eb505bfddcb621426c26200c269d59.webp' },
                 ].map((item) => {
                   const url = `/wallpapers/${encodeURIComponent(item.file)}`;
                   const isSelected =

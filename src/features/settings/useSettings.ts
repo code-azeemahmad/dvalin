@@ -4,16 +4,27 @@ import { HostSettings, WallpaperId } from '../desktop/types';
 const STORAGE_KEY = 'webos_settings_v1';
 
 const DEFAULT_SETTINGS: HostSettings = {
-  wallpaper: '/wallpapers/blue_dragon_wallpaper_1920x1080_v3.png',
+  wallpaper: '/wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp',
   displayScale: 1,
   theme: 'dark',
   autoCaptureMouse: true,
 };
 
+function getLocalStorage(): Storage | null {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage;
+  }
+  if (typeof localStorage !== 'undefined' && localStorage) {
+    return localStorage;
+  }
+  return null;
+}
+
 function readStorage(): HostSettings {
-  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
+  const storage = getLocalStorage();
+  if (!storage) return DEFAULT_SETTINGS;
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = storage.getItem(STORAGE_KEY);
     if (stored) {
       return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
     }
@@ -30,8 +41,9 @@ const listeners = new Set<SettingsListener>();
 function notify(newSettings: HostSettings) {
   activeSettings = newSettings;
   try {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+    const storage = getLocalStorage();
+    if (storage) {
+      storage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
     }
   } catch (e) {
     console.warn('Failed to persist WebOS settings to localStorage:', e);
@@ -53,7 +65,8 @@ if (typeof window !== 'undefined') {
 export function useSettings() {
   const [settings, setSettings] = useState<HostSettings>(() => {
     // If localStorage was cleared (e.g. in test beforeEach)
-    if (typeof localStorage !== 'undefined' && !localStorage.getItem(STORAGE_KEY)) {
+    const storage = getLocalStorage();
+    if (storage && !storage.getItem(STORAGE_KEY)) {
       activeSettings = DEFAULT_SETTINGS;
     } else {
       activeSettings = readStorage();

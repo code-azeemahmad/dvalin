@@ -186,13 +186,13 @@ describe('Retro Desktop Redesign Components', () => {
       wallpapersBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    expect(container.textContent).toContain('kame-house-dragon.jpg');
-    expect(container.textContent).toContain('makima.jpg');
-    expect(container.textContent).toContain('winter-mountain.jpg');
+    expect(container.textContent).toContain('kame-house-dragon.webp');
+    expect(container.textContent).toContain('makima.webp');
+    expect(container.textContent).toContain('winter-mountain.webp');
 
     // Find kame-house-dragon file item and double-click it
     const items = Array.from(container.querySelectorAll('.group'));
-    const kameItem = items.find((el) => el.textContent?.includes('kame-house-dragon.jpg'));
+    const kameItem = items.find((el) => el.textContent?.includes('kame-house-dragon.webp'));
     expect(kameItem).toBeDefined();
 
     act(() => {
@@ -200,8 +200,9 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     // Check localStorage persistence
-    const stored = JSON.parse(localStorage.getItem('webos_settings_v1') || '{}');
-    expect(stored.wallpaper).toContain('kame-house-dragon.jpg');
+    const storage = typeof window !== 'undefined' ? window.localStorage : localStorage;
+    const stored = JSON.parse(storage?.getItem('webos_settings_v1') || '{}');
+    expect(stored.wallpaper).toContain('kame-house-dragon.webp');
   });
 
   it('renders ControlPanelApp with tabs', () => {
@@ -251,9 +252,9 @@ describe('Retro Desktop Redesign Components', () => {
       wallpapersBtn?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    // Double click makima.jpg
+    // Double click makima.webp
     const items = Array.from(container.querySelectorAll('.group'));
-    const makimaItem = items.find((el) => el.textContent?.includes('makima.jpg'));
+    const makimaItem = items.find((el) => el.textContent?.includes('makima.webp'));
     expect(makimaItem).toBeDefined();
 
     act(() => {
@@ -261,7 +262,7 @@ describe('Retro Desktop Redesign Components', () => {
     });
 
     // Verify the desktop background element updated in real-time!
-    expect(bgElement.style.backgroundImage).toContain('makima.jpg');
+    expect(bgElement.style.backgroundImage).toContain('makima.webp');
   });
 
   it('renders TerminalApp without top info bar or clear delete button', () => {

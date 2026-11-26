@@ -371,7 +371,7 @@ Output is executed and returned directly from the guest operating system.`,
       } else if (cwd === '/etc') {
         output = 'fstab  group  hostname  hosts  inittab  issue  os-release  passwd  resolv.conf  shadow  sysconfig';
       } else if (cwd.includes('wallpaper')) {
-        output = 'autumn-lake.jpg  city-night.jpg  cosmic-nebula.jpg  cyberpunk-street.jpg  makima.jpg  winter-mountain.jpg';
+        output = 'blue_dragon_wallpaper_1920x1080_v3.webp  kame-house-dragon.webp  makima.webp  winter-mountain.webp';
       } else if (cwd === '/home') {
         output = 'tc';
       } else if (cwd === '/tmp') {

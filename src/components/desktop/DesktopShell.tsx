@@ -28,7 +28,7 @@ import { resolveAssetPath } from '@/utils/assetPath';
 const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefined => {
   if (!wallpaper) {
     return {
-      backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.png')}')`,
+      backgroundImage: `url('${resolveAssetPath('wallpapers/blue_dragon_wallpaper_1920x1080_v3.webp')}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -37,7 +37,7 @@ const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefin
 
   if (wallpaper === 'slate-mesh') {
     return {
-      backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.png')}')`,
+      backgroundImage: `url('${resolveAssetPath('assets/images/desktop_screen.webp')}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -66,21 +66,21 @@ const resolveWallpaperStyle = (wallpaper: string): React.CSSProperties | undefin
 const DesktopContent: React.FC = () => {
   const { windows } = useWindowManager();
   const { settings } = useSettings();
-  const { status, boot } = useEmulator();
+  const { status, bootWithSnapshotFastResume } = useEmulator();
 
   // Screen state machine: booting -> signin -> desktop
   const [screenState, setScreenState] = useState<'booting' | 'signin' | 'desktop'>('booting');
 
-  // Trigger emulator boot during booting screen so guest Linux is warmed up and ready
+  // Fast resume emulator from snapshot or boot during booting screen so guest Linux is warmed up and ready
   useEffect(() => {
     if (status === 'idle') {
       try {
-        boot();
+        bootWithSnapshotFastResume();
       } catch (err) {
         console.warn('Initial background boot dispatch error:', err);
       }
     }
-  }, [status, boot]);
+  }, [status, bootWithSnapshotFastResume]);
 
   const renderAppContent = (appId: string) => {
     switch (appId) {
