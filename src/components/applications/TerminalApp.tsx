@@ -495,7 +495,7 @@ Output is executed and returned directly from the guest operating system.`,
 
   return (
     <div
-      className="flex-1 flex flex-col w-full h-full bg-black font-mono text-xs select-text overflow-hidden"
+      className="flex-1 flex flex-col w-full h-full bg-black font-mono text-xs select-text overflow-hidden cursor-text"
       onClick={() => inputRef.current?.focus()}
     >
       {/* Terminal Scrollback Area */}
@@ -546,7 +546,13 @@ Output is executed and returned directly from the guest operating system.`,
             autoFocus
             spellCheck={false}
             autoComplete="off"
-            className="flex-1 bg-transparent text-slate-100 outline-hidden border-none font-mono text-xs focus:ring-0 p-0"
+            className="flex-1 bg-transparent text-slate-100 outline-none border-none ring-0 focus:outline-none focus:ring-0 focus:border-none font-mono text-xs p-0 shadow-none caret-emerald-400 cursor-text"
+            style={{
+              outline: 'none',
+              border: 'none',
+              boxShadow: 'none',
+              caretColor: '#34d399',
+            }}
           />
           <button
             type="submit"
