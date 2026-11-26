@@ -122,7 +122,7 @@ describe('Retro Desktop Redesign Components', () => {
     expect(container.querySelector('[data-testid="my-socials-modal"]')).toBeNull();
   });
 
-  it('renders RetroDock with all 6 floating dock items', () => {
+  it('renders RetroDock with all 6 floating dock items and shows tooltip on hover', () => {
     const container = document.createElement('div');
     const root = createRoot(container);
 
@@ -138,6 +138,27 @@ describe('Retro Desktop Redesign Components', () => {
     expect(buttons.length).toBe(6);
     // Messages badge '6'
     expect(container.textContent).toContain('6');
+
+    // Terminal button hover test
+    const terminalBtn = Array.from(buttons).find((b) => b.getAttribute('aria-label') === 'Terminal');
+    expect(terminalBtn).toBeDefined();
+
+    // Hover Terminal
+    act(() => {
+      terminalBtn?.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    });
+
+    const terminalTooltip = container.querySelector('[data-testid="dock-tooltip-terminal"]');
+    expect(terminalTooltip).toBeDefined();
+    expect(terminalTooltip?.textContent).toContain('Terminal');
+    expect(terminalTooltip?.className).toContain('opacity-100');
+
+    // Move away
+    act(() => {
+      terminalBtn?.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+    });
+
+    expect(terminalTooltip?.className).toContain('opacity-0');
   });
 
   it('renders TextEditorApp with ReadMe.txt and tabs', () => {
