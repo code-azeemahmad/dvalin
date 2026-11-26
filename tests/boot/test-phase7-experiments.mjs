@@ -30,7 +30,7 @@ async function runPhase7ExperimentsVerification() {
 
   if (!fs.existsSync(corePath)) {
     console.log(`Core-17.1.iso not found at ${corePath}. Skipping live VM verification in environment without pre-downloaded ISO.`);
-    return;
+    return { passed: true, skipped: true };
   }
 
   const v86Module = await import('v86');
